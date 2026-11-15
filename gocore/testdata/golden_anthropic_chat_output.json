@@ -1,0 +1,2857 @@
+{
+  "schema": "anthropic-chat-output-v1",
+  "scenarios": [
+    {
+      "name": "text_success",
+      "steps": [
+        {
+          "input": {
+            "op": "start"
+          },
+          "events": [
+            "event: message_start\ndata: {\"type\": \"message_start\", \"message\": {\"id\": \"msg-test\", \"type\": \"message\", \"role\": \"assistant\", \"content\": [], \"model\": \"model-\\u00e9\", \"stop_reason\": null, \"stop_sequence\": null, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 1}}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text"
+          },
+          "events": [
+            "event: content_block_start\ndata: {\"type\": \"content_block_start\", \"index\": 0, \"content_block\": {\"type\": \"text\", \"text\": \"\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text_delta",
+            "value": "Hi \"<world>\"!\n工具 😀 "
+          },
+          "events": [
+            "event: content_block_delta\ndata: {\"type\": \"content_block_delta\", \"index\": 0, \"delta\": {\"type\": \"text_delta\", \"text\": \"Hi \\\"<world>\\\"!\\n\\u5de5\\u5177 \\ud83d\\ude00 \\u007f\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text_delta",
+            "value": ""
+          },
+          "events": [
+            "event: content_block_delta\ndata: {\"type\": \"content_block_delta\", \"index\": 0, \"delta\": {\"type\": \"text_delta\", \"text\": \"\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "success",
+            "value": "end_turn"
+          },
+          "events": [
+            "event: content_block_stop\ndata: {\"type\": \"content_block_stop\", \"index\": 0}\n\n",
+            "event: message_delta\ndata: {\"type\": \"message_delta\", \"delta\": {\"stop_reason\": \"end_turn\", \"stop_sequence\": null}, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 13}}\n\n",
+            "event: message_stop\ndata: {\"type\": \"message_stop\"}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "success",
+            "value": "stop"
+          },
+          "events": []
+        }
+      ]
+    },
+    {
+      "name": "reasoning_interleaved",
+      "steps": [
+        {
+          "input": {
+            "op": "start"
+          },
+          "events": [
+            "event: message_start\ndata: {\"type\": \"message_start\", \"message\": {\"id\": \"msg-test\", \"type\": \"message\", \"role\": \"assistant\", \"content\": [], \"model\": \"model-\\u00e9\", \"stop_reason\": null, \"stop_sequence\": null, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 1}}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "reasoning",
+            "index": 4
+          },
+          "events": [
+            "event: content_block_start\ndata: {\"type\": \"content_block_start\", \"index\": 0, \"content_block\": {\"type\": \"thinking\", \"thinking\": \"\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "reasoning_delta",
+            "index": 4,
+            "value": "思考",
+            "summary": true
+          },
+          "events": [
+            "event: content_block_delta\ndata: {\"type\": \"content_block_delta\", \"index\": 0, \"delta\": {\"type\": \"thinking_delta\", \"thinking\": \"\\u601d\\u8003\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "complete",
+            "index": 4,
+            "opaque": [
+              "sig😀",
+              "opaque"
+            ]
+          },
+          "events": [
+            "event: content_block_delta\ndata: {\"type\": \"content_block_delta\", \"index\": 0, \"delta\": {\"type\": \"signature_delta\", \"signature\": \"sig\\ud83d\\ude00\"}}\n\n",
+            "event: content_block_stop\ndata: {\"type\": \"content_block_stop\", \"index\": 0}\n\n",
+            "event: content_block_start\ndata: {\"type\": \"content_block_start\", \"index\": 1, \"content_block\": {\"type\": \"redacted_thinking\", \"data\": \"opaque\"}}\n\n",
+            "event: content_block_stop\ndata: {\"type\": \"content_block_stop\", \"index\": 1}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text"
+          },
+          "events": [
+            "event: content_block_start\ndata: {\"type\": \"content_block_start\", \"index\": 2, \"content_block\": {\"type\": \"text\", \"text\": \"\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text_delta",
+            "value": "answer"
+          },
+          "events": [
+            "event: content_block_delta\ndata: {\"type\": \"content_block_delta\", \"index\": 2, \"delta\": {\"type\": \"text_delta\", \"text\": \"answer\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "reasoning",
+            "index": 3
+          },
+          "events": [
+            "event: content_block_stop\ndata: {\"type\": \"content_block_stop\", \"index\": 2}\n\n",
+            "event: content_block_start\ndata: {\"type\": \"content_block_start\", \"index\": 3, \"content_block\": {\"type\": \"thinking\", \"thinking\": \"\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "reasoning_delta",
+            "index": 3,
+            "value": "r"
+          },
+          "events": [
+            "event: content_block_delta\ndata: {\"type\": \"content_block_delta\", \"index\": 3, \"delta\": {\"type\": \"thinking_delta\", \"thinking\": \"r\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text"
+          },
+          "events": [
+            "event: content_block_stop\ndata: {\"type\": \"content_block_stop\", \"index\": 3}\n\n",
+            "event: content_block_start\ndata: {\"type\": \"content_block_start\", \"index\": 4, \"content_block\": {\"type\": \"text\", \"text\": \"\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "success",
+            "value": "tool_use"
+          },
+          "events": [
+            "event: content_block_stop\ndata: {\"type\": \"content_block_stop\", \"index\": 4}\n\n",
+            "event: message_delta\ndata: {\"type\": \"message_delta\", \"delta\": {\"stop_reason\": \"end_turn\", \"stop_sequence\": null}, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 13}}\n\n",
+            "event: message_stop\ndata: {\"type\": \"message_stop\"}\n\n"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "tools_success",
+      "steps": [
+        {
+          "input": {
+            "op": "start"
+          },
+          "events": [
+            "event: message_start\ndata: {\"type\": \"message_start\", \"message\": {\"id\": \"msg-test\", \"type\": \"message\", \"role\": \"assistant\", \"content\": [], \"model\": \"model-\\u00e9\", \"stop_reason\": null, \"stop_sequence\": null, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 1}}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "tool_start",
+            "index": 4,
+            "id": "id-4",
+            "value": "工具",
+            "extra": {
+              "z": {
+                "b": 1,
+                "a": [
+                  1.0,
+                  1e-05,
+                  "é"
+                ]
+              },
+              "a": "😀"
+            }
+          },
+          "events": [
+            "event: content_block_start\ndata: {\"type\": \"content_block_start\", \"index\": 0, \"content_block\": {\"type\": \"tool_use\", \"id\": \"id-4\", \"name\": \"\\u5de5\\u5177\", \"input\": {}, \"extra_content\": {\"z\": {\"b\": 1, \"a\": [1.0, 1e-05, \"\\u00e9\"]}, \"a\": \"\\ud83d\\ude00\"}}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "tool_delta",
+            "index": 4,
+            "value": "{\"q\": \u000301}"
+          },
+          "events": [
+            "event: content_block_delta\ndata: {\"type\": \"content_block_delta\", \"index\": 0, \"delta\": {\"type\": \"input_json_delta\", \"partial_json\": \"{\\\"q\\\": \\u000301}\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "tool_start",
+            "index": 1,
+            "id": "id-1",
+            "value": "read"
+          },
+          "events": [
+            "event: content_block_start\ndata: {\"type\": \"content_block_start\", \"index\": 1, \"content_block\": {\"type\": \"tool_use\", \"id\": \"id-1\", \"name\": \"read\", \"input\": {}}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "tool_stop",
+            "index": 1
+          },
+          "events": [
+            "event: content_block_stop\ndata: {\"type\": \"content_block_stop\", \"index\": 1}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "defer",
+            "value": "secret"
+          },
+          "events": []
+        },
+        {
+          "input": {
+            "op": "success",
+            "value": "end_turn",
+            "usage_fields": {
+              "output_tokens": 99,
+              "z": 0,
+              "a": true,
+              "invalid": "skip"
+            }
+          },
+          "events": [
+            "event: content_block_start\ndata: {\"type\": \"content_block_start\", \"index\": 2, \"content_block\": {\"type\": \"redacted_thinking\", \"data\": \"secret\"}}\n\n",
+            "event: content_block_stop\ndata: {\"type\": \"content_block_stop\", \"index\": 2}\n\n",
+            "event: content_block_stop\ndata: {\"type\": \"content_block_stop\", \"index\": 0}\n\n",
+            "event: message_delta\ndata: {\"type\": \"message_delta\", \"delta\": {\"stop_reason\": \"tool_use\", \"stop_sequence\": null}, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 99, \"z\": 0, \"a\": true}}\n\n",
+            "event: message_stop\ndata: {\"type\": \"message_stop\"}\n\n"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "failure_lifo",
+      "steps": [
+        {
+          "input": {
+            "op": "start"
+          },
+          "events": [
+            "event: message_start\ndata: {\"type\": \"message_start\", \"message\": {\"id\": \"msg-test\", \"type\": \"message\", \"role\": \"assistant\", \"content\": [], \"model\": \"model-\\u00e9\", \"stop_reason\": null, \"stop_sequence\": null, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 1}}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "begin",
+            "index": 3
+          },
+          "events": [
+            "event: content_block_start\ndata: {\"type\": \"content_block_start\", \"index\": 0, \"content_block\": {\"type\": \"thinking\", \"thinking\": \"\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "begin",
+            "index": 1
+          },
+          "events": [
+            "event: content_block_start\ndata: {\"type\": \"content_block_start\", \"index\": 1, \"content_block\": {\"type\": \"thinking\", \"thinking\": \"\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "tool_start",
+            "index": 7,
+            "id": "call",
+            "value": "tool"
+          },
+          "events": [
+            "event: content_block_start\ndata: {\"type\": \"content_block_start\", \"index\": 2, \"content_block\": {\"type\": \"tool_use\", \"id\": \"call\", \"name\": \"tool\", \"input\": {}}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "defer",
+            "value": "dropped"
+          },
+          "events": []
+        },
+        {
+          "input": {
+            "op": "failure"
+          },
+          "events": [
+            "event: content_block_stop\ndata: {\"type\": \"content_block_stop\", \"index\": 1}\n\n",
+            "event: content_block_stop\ndata: {\"type\": \"content_block_stop\", \"index\": 0}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "failure"
+          },
+          "events": []
+        }
+      ]
+    },
+    {
+      "name": "close_and_restart",
+      "steps": [
+        {
+          "input": {
+            "op": "start"
+          },
+          "events": [
+            "event: message_start\ndata: {\"type\": \"message_start\", \"message\": {\"id\": \"msg-test\", \"type\": \"message\", \"role\": \"assistant\", \"content\": [], \"model\": \"model-\\u00e9\", \"stop_reason\": null, \"stop_sequence\": null, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 1}}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text"
+          },
+          "events": [
+            "event: content_block_start\ndata: {\"type\": \"content_block_start\", \"index\": 0, \"content_block\": {\"type\": \"text\", \"text\": \"\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "close_unclosed"
+          },
+          "events": [
+            "event: content_block_stop\ndata: {\"type\": \"content_block_stop\", \"index\": 0}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text"
+          },
+          "events": [
+            "event: content_block_start\ndata: {\"type\": \"content_block_start\", \"index\": 1, \"content_block\": {\"type\": \"text\", \"text\": \"\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text_delta",
+            "value": "new"
+          },
+          "events": [
+            "event: content_block_delta\ndata: {\"type\": \"content_block_delta\", \"index\": 1, \"delta\": {\"type\": \"text_delta\", \"text\": \"new\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "close_all"
+          },
+          "events": [
+            "event: content_block_stop\ndata: {\"type\": \"content_block_stop\", \"index\": 1}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "opaque",
+            "value": "sealed"
+          },
+          "events": [
+            "event: content_block_start\ndata: {\"type\": \"content_block_start\", \"index\": 2, \"content_block\": {\"type\": \"redacted_thinking\", \"data\": \"sealed\"}}\n\n",
+            "event: content_block_stop\ndata: {\"type\": \"content_block_stop\", \"index\": 2}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "success",
+            "value": "stop"
+          },
+          "events": [
+            "event: message_delta\ndata: {\"type\": \"message_delta\", \"delta\": {\"stop_reason\": \"stop\", \"stop_sequence\": null}, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 13}}\n\n",
+            "event: message_stop\ndata: {\"type\": \"message_stop\"}\n\n"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "text_unicode_0",
+      "steps": [
+        {
+          "input": {
+            "op": "start"
+          },
+          "events": [
+            "event: message_start\ndata: {\"type\": \"message_start\", \"message\": {\"id\": \"msg-test\", \"type\": \"message\", \"role\": \"assistant\", \"content\": [], \"model\": \"model-\\u00e9\", \"stop_reason\": null, \"stop_sequence\": null, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 1}}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text"
+          },
+          "events": [
+            "event: content_block_start\ndata: {\"type\": \"content_block_start\", \"index\": 0, \"content_block\": {\"type\": \"text\", \"text\": \"\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text_delta",
+            "value": "\\\\Z&a\"\t\u0000\n漢"
+          },
+          "events": [
+            "event: content_block_delta\ndata: {\"type\": \"content_block_delta\", \"index\": 0, \"delta\": {\"type\": \"text_delta\", \"text\": \"\\\\\\\\Z\\u007f&a\\\"\\t\\u0000\\n\\u6f22\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "success",
+            "value": "end_turn"
+          },
+          "events": [
+            "event: content_block_stop\ndata: {\"type\": \"content_block_stop\", \"index\": 0}\n\n",
+            "event: message_delta\ndata: {\"type\": \"message_delta\", \"delta\": {\"stop_reason\": \"end_turn\", \"stop_sequence\": null}, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 13}}\n\n",
+            "event: message_stop\ndata: {\"type\": \"message_stop\"}\n\n"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "text_unicode_1",
+      "steps": [
+        {
+          "input": {
+            "op": "start"
+          },
+          "events": [
+            "event: message_start\ndata: {\"type\": \"message_start\", \"message\": {\"id\": \"msg-test\", \"type\": \"message\", \"role\": \"assistant\", \"content\": [], \"model\": \"model-\\u00e9\", \"stop_reason\": null, \"stop_sequence\": null, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 1}}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text"
+          },
+          "events": [
+            "event: content_block_start\ndata: {\"type\": \"content_block_start\", \"index\": 0, \"content_block\": {\"type\": \"text\", \"text\": \"\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text_delta",
+            "value": "Z\u0000 \\"
+          },
+          "events": [
+            "event: content_block_delta\ndata: {\"type\": \"content_block_delta\", \"index\": 0, \"delta\": {\"type\": \"text_delta\", \"text\": \"Z\\u007f\\u0000 \\\\\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "success",
+            "value": "end_turn"
+          },
+          "events": [
+            "event: content_block_stop\ndata: {\"type\": \"content_block_stop\", \"index\": 0}\n\n",
+            "event: message_delta\ndata: {\"type\": \"message_delta\", \"delta\": {\"stop_reason\": \"end_turn\", \"stop_sequence\": null}, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 13}}\n\n",
+            "event: message_stop\ndata: {\"type\": \"message_stop\"}\n\n"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "text_unicode_2",
+      "steps": [
+        {
+          "input": {
+            "op": "start"
+          },
+          "events": [
+            "event: message_start\ndata: {\"type\": \"message_start\", \"message\": {\"id\": \"msg-test\", \"type\": \"message\", \"role\": \"assistant\", \"content\": [], \"model\": \"model-\\u00e9\", \"stop_reason\": null, \"stop_sequence\": null, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 1}}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text"
+          },
+          "events": [
+            "event: content_block_start\ndata: {\"type\": \"content_block_start\", \"index\": 0, \"content_block\": {\"type\": \"text\", \"text\": \"\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text_delta",
+            "value": ""
+          },
+          "events": [
+            "event: content_block_delta\ndata: {\"type\": \"content_block_delta\", \"index\": 0, \"delta\": {\"type\": \"text_delta\", \"text\": \"\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "success",
+            "value": "end_turn"
+          },
+          "events": [
+            "event: content_block_stop\ndata: {\"type\": \"content_block_stop\", \"index\": 0}\n\n",
+            "event: message_delta\ndata: {\"type\": \"message_delta\", \"delta\": {\"stop_reason\": \"end_turn\", \"stop_sequence\": null}, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 13}}\n\n",
+            "event: message_stop\ndata: {\"type\": \"message_stop\"}\n\n"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "text_unicode_3",
+      "steps": [
+        {
+          "input": {
+            "op": "start"
+          },
+          "events": [
+            "event: message_start\ndata: {\"type\": \"message_start\", \"message\": {\"id\": \"msg-test\", \"type\": \"message\", \"role\": \"assistant\", \"content\": [], \"model\": \"model-\\u00e9\", \"stop_reason\": null, \"stop_sequence\": null, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 1}}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text"
+          },
+          "events": [
+            "event: content_block_start\ndata: {\"type\": \"content_block_start\", \"index\": 0, \"content_block\": {\"type\": \"text\", \"text\": \"\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text_delta",
+            "value": "\né漢 \tZ漢\\\n漢漢😀\u0000\t😀é< \\<\\\t \\ \"Z\u0000😀\"<&\t"
+          },
+          "events": [
+            "event: content_block_delta\ndata: {\"type\": \"content_block_delta\", \"index\": 0, \"delta\": {\"type\": \"text_delta\", \"text\": \"\\n\\u00e9\\u6f22\\u2028\\tZ\\u6f22\\\\\\n\\u007f\\u6f22\\u6f22\\ud83d\\ude00\\u0000\\t\\ud83d\\ude00\\u00e9<\\u2028\\\\<\\\\\\u007f\\t\\u2028\\\\ \\\"Z\\u0000\\ud83d\\ude00\\\"<&\\t\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "success",
+            "value": "end_turn"
+          },
+          "events": [
+            "event: content_block_stop\ndata: {\"type\": \"content_block_stop\", \"index\": 0}\n\n",
+            "event: message_delta\ndata: {\"type\": \"message_delta\", \"delta\": {\"stop_reason\": \"end_turn\", \"stop_sequence\": null}, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 13}}\n\n",
+            "event: message_stop\ndata: {\"type\": \"message_stop\"}\n\n"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "text_unicode_4",
+      "steps": [
+        {
+          "input": {
+            "op": "start"
+          },
+          "events": [
+            "event: message_start\ndata: {\"type\": \"message_start\", \"message\": {\"id\": \"msg-test\", \"type\": \"message\", \"role\": \"assistant\", \"content\": [], \"model\": \"model-\\u00e9\", \"stop_reason\": null, \"stop_sequence\": null, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 1}}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text"
+          },
+          "events": [
+            "event: content_block_start\ndata: {\"type\": \"content_block_start\", \"index\": 0, \"content_block\": {\"type\": \"text\", \"text\": \"\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text_delta",
+            "value": "Z"
+          },
+          "events": [
+            "event: content_block_delta\ndata: {\"type\": \"content_block_delta\", \"index\": 0, \"delta\": {\"type\": \"text_delta\", \"text\": \"Z\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "success",
+            "value": "end_turn"
+          },
+          "events": [
+            "event: content_block_stop\ndata: {\"type\": \"content_block_stop\", \"index\": 0}\n\n",
+            "event: message_delta\ndata: {\"type\": \"message_delta\", \"delta\": {\"stop_reason\": \"end_turn\", \"stop_sequence\": null}, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 13}}\n\n",
+            "event: message_stop\ndata: {\"type\": \"message_stop\"}\n\n"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "text_unicode_5",
+      "steps": [
+        {
+          "input": {
+            "op": "start"
+          },
+          "events": [
+            "event: message_start\ndata: {\"type\": \"message_start\", \"message\": {\"id\": \"msg-test\", \"type\": \"message\", \"role\": \"assistant\", \"content\": [], \"model\": \"model-\\u00e9\", \"stop_reason\": null, \"stop_sequence\": null, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 1}}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text"
+          },
+          "events": [
+            "event: content_block_start\ndata: {\"type\": \"content_block_start\", \"index\": 0, \"content_block\": {\"type\": \"text\", \"text\": \"\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text_delta",
+            "value": " \u0000\u0000\\a\u0000漢<😀漢\\a\u0000\"Z\\Zé\\  é漢\\Z\t\t\u0000Z\n"
+          },
+          "events": [
+            "event: content_block_delta\ndata: {\"type\": \"content_block_delta\", \"index\": 0, \"delta\": {\"type\": \"text_delta\", \"text\": \" \\u0000\\u0000\\\\a\\u0000\\u6f22<\\ud83d\\ude00\\u6f22\\\\a\\u0000\\\"Z\\\\Z\\u00e9\\\\\\u2028\\u2028\\u00e9\\u6f22\\\\Z\\t\\t\\u007f\\u007f\\u0000Z\\n\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "success",
+            "value": "end_turn"
+          },
+          "events": [
+            "event: content_block_stop\ndata: {\"type\": \"content_block_stop\", \"index\": 0}\n\n",
+            "event: message_delta\ndata: {\"type\": \"message_delta\", \"delta\": {\"stop_reason\": \"end_turn\", \"stop_sequence\": null}, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 13}}\n\n",
+            "event: message_stop\ndata: {\"type\": \"message_stop\"}\n\n"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "text_unicode_6",
+      "steps": [
+        {
+          "input": {
+            "op": "start"
+          },
+          "events": [
+            "event: message_start\ndata: {\"type\": \"message_start\", \"message\": {\"id\": \"msg-test\", \"type\": \"message\", \"role\": \"assistant\", \"content\": [], \"model\": \"model-\\u00e9\", \"stop_reason\": null, \"stop_sequence\": null, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 1}}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text"
+          },
+          "events": [
+            "event: content_block_start\ndata: {\"type\": \"content_block_start\", \"index\": 0, \"content_block\": {\"type\": \"text\", \"text\": \"\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text_delta",
+            "value": "\u0000\\\tZ漢\n漢Z\n\u0000<\t&\u0000\\\"<漢éé😀"
+          },
+          "events": [
+            "event: content_block_delta\ndata: {\"type\": \"content_block_delta\", \"index\": 0, \"delta\": {\"type\": \"text_delta\", \"text\": \"\\u0000\\\\\\tZ\\u6f22\\n\\u6f22Z\\n\\u0000\\u007f<\\t&\\u0000\\\\\\\"<\\u6f22\\u00e9\\u007f\\u00e9\\ud83d\\ude00\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "success",
+            "value": "end_turn"
+          },
+          "events": [
+            "event: content_block_stop\ndata: {\"type\": \"content_block_stop\", \"index\": 0}\n\n",
+            "event: message_delta\ndata: {\"type\": \"message_delta\", \"delta\": {\"stop_reason\": \"end_turn\", \"stop_sequence\": null}, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 13}}\n\n",
+            "event: message_stop\ndata: {\"type\": \"message_stop\"}\n\n"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "text_unicode_7",
+      "steps": [
+        {
+          "input": {
+            "op": "start"
+          },
+          "events": [
+            "event: message_start\ndata: {\"type\": \"message_start\", \"message\": {\"id\": \"msg-test\", \"type\": \"message\", \"role\": \"assistant\", \"content\": [], \"model\": \"model-\\u00e9\", \"stop_reason\": null, \"stop_sequence\": null, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 1}}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text"
+          },
+          "events": [
+            "event: content_block_start\ndata: {\"type\": \"content_block_start\", \"index\": 0, \"content_block\": {\"type\": \"text\", \"text\": \"\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text_delta",
+            "value": "😀\tééZ\" a\"😀 a\né\\\tZ<ZZ< 😀<\" \n\n<\n漢 \\é"
+          },
+          "events": [
+            "event: content_block_delta\ndata: {\"type\": \"content_block_delta\", \"index\": 0, \"delta\": {\"type\": \"text_delta\", \"text\": \"\\ud83d\\ude00\\t\\u00e9\\u00e9Z\\\" a\\u007f\\\"\\ud83d\\ude00\\u2028a\\n\\u00e9\\\\\\tZ<ZZ< \\ud83d\\ude00<\\\"\\u2028\\n\\n<\\n\\u6f22 \\\\\\u007f\\u00e9\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "success",
+            "value": "end_turn"
+          },
+          "events": [
+            "event: content_block_stop\ndata: {\"type\": \"content_block_stop\", \"index\": 0}\n\n",
+            "event: message_delta\ndata: {\"type\": \"message_delta\", \"delta\": {\"stop_reason\": \"end_turn\", \"stop_sequence\": null}, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 13}}\n\n",
+            "event: message_stop\ndata: {\"type\": \"message_stop\"}\n\n"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "text_unicode_8",
+      "steps": [
+        {
+          "input": {
+            "op": "start"
+          },
+          "events": [
+            "event: message_start\ndata: {\"type\": \"message_start\", \"message\": {\"id\": \"msg-test\", \"type\": \"message\", \"role\": \"assistant\", \"content\": [], \"model\": \"model-\\u00e9\", \"stop_reason\": null, \"stop_sequence\": null, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 1}}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text"
+          },
+          "events": [
+            "event: content_block_start\ndata: {\"type\": \"content_block_start\", \"index\": 0, \"content_block\": {\"type\": \"text\", \"text\": \"\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text_delta",
+            "value": "é\\😀\\漢< \t\t\n \n"
+          },
+          "events": [
+            "event: content_block_delta\ndata: {\"type\": \"content_block_delta\", \"index\": 0, \"delta\": {\"type\": \"text_delta\", \"text\": \"\\u00e9\\\\\\ud83d\\ude00\\\\\\u6f22< \\t\\t\\n \\n\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "success",
+            "value": "end_turn"
+          },
+          "events": [
+            "event: content_block_stop\ndata: {\"type\": \"content_block_stop\", \"index\": 0}\n\n",
+            "event: message_delta\ndata: {\"type\": \"message_delta\", \"delta\": {\"stop_reason\": \"end_turn\", \"stop_sequence\": null}, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 13}}\n\n",
+            "event: message_stop\ndata: {\"type\": \"message_stop\"}\n\n"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "text_unicode_9",
+      "steps": [
+        {
+          "input": {
+            "op": "start"
+          },
+          "events": [
+            "event: message_start\ndata: {\"type\": \"message_start\", \"message\": {\"id\": \"msg-test\", \"type\": \"message\", \"role\": \"assistant\", \"content\": [], \"model\": \"model-\\u00e9\", \"stop_reason\": null, \"stop_sequence\": null, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 1}}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text"
+          },
+          "events": [
+            "event: content_block_start\ndata: {\"type\": \"content_block_start\", \"index\": 0, \"content_block\": {\"type\": \"text\", \"text\": \"\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text_delta",
+            "value": " a\u0000 漢<\u0000😀\naaé\t漢\\<Zé éé éZé漢a漢a\u0000Zéé\\ \u0000a\u0000\" &é😀  é😀 漢 <😀Za😀&"
+          },
+          "events": [
+            "event: content_block_delta\ndata: {\"type\": \"content_block_delta\", \"index\": 0, \"delta\": {\"type\": \"text_delta\", \"text\": \"\\u2028a\\u0000\\u2028\\u007f\\u6f22<\\u0000\\ud83d\\ude00\\naa\\u00e9\\t\\u6f22\\\\<Z\\u00e9 \\u00e9\\u00e9\\u2028\\u00e9Z\\u00e9\\u6f22a\\u6f22a\\u0000Z\\u00e9\\u00e9\\\\\\u2028\\u0000a\\u0000\\\"\\u2028&\\u00e9\\ud83d\\ude00 \\u2028\\u00e9\\ud83d\\ude00 \\u6f22\\u2028\\u007f<\\ud83d\\ude00Za\\ud83d\\ude00&\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "success",
+            "value": "end_turn"
+          },
+          "events": [
+            "event: content_block_stop\ndata: {\"type\": \"content_block_stop\", \"index\": 0}\n\n",
+            "event: message_delta\ndata: {\"type\": \"message_delta\", \"delta\": {\"stop_reason\": \"end_turn\", \"stop_sequence\": null}, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 13}}\n\n",
+            "event: message_stop\ndata: {\"type\": \"message_stop\"}\n\n"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "text_unicode_10",
+      "steps": [
+        {
+          "input": {
+            "op": "start"
+          },
+          "events": [
+            "event: message_start\ndata: {\"type\": \"message_start\", \"message\": {\"id\": \"msg-test\", \"type\": \"message\", \"role\": \"assistant\", \"content\": [], \"model\": \"model-\\u00e9\", \"stop_reason\": null, \"stop_sequence\": null, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 1}}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text"
+          },
+          "events": [
+            "event: content_block_start\ndata: {\"type\": \"content_block_start\", \"index\": 0, \"content_block\": {\"type\": \"text\", \"text\": \"\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text_delta",
+            "value": "<\\\n\n<😀<😀\u0000\t漢\\ \u0000\"\n\n 😀漢\n\n Z😀aé\n\t\n😀\\\t😀 \u0000😀\t \\Z\u0000 é a<\\éé漢\\"
+          },
+          "events": [
+            "event: content_block_delta\ndata: {\"type\": \"content_block_delta\", \"index\": 0, \"delta\": {\"type\": \"text_delta\", \"text\": \"<\\\\\\n\\n<\\ud83d\\ude00<\\ud83d\\ude00\\u0000\\t\\u6f22\\\\ \\u0000\\\"\\n\\n \\ud83d\\ude00\\u6f22\\n\\n Z\\ud83d\\ude00a\\u00e9\\n\\t\\n\\u007f\\ud83d\\ude00\\\\\\t\\ud83d\\ude00\\u2028\\u0000\\ud83d\\ude00\\t \\\\Z\\u0000\\u007f\\u2028\\u00e9 \\u007fa<\\\\\\u00e9\\u00e9\\u6f22\\\\\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "success",
+            "value": "end_turn"
+          },
+          "events": [
+            "event: content_block_stop\ndata: {\"type\": \"content_block_stop\", \"index\": 0}\n\n",
+            "event: message_delta\ndata: {\"type\": \"message_delta\", \"delta\": {\"stop_reason\": \"end_turn\", \"stop_sequence\": null}, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 13}}\n\n",
+            "event: message_stop\ndata: {\"type\": \"message_stop\"}\n\n"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "text_unicode_11",
+      "steps": [
+        {
+          "input": {
+            "op": "start"
+          },
+          "events": [
+            "event: message_start\ndata: {\"type\": \"message_start\", \"message\": {\"id\": \"msg-test\", \"type\": \"message\", \"role\": \"assistant\", \"content\": [], \"model\": \"model-\\u00e9\", \"stop_reason\": null, \"stop_sequence\": null, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 1}}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text"
+          },
+          "events": [
+            "event: content_block_start\ndata: {\"type\": \"content_block_start\", \"index\": 0, \"content_block\": {\"type\": \"text\", \"text\": \"\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text_delta",
+            "value": "a\\<<a\"\t\u0000\tZé\t &\t \u0000\n\"\\\nZZ 😀\n&Z<漢\t\t& <漢\\&\té \t\u0000&é&😀<<Z\t aa"
+          },
+          "events": [
+            "event: content_block_delta\ndata: {\"type\": \"content_block_delta\", \"index\": 0, \"delta\": {\"type\": \"text_delta\", \"text\": \"a\\\\<<a\\\"\\t\\u0000\\tZ\\u00e9\\t \\u007f\\u007f&\\t\\u2028\\u0000\\n\\\"\\\\\\nZZ \\ud83d\\ude00\\n&Z\\u007f<\\u6f22\\t\\t& <\\u6f22\\\\&\\t\\u00e9\\u2028\\t\\u0000&\\u007f\\u00e9&\\ud83d\\ude00<<Z\\t \\u007faa\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "success",
+            "value": "end_turn"
+          },
+          "events": [
+            "event: content_block_stop\ndata: {\"type\": \"content_block_stop\", \"index\": 0}\n\n",
+            "event: message_delta\ndata: {\"type\": \"message_delta\", \"delta\": {\"stop_reason\": \"end_turn\", \"stop_sequence\": null}, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 13}}\n\n",
+            "event: message_stop\ndata: {\"type\": \"message_stop\"}\n\n"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "text_unicode_12",
+      "steps": [
+        {
+          "input": {
+            "op": "start"
+          },
+          "events": [
+            "event: message_start\ndata: {\"type\": \"message_start\", \"message\": {\"id\": \"msg-test\", \"type\": \"message\", \"role\": \"assistant\", \"content\": [], \"model\": \"model-\\u00e9\", \"stop_reason\": null, \"stop_sequence\": null, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 1}}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text"
+          },
+          "events": [
+            "event: content_block_start\ndata: {\"type\": \"content_block_start\", \"index\": 0, \"content_block\": {\"type\": \"text\", \"text\": \"\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text_delta",
+            "value": "&a Z \"\"a😀Z漢<😀 \té漢Z& Z\\a  Z😀😀éé\\ Z \\Z Z\nZé漢\té漢\t"
+          },
+          "events": [
+            "event: content_block_delta\ndata: {\"type\": \"content_block_delta\", \"index\": 0, \"delta\": {\"type\": \"text_delta\", \"text\": \"&a Z\\u2028\\\"\\\"a\\u007f\\ud83d\\ude00Z\\u6f22<\\ud83d\\ude00 \\t\\u00e9\\u007f\\u6f22Z&\\u2028Z\\\\a\\u2028\\u2028Z\\ud83d\\ude00\\ud83d\\ude00\\u00e9\\u00e9\\\\\\u007f\\u2028Z \\\\Z Z\\nZ\\u00e9\\u6f22\\t\\u00e9\\u6f22\\t\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "success",
+            "value": "end_turn"
+          },
+          "events": [
+            "event: content_block_stop\ndata: {\"type\": \"content_block_stop\", \"index\": 0}\n\n",
+            "event: message_delta\ndata: {\"type\": \"message_delta\", \"delta\": {\"stop_reason\": \"end_turn\", \"stop_sequence\": null}, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 13}}\n\n",
+            "event: message_stop\ndata: {\"type\": \"message_stop\"}\n\n"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "text_unicode_13",
+      "steps": [
+        {
+          "input": {
+            "op": "start"
+          },
+          "events": [
+            "event: message_start\ndata: {\"type\": \"message_start\", \"message\": {\"id\": \"msg-test\", \"type\": \"message\", \"role\": \"assistant\", \"content\": [], \"model\": \"model-\\u00e9\", \"stop_reason\": null, \"stop_sequence\": null, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 1}}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text"
+          },
+          "events": [
+            "event: content_block_start\ndata: {\"type\": \"content_block_start\", \"index\": 0, \"content_block\": {\"type\": \"text\", \"text\": \"\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text_delta",
+            "value": "  aa\"<\n😀 a& \tZ\t\n \"\u0000<<\\ é\"Z\n<<\u0000\né\n\\\"a\naééé\\\n<\"\\"
+          },
+          "events": [
+            "event: content_block_delta\ndata: {\"type\": \"content_block_delta\", \"index\": 0, \"delta\": {\"type\": \"text_delta\", \"text\": \"\\u2028\\u2028aa\\\"<\\n\\ud83d\\ude00\\u2028a&\\u2028\\tZ\\u007f\\t\\n \\u007f\\\"\\u0000<<\\\\\\u2028\\u00e9\\\"Z\\n<<\\u0000\\n\\u007f\\u00e9\\n\\\\\\\"\\u007fa\\na\\u00e9\\u00e9\\u00e9\\\\\\n<\\\"\\\\\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "success",
+            "value": "end_turn"
+          },
+          "events": [
+            "event: content_block_stop\ndata: {\"type\": \"content_block_stop\", \"index\": 0}\n\n",
+            "event: message_delta\ndata: {\"type\": \"message_delta\", \"delta\": {\"stop_reason\": \"end_turn\", \"stop_sequence\": null}, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 13}}\n\n",
+            "event: message_stop\ndata: {\"type\": \"message_stop\"}\n\n"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "text_unicode_14",
+      "steps": [
+        {
+          "input": {
+            "op": "start"
+          },
+          "events": [
+            "event: message_start\ndata: {\"type\": \"message_start\", \"message\": {\"id\": \"msg-test\", \"type\": \"message\", \"role\": \"assistant\", \"content\": [], \"model\": \"model-\\u00e9\", \"stop_reason\": null, \"stop_sequence\": null, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 1}}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text"
+          },
+          "events": [
+            "event: content_block_start\ndata: {\"type\": \"content_block_start\", \"index\": 0, \"content_block\": {\"type\": \"text\", \"text\": \"\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text_delta",
+            "value": "\\\\😀\"&<&\n   Z \t&\" \"\ta\t\ta\u0000\n\\\u0000😀\\\\漢😀😀\u0000漢 Z\" 😀"
+          },
+          "events": [
+            "event: content_block_delta\ndata: {\"type\": \"content_block_delta\", \"index\": 0, \"delta\": {\"type\": \"text_delta\", \"text\": \"\\\\\\\\\\ud83d\\ude00\\\"&<&\\n \\u2028 Z \\t&\\\"\\u2028\\\"\\ta\\t\\t\\u007fa\\u0000\\u007f\\n\\\\\\u0000\\ud83d\\ude00\\\\\\\\\\u007f\\u6f22\\ud83d\\ude00\\ud83d\\ude00\\u0000\\u6f22\\u2028Z\\\"\\u2028\\ud83d\\ude00\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "success",
+            "value": "end_turn"
+          },
+          "events": [
+            "event: content_block_stop\ndata: {\"type\": \"content_block_stop\", \"index\": 0}\n\n",
+            "event: message_delta\ndata: {\"type\": \"message_delta\", \"delta\": {\"stop_reason\": \"end_turn\", \"stop_sequence\": null}, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 13}}\n\n",
+            "event: message_stop\ndata: {\"type\": \"message_stop\"}\n\n"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "text_unicode_15",
+      "steps": [
+        {
+          "input": {
+            "op": "start"
+          },
+          "events": [
+            "event: message_start\ndata: {\"type\": \"message_start\", \"message\": {\"id\": \"msg-test\", \"type\": \"message\", \"role\": \"assistant\", \"content\": [], \"model\": \"model-\\u00e9\", \"stop_reason\": null, \"stop_sequence\": null, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 1}}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text"
+          },
+          "events": [
+            "event: content_block_start\ndata: {\"type\": \"content_block_start\", \"index\": 0, \"content_block\": {\"type\": \"text\", \"text\": \"\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text_delta",
+            "value": "😀Z a😀\u0000é<😀😀😀Z \t<\n< < 漢Z Zé\t 漢é\u0000"
+          },
+          "events": [
+            "event: content_block_delta\ndata: {\"type\": \"content_block_delta\", \"index\": 0, \"delta\": {\"type\": \"text_delta\", \"text\": \"\\ud83d\\ude00Z\\u2028a\\u007f\\ud83d\\ude00\\u0000\\u00e9<\\ud83d\\ude00\\ud83d\\ude00\\ud83d\\ude00Z \\t<\\n<\\u2028<\\u2028\\u6f22Z\\u2028Z\\u00e9\\t\\u2028\\u007f\\u6f22\\u00e9\\u0000\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "success",
+            "value": "end_turn"
+          },
+          "events": [
+            "event: content_block_stop\ndata: {\"type\": \"content_block_stop\", \"index\": 0}\n\n",
+            "event: message_delta\ndata: {\"type\": \"message_delta\", \"delta\": {\"stop_reason\": \"end_turn\", \"stop_sequence\": null}, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 13}}\n\n",
+            "event: message_stop\ndata: {\"type\": \"message_stop\"}\n\n"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "text_unicode_16",
+      "steps": [
+        {
+          "input": {
+            "op": "start"
+          },
+          "events": [
+            "event: message_start\ndata: {\"type\": \"message_start\", \"message\": {\"id\": \"msg-test\", \"type\": \"message\", \"role\": \"assistant\", \"content\": [], \"model\": \"model-\\u00e9\", \"stop_reason\": null, \"stop_sequence\": null, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 1}}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text"
+          },
+          "events": [
+            "event: content_block_start\ndata: {\"type\": \"content_block_start\", \"index\": 0, \"content_block\": {\"type\": \"text\", \"text\": \"\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text_delta",
+            "value": "aZZ漢\\\"\\ \n&é <\n\t😀 \"&&é\\漢漢\\a\u0000\n\n\t\t\n 😀\\\u0000\\\t\u0000😀漢  \"aé"
+          },
+          "events": [
+            "event: content_block_delta\ndata: {\"type\": \"content_block_delta\", \"index\": 0, \"delta\": {\"type\": \"text_delta\", \"text\": \"aZZ\\u007f\\u6f22\\\\\\\"\\\\\\u2028\\n&\\u007f\\u00e9 <\\n\\t\\ud83d\\ude00 \\\"&&\\u00e9\\\\\\u6f22\\u6f22\\u007f\\\\a\\u0000\\n\\n\\t\\t\\n\\u2028\\ud83d\\ude00\\u007f\\\\\\u0000\\u007f\\\\\\t\\u0000\\u007f\\ud83d\\ude00\\u6f22 \\u2028\\\"a\\u00e9\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "success",
+            "value": "end_turn"
+          },
+          "events": [
+            "event: content_block_stop\ndata: {\"type\": \"content_block_stop\", \"index\": 0}\n\n",
+            "event: message_delta\ndata: {\"type\": \"message_delta\", \"delta\": {\"stop_reason\": \"end_turn\", \"stop_sequence\": null}, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 13}}\n\n",
+            "event: message_stop\ndata: {\"type\": \"message_stop\"}\n\n"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "text_unicode_17",
+      "steps": [
+        {
+          "input": {
+            "op": "start"
+          },
+          "events": [
+            "event: message_start\ndata: {\"type\": \"message_start\", \"message\": {\"id\": \"msg-test\", \"type\": \"message\", \"role\": \"assistant\", \"content\": [], \"model\": \"model-\\u00e9\", \"stop_reason\": null, \"stop_sequence\": null, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 1}}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text"
+          },
+          "events": [
+            "event: content_block_start\ndata: {\"type\": \"content_block_start\", \"index\": 0, \"content_block\": {\"type\": \"text\", \"text\": \"\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text_delta",
+            "value": "a\u0000  漢é& \n&\"\u0000  😀é\tZ Z<a\t\t \t😀\t\u0000\n\né \té\\  &  aZZ\n\\<"
+          },
+          "events": [
+            "event: content_block_delta\ndata: {\"type\": \"content_block_delta\", \"index\": 0, \"delta\": {\"type\": \"text_delta\", \"text\": \"a\\u0000\\u2028 \\u6f22\\u00e9& \\n&\\\"\\u0000\\u2028\\u2028\\ud83d\\ude00\\u00e9\\tZ\\u007f Z<a\\t\\t \\t\\ud83d\\ude00\\t\\u0000\\n\\n\\u00e9\\u007f\\u2028\\t\\u00e9\\\\ \\u2028&\\u2028\\u2028aZZ\\n\\\\<\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "success",
+            "value": "end_turn"
+          },
+          "events": [
+            "event: content_block_stop\ndata: {\"type\": \"content_block_stop\", \"index\": 0}\n\n",
+            "event: message_delta\ndata: {\"type\": \"message_delta\", \"delta\": {\"stop_reason\": \"end_turn\", \"stop_sequence\": null}, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 13}}\n\n",
+            "event: message_stop\ndata: {\"type\": \"message_stop\"}\n\n"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "text_unicode_18",
+      "steps": [
+        {
+          "input": {
+            "op": "start"
+          },
+          "events": [
+            "event: message_start\ndata: {\"type\": \"message_start\", \"message\": {\"id\": \"msg-test\", \"type\": \"message\", \"role\": \"assistant\", \"content\": [], \"model\": \"model-\\u00e9\", \"stop_reason\": null, \"stop_sequence\": null, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 1}}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text"
+          },
+          "events": [
+            "event: content_block_start\ndata: {\"type\": \"content_block_start\", \"index\": 0, \"content_block\": {\"type\": \"text\", \"text\": \"\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text_delta",
+            "value": "😀\t漢\"  & a\\Za  \"ZZ  😀<\n😀 Z\n\t<\u0000\u0000😀\u0000<\n\"\"<<😀\\\\\n\\\\\u0000a\n\\"
+          },
+          "events": [
+            "event: content_block_delta\ndata: {\"type\": \"content_block_delta\", \"index\": 0, \"delta\": {\"type\": \"text_delta\", \"text\": \"\\ud83d\\ude00\\t\\u6f22\\\"\\u2028\\u2028&\\u2028a\\\\Za  \\u007f\\u007f\\\"\\u007fZZ \\u2028\\ud83d\\ude00<\\n\\ud83d\\ude00\\u2028Z\\n\\t<\\u0000\\u0000\\ud83d\\ude00\\u0000<\\n\\\"\\\"<<\\ud83d\\ude00\\\\\\\\\\n\\\\\\u007f\\\\\\u0000a\\n\\u007f\\\\\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "success",
+            "value": "end_turn"
+          },
+          "events": [
+            "event: content_block_stop\ndata: {\"type\": \"content_block_stop\", \"index\": 0}\n\n",
+            "event: message_delta\ndata: {\"type\": \"message_delta\", \"delta\": {\"stop_reason\": \"end_turn\", \"stop_sequence\": null}, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 13}}\n\n",
+            "event: message_stop\ndata: {\"type\": \"message_stop\"}\n\n"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "text_unicode_19",
+      "steps": [
+        {
+          "input": {
+            "op": "start"
+          },
+          "events": [
+            "event: message_start\ndata: {\"type\": \"message_start\", \"message\": {\"id\": \"msg-test\", \"type\": \"message\", \"role\": \"assistant\", \"content\": [], \"model\": \"model-\\u00e9\", \"stop_reason\": null, \"stop_sequence\": null, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 1}}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text"
+          },
+          "events": [
+            "event: content_block_start\ndata: {\"type\": \"content_block_start\", \"index\": 0, \"content_block\": {\"type\": \"text\", \"text\": \"\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text_delta",
+            "value": "\n&é漢&\n\t \u0000Z\n  \t😀< \n漢😀\u0000 a\u0000\u0000漢a😀éZ\" a<\na Z\" Z漢ZZa\n  é &\n&<"
+          },
+          "events": [
+            "event: content_block_delta\ndata: {\"type\": \"content_block_delta\", \"index\": 0, \"delta\": {\"type\": \"text_delta\", \"text\": \"\\n&\\u00e9\\u6f22&\\n\\t\\u007f \\u0000Z\\n \\u2028\\t\\ud83d\\ude00<\\u2028\\n\\u007f\\u6f22\\ud83d\\ude00\\u007f\\u0000\\u2028a\\u0000\\u0000\\u6f22a\\ud83d\\ude00\\u00e9Z\\\" a<\\na\\u2028Z\\\" Z\\u6f22ZZa\\u007f\\n  \\u00e9\\u2028\\u007f&\\n&<\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "success",
+            "value": "end_turn"
+          },
+          "events": [
+            "event: content_block_stop\ndata: {\"type\": \"content_block_stop\", \"index\": 0}\n\n",
+            "event: message_delta\ndata: {\"type\": \"message_delta\", \"delta\": {\"stop_reason\": \"end_turn\", \"stop_sequence\": null}, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 13}}\n\n",
+            "event: message_stop\ndata: {\"type\": \"message_stop\"}\n\n"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "text_unicode_20",
+      "steps": [
+        {
+          "input": {
+            "op": "start"
+          },
+          "events": [
+            "event: message_start\ndata: {\"type\": \"message_start\", \"message\": {\"id\": \"msg-test\", \"type\": \"message\", \"role\": \"assistant\", \"content\": [], \"model\": \"model-\\u00e9\", \"stop_reason\": null, \"stop_sequence\": null, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 1}}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text"
+          },
+          "events": [
+            "event: content_block_start\ndata: {\"type\": \"content_block_start\", \"index\": 0, \"content_block\": {\"type\": \"text\", \"text\": \"\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text_delta",
+            "value": " \u0000\tZ 😀Za \\\n😀 < a <<<\"😀😀é\\ 漢&\""
+          },
+          "events": [
+            "event: content_block_delta\ndata: {\"type\": \"content_block_delta\", \"index\": 0, \"delta\": {\"type\": \"text_delta\", \"text\": \"\\u2028\\u0000\\tZ \\ud83d\\ude00Za\\u2028\\\\\\n\\ud83d\\ude00\\u2028<\\u2028a <<<\\\"\\ud83d\\ude00\\ud83d\\ude00\\u00e9\\\\\\u2028\\u6f22&\\\"\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "success",
+            "value": "end_turn"
+          },
+          "events": [
+            "event: content_block_stop\ndata: {\"type\": \"content_block_stop\", \"index\": 0}\n\n",
+            "event: message_delta\ndata: {\"type\": \"message_delta\", \"delta\": {\"stop_reason\": \"end_turn\", \"stop_sequence\": null}, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 13}}\n\n",
+            "event: message_stop\ndata: {\"type\": \"message_stop\"}\n\n"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "text_unicode_21",
+      "steps": [
+        {
+          "input": {
+            "op": "start"
+          },
+          "events": [
+            "event: message_start\ndata: {\"type\": \"message_start\", \"message\": {\"id\": \"msg-test\", \"type\": \"message\", \"role\": \"assistant\", \"content\": [], \"model\": \"model-\\u00e9\", \"stop_reason\": null, \"stop_sequence\": null, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 1}}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text"
+          },
+          "events": [
+            "event: content_block_start\ndata: {\"type\": \"content_block_start\", \"index\": 0, \"content_block\": {\"type\": \"text\", \"text\": \"\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text_delta",
+            "value": "a\n<\u0000\tZé< \u0000😀"
+          },
+          "events": [
+            "event: content_block_delta\ndata: {\"type\": \"content_block_delta\", \"index\": 0, \"delta\": {\"type\": \"text_delta\", \"text\": \"a\\n<\\u0000\\tZ\\u00e9<\\u2028\\u0000\\ud83d\\ude00\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "success",
+            "value": "end_turn"
+          },
+          "events": [
+            "event: content_block_stop\ndata: {\"type\": \"content_block_stop\", \"index\": 0}\n\n",
+            "event: message_delta\ndata: {\"type\": \"message_delta\", \"delta\": {\"stop_reason\": \"end_turn\", \"stop_sequence\": null}, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 13}}\n\n",
+            "event: message_stop\ndata: {\"type\": \"message_stop\"}\n\n"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "text_unicode_22",
+      "steps": [
+        {
+          "input": {
+            "op": "start"
+          },
+          "events": [
+            "event: message_start\ndata: {\"type\": \"message_start\", \"message\": {\"id\": \"msg-test\", \"type\": \"message\", \"role\": \"assistant\", \"content\": [], \"model\": \"model-\\u00e9\", \"stop_reason\": null, \"stop_sequence\": null, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 1}}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text"
+          },
+          "events": [
+            "event: content_block_start\ndata: {\"type\": \"content_block_start\", \"index\": 0, \"content_block\": {\"type\": \"text\", \"text\": \"\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text_delta",
+            "value": "&😀\t 😀😀\"\u0000😀\t😀Z\u0000<<Z\t\u0000😀<\u0000\u0000漢\t 漢<\\\"< \né\nZéé😀 \n\t\\\\\\\u0000\\\t😀 \"Z\u0000a"
+          },
+          "events": [
+            "event: content_block_delta\ndata: {\"type\": \"content_block_delta\", \"index\": 0, \"delta\": {\"type\": \"text_delta\", \"text\": \"&\\ud83d\\ude00\\t \\ud83d\\ude00\\ud83d\\ude00\\\"\\u0000\\ud83d\\ude00\\t\\ud83d\\ude00Z\\u0000<<Z\\t\\u0000\\ud83d\\ude00<\\u007f\\u0000\\u0000\\u6f22\\t\\u2028\\u6f22<\\\\\\\"< \\n\\u00e9\\nZ\\u00e9\\u00e9\\ud83d\\ude00\\u2028\\u007f\\n\\t\\\\\\\\\\\\\\u007f\\u0000\\\\\\t\\ud83d\\ude00 \\\"Z\\u0000a\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "success",
+            "value": "end_turn"
+          },
+          "events": [
+            "event: content_block_stop\ndata: {\"type\": \"content_block_stop\", \"index\": 0}\n\n",
+            "event: message_delta\ndata: {\"type\": \"message_delta\", \"delta\": {\"stop_reason\": \"end_turn\", \"stop_sequence\": null}, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 13}}\n\n",
+            "event: message_stop\ndata: {\"type\": \"message_stop\"}\n\n"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "text_unicode_23",
+      "steps": [
+        {
+          "input": {
+            "op": "start"
+          },
+          "events": [
+            "event: message_start\ndata: {\"type\": \"message_start\", \"message\": {\"id\": \"msg-test\", \"type\": \"message\", \"role\": \"assistant\", \"content\": [], \"model\": \"model-\\u00e9\", \"stop_reason\": null, \"stop_sequence\": null, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 1}}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text"
+          },
+          "events": [
+            "event: content_block_start\ndata: {\"type\": \"content_block_start\", \"index\": 0, \"content_block\": {\"type\": \"text\", \"text\": \"\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text_delta",
+            "value": "a\nZ\"\u0000a&&aé    <漢Z 漢\n"
+          },
+          "events": [
+            "event: content_block_delta\ndata: {\"type\": \"content_block_delta\", \"index\": 0, \"delta\": {\"type\": \"text_delta\", \"text\": \"a\\nZ\\\"\\u007f\\u0000a&&a\\u00e9 \\u2028\\u2028\\u2028<\\u6f22Z \\u6f22\\u007f\\n\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "success",
+            "value": "end_turn"
+          },
+          "events": [
+            "event: content_block_stop\ndata: {\"type\": \"content_block_stop\", \"index\": 0}\n\n",
+            "event: message_delta\ndata: {\"type\": \"message_delta\", \"delta\": {\"stop_reason\": \"end_turn\", \"stop_sequence\": null}, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 13}}\n\n",
+            "event: message_stop\ndata: {\"type\": \"message_stop\"}\n\n"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "text_unicode_24",
+      "steps": [
+        {
+          "input": {
+            "op": "start"
+          },
+          "events": [
+            "event: message_start\ndata: {\"type\": \"message_start\", \"message\": {\"id\": \"msg-test\", \"type\": \"message\", \"role\": \"assistant\", \"content\": [], \"model\": \"model-\\u00e9\", \"stop_reason\": null, \"stop_sequence\": null, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 1}}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text"
+          },
+          "events": [
+            "event: content_block_start\ndata: {\"type\": \"content_block_start\", \"index\": 0, \"content_block\": {\"type\": \"text\", \"text\": \"\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text_delta",
+            "value": " <éZ& a\\&&a😀\té&Z<\\\\\té<\u0000\u0000Z\n<\" 漢\u0000😀\\é😀\n\u0000漢"
+          },
+          "events": [
+            "event: content_block_delta\ndata: {\"type\": \"content_block_delta\", \"index\": 0, \"delta\": {\"type\": \"text_delta\", \"text\": \" <\\u00e9Z&\\u2028a\\\\&&a\\u007f\\ud83d\\ude00\\t\\u00e9&Z<\\\\\\\\\\t\\u00e9<\\u0000\\u0000Z\\n<\\\"\\u2028\\u6f22\\u0000\\ud83d\\ude00\\\\\\u00e9\\ud83d\\ude00\\n\\u0000\\u6f22\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "success",
+            "value": "end_turn"
+          },
+          "events": [
+            "event: content_block_stop\ndata: {\"type\": \"content_block_stop\", \"index\": 0}\n\n",
+            "event: message_delta\ndata: {\"type\": \"message_delta\", \"delta\": {\"stop_reason\": \"end_turn\", \"stop_sequence\": null}, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 13}}\n\n",
+            "event: message_stop\ndata: {\"type\": \"message_stop\"}\n\n"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "text_unicode_25",
+      "steps": [
+        {
+          "input": {
+            "op": "start"
+          },
+          "events": [
+            "event: message_start\ndata: {\"type\": \"message_start\", \"message\": {\"id\": \"msg-test\", \"type\": \"message\", \"role\": \"assistant\", \"content\": [], \"model\": \"model-\\u00e9\", \"stop_reason\": null, \"stop_sequence\": null, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 1}}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text"
+          },
+          "events": [
+            "event: content_block_start\ndata: {\"type\": \"content_block_start\", \"index\": 0, \"content_block\": {\"type\": \"text\", \"text\": \"\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text_delta",
+            "value": "😀\\😀😀\"a \n\nZ\\éé\u0000😀\\é\t\"\n\u0000\n\u0000é&😀😀a漢\"a\t漢Zé漢 aa\u0000 \tZé<\t  \"😀\tZ漢Z\u0000\u0000"
+          },
+          "events": [
+            "event: content_block_delta\ndata: {\"type\": \"content_block_delta\", \"index\": 0, \"delta\": {\"type\": \"text_delta\", \"text\": \"\\ud83d\\ude00\\\\\\ud83d\\ude00\\ud83d\\ude00\\\"a \\n\\nZ\\\\\\u00e9\\u00e9\\u0000\\ud83d\\ude00\\\\\\u00e9\\t\\\"\\n\\u0000\\n\\u0000\\u00e9&\\ud83d\\ude00\\ud83d\\ude00a\\u6f22\\\"a\\u007f\\t\\u6f22Z\\u00e9\\u6f22\\u2028aa\\u007f\\u0000 \\tZ\\u00e9<\\t \\u2028\\\"\\ud83d\\ude00\\tZ\\u6f22Z\\u0000\\u0000\\u007f\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "success",
+            "value": "end_turn"
+          },
+          "events": [
+            "event: content_block_stop\ndata: {\"type\": \"content_block_stop\", \"index\": 0}\n\n",
+            "event: message_delta\ndata: {\"type\": \"message_delta\", \"delta\": {\"stop_reason\": \"end_turn\", \"stop_sequence\": null}, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 13}}\n\n",
+            "event: message_stop\ndata: {\"type\": \"message_stop\"}\n\n"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "text_unicode_26",
+      "steps": [
+        {
+          "input": {
+            "op": "start"
+          },
+          "events": [
+            "event: message_start\ndata: {\"type\": \"message_start\", \"message\": {\"id\": \"msg-test\", \"type\": \"message\", \"role\": \"assistant\", \"content\": [], \"model\": \"model-\\u00e9\", \"stop_reason\": null, \"stop_sequence\": null, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 1}}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text"
+          },
+          "events": [
+            "event: content_block_start\ndata: {\"type\": \"content_block_start\", \"index\": 0, \"content_block\": {\"type\": \"text\", \"text\": \"\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text_delta",
+            "value": "& \t &漢\na\na\n\n\\Z😀漢\n<é\tZ\na\\\n\"é漢&\n<\t&\\\"漢\"\u0000a \"\u0000&😀é😀漢 éa "
+          },
+          "events": [
+            "event: content_block_delta\ndata: {\"type\": \"content_block_delta\", \"index\": 0, \"delta\": {\"type\": \"text_delta\", \"text\": \"&\\u2028\\t &\\u6f22\\na\\na\\n\\n\\\\Z\\ud83d\\ude00\\u6f22\\n<\\u00e9\\tZ\\na\\\\\\n\\\"\\u00e9\\u6f22&\\n<\\t&\\\\\\\"\\u6f22\\\"\\u0000a\\u2028\\\"\\u0000&\\ud83d\\ude00\\u00e9\\ud83d\\ude00\\u6f22\\u2028\\u00e9a \"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "success",
+            "value": "end_turn"
+          },
+          "events": [
+            "event: content_block_stop\ndata: {\"type\": \"content_block_stop\", \"index\": 0}\n\n",
+            "event: message_delta\ndata: {\"type\": \"message_delta\", \"delta\": {\"stop_reason\": \"end_turn\", \"stop_sequence\": null}, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 13}}\n\n",
+            "event: message_stop\ndata: {\"type\": \"message_stop\"}\n\n"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "text_unicode_27",
+      "steps": [
+        {
+          "input": {
+            "op": "start"
+          },
+          "events": [
+            "event: message_start\ndata: {\"type\": \"message_start\", \"message\": {\"id\": \"msg-test\", \"type\": \"message\", \"role\": \"assistant\", \"content\": [], \"model\": \"model-\\u00e9\", \"stop_reason\": null, \"stop_sequence\": null, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 1}}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text"
+          },
+          "events": [
+            "event: content_block_start\ndata: {\"type\": \"content_block_start\", \"index\": 0, \"content_block\": {\"type\": \"text\", \"text\": \"\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text_delta",
+            "value": "\\Z\\\naa😀😀é\"\ta\u0000<  \\Z\"a漢Za😀 😀 &é😀 \u0000\t\""
+          },
+          "events": [
+            "event: content_block_delta\ndata: {\"type\": \"content_block_delta\", \"index\": 0, \"delta\": {\"type\": \"text_delta\", \"text\": \"\\\\Z\\\\\\naa\\ud83d\\ude00\\ud83d\\ude00\\u00e9\\\"\\t\\u007fa\\u0000\\u007f<\\u2028 \\\\Z\\\"a\\u6f22Za\\ud83d\\ude00\\u007f\\u2028\\ud83d\\ude00 &\\u00e9\\ud83d\\ude00 \\u0000\\t\\\"\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "success",
+            "value": "end_turn"
+          },
+          "events": [
+            "event: content_block_stop\ndata: {\"type\": \"content_block_stop\", \"index\": 0}\n\n",
+            "event: message_delta\ndata: {\"type\": \"message_delta\", \"delta\": {\"stop_reason\": \"end_turn\", \"stop_sequence\": null}, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 13}}\n\n",
+            "event: message_stop\ndata: {\"type\": \"message_stop\"}\n\n"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "text_unicode_28",
+      "steps": [
+        {
+          "input": {
+            "op": "start"
+          },
+          "events": [
+            "event: message_start\ndata: {\"type\": \"message_start\", \"message\": {\"id\": \"msg-test\", \"type\": \"message\", \"role\": \"assistant\", \"content\": [], \"model\": \"model-\\u00e9\", \"stop_reason\": null, \"stop_sequence\": null, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 1}}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text"
+          },
+          "events": [
+            "event: content_block_start\ndata: {\"type\": \"content_block_start\", \"index\": 0, \"content_block\": {\"type\": \"text\", \"text\": \"\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text_delta",
+            "value": "\"a\n\"Z \taééa \\漢< Z\n\u0000漢😀é😀\t< a\"\t\u0000a&😀&漢Z漢\n"
+          },
+          "events": [
+            "event: content_block_delta\ndata: {\"type\": \"content_block_delta\", \"index\": 0, \"delta\": {\"type\": \"text_delta\", \"text\": \"\\\"a\\n\\\"Z \\ta\\u00e9\\u00e9a \\\\\\u6f22\\u007f\\u007f<\\u2028Z\\n\\u0000\\u007f\\u6f22\\ud83d\\ude00\\u00e9\\ud83d\\ude00\\t<\\u2028a\\\"\\u007f\\t\\u0000a&\\ud83d\\ude00&\\u6f22Z\\u6f22\\n\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "success",
+            "value": "end_turn"
+          },
+          "events": [
+            "event: content_block_stop\ndata: {\"type\": \"content_block_stop\", \"index\": 0}\n\n",
+            "event: message_delta\ndata: {\"type\": \"message_delta\", \"delta\": {\"stop_reason\": \"end_turn\", \"stop_sequence\": null}, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 13}}\n\n",
+            "event: message_stop\ndata: {\"type\": \"message_stop\"}\n\n"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "text_unicode_29",
+      "steps": [
+        {
+          "input": {
+            "op": "start"
+          },
+          "events": [
+            "event: message_start\ndata: {\"type\": \"message_start\", \"message\": {\"id\": \"msg-test\", \"type\": \"message\", \"role\": \"assistant\", \"content\": [], \"model\": \"model-\\u00e9\", \"stop_reason\": null, \"stop_sequence\": null, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 1}}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text"
+          },
+          "events": [
+            "event: content_block_start\ndata: {\"type\": \"content_block_start\", \"index\": 0, \"content_block\": {\"type\": \"text\", \"text\": \"\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text_delta",
+            "value": "&漢"
+          },
+          "events": [
+            "event: content_block_delta\ndata: {\"type\": \"content_block_delta\", \"index\": 0, \"delta\": {\"type\": \"text_delta\", \"text\": \"&\\u6f22\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "success",
+            "value": "end_turn"
+          },
+          "events": [
+            "event: content_block_stop\ndata: {\"type\": \"content_block_stop\", \"index\": 0}\n\n",
+            "event: message_delta\ndata: {\"type\": \"message_delta\", \"delta\": {\"stop_reason\": \"end_turn\", \"stop_sequence\": null}, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 13}}\n\n",
+            "event: message_stop\ndata: {\"type\": \"message_stop\"}\n\n"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "text_unicode_30",
+      "steps": [
+        {
+          "input": {
+            "op": "start"
+          },
+          "events": [
+            "event: message_start\ndata: {\"type\": \"message_start\", \"message\": {\"id\": \"msg-test\", \"type\": \"message\", \"role\": \"assistant\", \"content\": [], \"model\": \"model-\\u00e9\", \"stop_reason\": null, \"stop_sequence\": null, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 1}}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text"
+          },
+          "events": [
+            "event: content_block_start\ndata: {\"type\": \"content_block_start\", \"index\": 0, \"content_block\": {\"type\": \"text\", \"text\": \"\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text_delta",
+            "value": "😀\\\\& <\"\"&\\é😀a< 😀\n\t&\n\n \\& éé&<\n\n😀é\n  \u0000é \"\u0000éé漢漢é \t\\\t é漢"
+          },
+          "events": [
+            "event: content_block_delta\ndata: {\"type\": \"content_block_delta\", \"index\": 0, \"delta\": {\"type\": \"text_delta\", \"text\": \"\\ud83d\\ude00\\\\\\\\\\u007f& <\\\"\\\"&\\\\\\u00e9\\ud83d\\ude00a<\\u2028\\ud83d\\ude00\\n\\t&\\n\\n \\\\& \\u00e9\\u00e9&<\\n\\n\\ud83d\\ude00\\u00e9\\n\\u2028 \\u0000\\u00e9\\u2028\\\"\\u007f\\u0000\\u00e9\\u00e9\\u6f22\\u6f22\\u007f\\u00e9\\u2028\\t\\u007f\\\\\\t \\u00e9\\u6f22\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "success",
+            "value": "end_turn"
+          },
+          "events": [
+            "event: content_block_stop\ndata: {\"type\": \"content_block_stop\", \"index\": 0}\n\n",
+            "event: message_delta\ndata: {\"type\": \"message_delta\", \"delta\": {\"stop_reason\": \"end_turn\", \"stop_sequence\": null}, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 13}}\n\n",
+            "event: message_stop\ndata: {\"type\": \"message_stop\"}\n\n"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "text_unicode_31",
+      "steps": [
+        {
+          "input": {
+            "op": "start"
+          },
+          "events": [
+            "event: message_start\ndata: {\"type\": \"message_start\", \"message\": {\"id\": \"msg-test\", \"type\": \"message\", \"role\": \"assistant\", \"content\": [], \"model\": \"model-\\u00e9\", \"stop_reason\": null, \"stop_sequence\": null, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 1}}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text"
+          },
+          "events": [
+            "event: content_block_start\ndata: {\"type\": \"content_block_start\", \"index\": 0, \"content_block\": {\"type\": \"text\", \"text\": \"\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text_delta",
+            "value": "  é\n&\u0000漢😀\"😀😀a  aé\"\n漢a\n\n"
+          },
+          "events": [
+            "event: content_block_delta\ndata: {\"type\": \"content_block_delta\", \"index\": 0, \"delta\": {\"type\": \"text_delta\", \"text\": \" \\u2028\\u00e9\\n&\\u0000\\u6f22\\ud83d\\ude00\\\"\\ud83d\\ude00\\ud83d\\ude00a \\u2028a\\u007f\\u00e9\\\"\\n\\u6f22a\\n\\n\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "success",
+            "value": "end_turn"
+          },
+          "events": [
+            "event: content_block_stop\ndata: {\"type\": \"content_block_stop\", \"index\": 0}\n\n",
+            "event: message_delta\ndata: {\"type\": \"message_delta\", \"delta\": {\"stop_reason\": \"end_turn\", \"stop_sequence\": null}, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 13}}\n\n",
+            "event: message_stop\ndata: {\"type\": \"message_stop\"}\n\n"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "text_unicode_32",
+      "steps": [
+        {
+          "input": {
+            "op": "start"
+          },
+          "events": [
+            "event: message_start\ndata: {\"type\": \"message_start\", \"message\": {\"id\": \"msg-test\", \"type\": \"message\", \"role\": \"assistant\", \"content\": [], \"model\": \"model-\\u00e9\", \"stop_reason\": null, \"stop_sequence\": null, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 1}}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text"
+          },
+          "events": [
+            "event: content_block_start\ndata: {\"type\": \"content_block_start\", \"index\": 0, \"content_block\": {\"type\": \"text\", \"text\": \"\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text_delta",
+            "value": "\ta😀\t漢Zé\u0000a\" \u0000é&\n &\u0000\t\"漢 é&aZ😀&aéZ漢漢é"
+          },
+          "events": [
+            "event: content_block_delta\ndata: {\"type\": \"content_block_delta\", \"index\": 0, \"delta\": {\"type\": \"text_delta\", \"text\": \"\\ta\\ud83d\\ude00\\t\\u6f22Z\\u00e9\\u0000a\\\"\\u2028\\u0000\\u007f\\u00e9&\\u007f\\n\\u007f\\u007f\\u2028&\\u0000\\t\\\"\\u6f22 \\u00e9&aZ\\ud83d\\ude00&a\\u00e9Z\\u6f22\\u6f22\\u00e9\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "success",
+            "value": "end_turn"
+          },
+          "events": [
+            "event: content_block_stop\ndata: {\"type\": \"content_block_stop\", \"index\": 0}\n\n",
+            "event: message_delta\ndata: {\"type\": \"message_delta\", \"delta\": {\"stop_reason\": \"end_turn\", \"stop_sequence\": null}, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 13}}\n\n",
+            "event: message_stop\ndata: {\"type\": \"message_stop\"}\n\n"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "text_unicode_33",
+      "steps": [
+        {
+          "input": {
+            "op": "start"
+          },
+          "events": [
+            "event: message_start\ndata: {\"type\": \"message_start\", \"message\": {\"id\": \"msg-test\", \"type\": \"message\", \"role\": \"assistant\", \"content\": [], \"model\": \"model-\\u00e9\", \"stop_reason\": null, \"stop_sequence\": null, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 1}}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text"
+          },
+          "events": [
+            "event: content_block_start\ndata: {\"type\": \"content_block_start\", \"index\": 0, \"content_block\": {\"type\": \"text\", \"text\": \"\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text_delta",
+            "value": "&漢éé\n\\é  <漢😀😀 <\\漢\u0000\u0000 \" \u0000😀😀\"\"\u0000aé\n漢\t\t漢\"Z&\"Z😀"
+          },
+          "events": [
+            "event: content_block_delta\ndata: {\"type\": \"content_block_delta\", \"index\": 0, \"delta\": {\"type\": \"text_delta\", \"text\": \"&\\u6f22\\u00e9\\u00e9\\n\\\\\\u00e9 \\u2028<\\u6f22\\ud83d\\ude00\\ud83d\\ude00\\u007f <\\\\\\u6f22\\u0000\\u0000 \\\"\\u2028\\u0000\\ud83d\\ude00\\ud83d\\ude00\\\"\\\"\\u0000a\\u00e9\\u007f\\n\\u6f22\\t\\u007f\\u007f\\t\\u6f22\\\"Z&\\\"Z\\ud83d\\ude00\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "success",
+            "value": "end_turn"
+          },
+          "events": [
+            "event: content_block_stop\ndata: {\"type\": \"content_block_stop\", \"index\": 0}\n\n",
+            "event: message_delta\ndata: {\"type\": \"message_delta\", \"delta\": {\"stop_reason\": \"end_turn\", \"stop_sequence\": null}, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 13}}\n\n",
+            "event: message_stop\ndata: {\"type\": \"message_stop\"}\n\n"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "text_unicode_34",
+      "steps": [
+        {
+          "input": {
+            "op": "start"
+          },
+          "events": [
+            "event: message_start\ndata: {\"type\": \"message_start\", \"message\": {\"id\": \"msg-test\", \"type\": \"message\", \"role\": \"assistant\", \"content\": [], \"model\": \"model-\\u00e9\", \"stop_reason\": null, \"stop_sequence\": null, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 1}}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text"
+          },
+          "events": [
+            "event: content_block_start\ndata: {\"type\": \"content_block_start\", \"index\": 0, \"content_block\": {\"type\": \"text\", \"text\": \"\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text_delta",
+            "value": "😀\u0000\né漢\t\u0000😀\\\u0000😀\t<\"\"😀\"\t\u0000 \t\ta\u0000\n&é  a😀é a漢Z\tZ\"  \u0000漢\\a😀é\\éé 漢a<\t"
+          },
+          "events": [
+            "event: content_block_delta\ndata: {\"type\": \"content_block_delta\", \"index\": 0, \"delta\": {\"type\": \"text_delta\", \"text\": \"\\ud83d\\ude00\\u0000\\n\\u00e9\\u6f22\\t\\u0000\\u007f\\ud83d\\ude00\\\\\\u0000\\ud83d\\ude00\\t<\\\"\\\"\\ud83d\\ude00\\\"\\t\\u0000\\u2028\\t\\u007f\\ta\\u0000\\n&\\u00e9\\u2028\\u2028a\\ud83d\\ude00\\u00e9\\u2028a\\u6f22Z\\tZ\\\"  \\u0000\\u6f22\\\\a\\ud83d\\ude00\\u00e9\\\\\\u00e9\\u00e9\\u2028\\u6f22a<\\t\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "success",
+            "value": "end_turn"
+          },
+          "events": [
+            "event: content_block_stop\ndata: {\"type\": \"content_block_stop\", \"index\": 0}\n\n",
+            "event: message_delta\ndata: {\"type\": \"message_delta\", \"delta\": {\"stop_reason\": \"end_turn\", \"stop_sequence\": null}, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 13}}\n\n",
+            "event: message_stop\ndata: {\"type\": \"message_stop\"}\n\n"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "text_unicode_35",
+      "steps": [
+        {
+          "input": {
+            "op": "start"
+          },
+          "events": [
+            "event: message_start\ndata: {\"type\": \"message_start\", \"message\": {\"id\": \"msg-test\", \"type\": \"message\", \"role\": \"assistant\", \"content\": [], \"model\": \"model-\\u00e9\", \"stop_reason\": null, \"stop_sequence\": null, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 1}}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text"
+          },
+          "events": [
+            "event: content_block_start\ndata: {\"type\": \"content_block_start\", \"index\": 0, \"content_block\": {\"type\": \"text\", \"text\": \"\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text_delta",
+            "value": "a漢漢<\t漢é\n\n漢a < a&\na😀😀\u0000\t😀 漢 \"\\漢漢< \\\n\" é<😀\\\\<漢\\<漢  "
+          },
+          "events": [
+            "event: content_block_delta\ndata: {\"type\": \"content_block_delta\", \"index\": 0, \"delta\": {\"type\": \"text_delta\", \"text\": \"a\\u6f22\\u6f22<\\t\\u6f22\\u00e9\\n\\n\\u6f22a < a&\\na\\ud83d\\ude00\\ud83d\\ude00\\u0000\\t\\ud83d\\ude00 \\u6f22 \\\"\\\\\\u6f22\\u6f22<\\u2028\\\\\\n\\\" \\u00e9<\\ud83d\\ude00\\u007f\\\\\\\\<\\u6f22\\\\\\u007f<\\u6f22\\u2028 \"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "success",
+            "value": "end_turn"
+          },
+          "events": [
+            "event: content_block_stop\ndata: {\"type\": \"content_block_stop\", \"index\": 0}\n\n",
+            "event: message_delta\ndata: {\"type\": \"message_delta\", \"delta\": {\"stop_reason\": \"end_turn\", \"stop_sequence\": null}, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 13}}\n\n",
+            "event: message_stop\ndata: {\"type\": \"message_stop\"}\n\n"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "text_unicode_36",
+      "steps": [
+        {
+          "input": {
+            "op": "start"
+          },
+          "events": [
+            "event: message_start\ndata: {\"type\": \"message_start\", \"message\": {\"id\": \"msg-test\", \"type\": \"message\", \"role\": \"assistant\", \"content\": [], \"model\": \"model-\\u00e9\", \"stop_reason\": null, \"stop_sequence\": null, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 1}}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text"
+          },
+          "events": [
+            "event: content_block_start\ndata: {\"type\": \"content_block_start\", \"index\": 0, \"content_block\": {\"type\": \"text\", \"text\": \"\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text_delta",
+            "value": "\t\u0000 éZé \\< a\t&Z&漢\t\u0000é漢漢\t\t"
+          },
+          "events": [
+            "event: content_block_delta\ndata: {\"type\": \"content_block_delta\", \"index\": 0, \"delta\": {\"type\": \"text_delta\", \"text\": \"\\t\\u0000\\u2028\\u00e9Z\\u00e9\\u2028\\\\< a\\t&Z&\\u6f22\\t\\u0000\\u007f\\u00e9\\u6f22\\u007f\\u6f22\\t\\t\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "success",
+            "value": "end_turn"
+          },
+          "events": [
+            "event: content_block_stop\ndata: {\"type\": \"content_block_stop\", \"index\": 0}\n\n",
+            "event: message_delta\ndata: {\"type\": \"message_delta\", \"delta\": {\"stop_reason\": \"end_turn\", \"stop_sequence\": null}, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 13}}\n\n",
+            "event: message_stop\ndata: {\"type\": \"message_stop\"}\n\n"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "text_unicode_37",
+      "steps": [
+        {
+          "input": {
+            "op": "start"
+          },
+          "events": [
+            "event: message_start\ndata: {\"type\": \"message_start\", \"message\": {\"id\": \"msg-test\", \"type\": \"message\", \"role\": \"assistant\", \"content\": [], \"model\": \"model-\\u00e9\", \"stop_reason\": null, \"stop_sequence\": null, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 1}}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text"
+          },
+          "events": [
+            "event: content_block_start\ndata: {\"type\": \"content_block_start\", \"index\": 0, \"content_block\": {\"type\": \"text\", \"text\": \"\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text_delta",
+            "value": "  é 😀a\"aa \"\té\\\"&\n\\\u0000😀& \n 😀Z\t\tZ😀é& 漢漢Za"
+          },
+          "events": [
+            "event: content_block_delta\ndata: {\"type\": \"content_block_delta\", \"index\": 0, \"delta\": {\"type\": \"text_delta\", \"text\": \" \\u2028\\u00e9 \\ud83d\\ude00a\\\"aa \\\"\\t\\u00e9\\\\\\\"&\\n\\\\\\u0000\\ud83d\\ude00& \\n \\ud83d\\ude00Z\\t\\tZ\\ud83d\\ude00\\u00e9& \\u6f22\\u6f22Za\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "success",
+            "value": "end_turn"
+          },
+          "events": [
+            "event: content_block_stop\ndata: {\"type\": \"content_block_stop\", \"index\": 0}\n\n",
+            "event: message_delta\ndata: {\"type\": \"message_delta\", \"delta\": {\"stop_reason\": \"end_turn\", \"stop_sequence\": null}, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 13}}\n\n",
+            "event: message_stop\ndata: {\"type\": \"message_stop\"}\n\n"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "text_unicode_38",
+      "steps": [
+        {
+          "input": {
+            "op": "start"
+          },
+          "events": [
+            "event: message_start\ndata: {\"type\": \"message_start\", \"message\": {\"id\": \"msg-test\", \"type\": \"message\", \"role\": \"assistant\", \"content\": [], \"model\": \"model-\\u00e9\", \"stop_reason\": null, \"stop_sequence\": null, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 1}}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text"
+          },
+          "events": [
+            "event: content_block_start\ndata: {\"type\": \"content_block_start\", \"index\": 0, \"content_block\": {\"type\": \"text\", \"text\": \"\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text_delta",
+            "value": "\u0000\u0000\"&😀é😀\u0000\né Z 漢\"< a \u0000😀\t\t<\t"
+          },
+          "events": [
+            "event: content_block_delta\ndata: {\"type\": \"content_block_delta\", \"index\": 0, \"delta\": {\"type\": \"text_delta\", \"text\": \"\\u0000\\u0000\\\"&\\ud83d\\ude00\\u00e9\\ud83d\\ude00\\u007f\\u0000\\n\\u007f\\u00e9\\u2028Z \\u6f22\\\"<\\u2028a\\u2028\\u0000\\ud83d\\ude00\\t\\t<\\t\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "success",
+            "value": "end_turn"
+          },
+          "events": [
+            "event: content_block_stop\ndata: {\"type\": \"content_block_stop\", \"index\": 0}\n\n",
+            "event: message_delta\ndata: {\"type\": \"message_delta\", \"delta\": {\"stop_reason\": \"end_turn\", \"stop_sequence\": null}, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 13}}\n\n",
+            "event: message_stop\ndata: {\"type\": \"message_stop\"}\n\n"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "text_unicode_39",
+      "steps": [
+        {
+          "input": {
+            "op": "start"
+          },
+          "events": [
+            "event: message_start\ndata: {\"type\": \"message_start\", \"message\": {\"id\": \"msg-test\", \"type\": \"message\", \"role\": \"assistant\", \"content\": [], \"model\": \"model-\\u00e9\", \"stop_reason\": null, \"stop_sequence\": null, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 1}}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text"
+          },
+          "events": [
+            "event: content_block_start\ndata: {\"type\": \"content_block_start\", \"index\": 0, \"content_block\": {\"type\": \"text\", \"text\": \"\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text_delta",
+            "value": "Z\n😀\né\n  \n\"\n&a Z\u0000Z漢\u0000\\\n漢\\&Z\\😀<é\n<\"\n"
+          },
+          "events": [
+            "event: content_block_delta\ndata: {\"type\": \"content_block_delta\", \"index\": 0, \"delta\": {\"type\": \"text_delta\", \"text\": \"Z\\n\\ud83d\\ude00\\n\\u00e9\\n \\u2028\\n\\\"\\u007f\\n&a Z\\u007f\\u0000Z\\u6f22\\u0000\\\\\\n\\u6f22\\\\&Z\\\\\\ud83d\\ude00<\\u00e9\\n<\\\"\\n\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "success",
+            "value": "end_turn"
+          },
+          "events": [
+            "event: content_block_stop\ndata: {\"type\": \"content_block_stop\", \"index\": 0}\n\n",
+            "event: message_delta\ndata: {\"type\": \"message_delta\", \"delta\": {\"stop_reason\": \"end_turn\", \"stop_sequence\": null}, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 13}}\n\n",
+            "event: message_stop\ndata: {\"type\": \"message_stop\"}\n\n"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "text_unicode_40",
+      "steps": [
+        {
+          "input": {
+            "op": "start"
+          },
+          "events": [
+            "event: message_start\ndata: {\"type\": \"message_start\", \"message\": {\"id\": \"msg-test\", \"type\": \"message\", \"role\": \"assistant\", \"content\": [], \"model\": \"model-\\u00e9\", \"stop_reason\": null, \"stop_sequence\": null, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 1}}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text"
+          },
+          "events": [
+            "event: content_block_start\ndata: {\"type\": \"content_block_start\", \"index\": 0, \"content_block\": {\"type\": \"text\", \"text\": \"\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text_delta",
+            "value": "<😀\"\u0000\\😀é \t\"\t\\a\u0000\\😀😀😀aé😀😀\u0000\n\u0000\u0000 \\Z &<"
+          },
+          "events": [
+            "event: content_block_delta\ndata: {\"type\": \"content_block_delta\", \"index\": 0, \"delta\": {\"type\": \"text_delta\", \"text\": \"<\\ud83d\\ude00\\\"\\u0000\\u007f\\\\\\ud83d\\ude00\\u00e9 \\t\\u007f\\\"\\t\\\\a\\u0000\\\\\\ud83d\\ude00\\ud83d\\ude00\\ud83d\\ude00a\\u00e9\\ud83d\\ude00\\ud83d\\ude00\\u0000\\n\\u0000\\u0000 \\\\Z &<\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "success",
+            "value": "end_turn"
+          },
+          "events": [
+            "event: content_block_stop\ndata: {\"type\": \"content_block_stop\", \"index\": 0}\n\n",
+            "event: message_delta\ndata: {\"type\": \"message_delta\", \"delta\": {\"stop_reason\": \"end_turn\", \"stop_sequence\": null}, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 13}}\n\n",
+            "event: message_stop\ndata: {\"type\": \"message_stop\"}\n\n"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "text_unicode_41",
+      "steps": [
+        {
+          "input": {
+            "op": "start"
+          },
+          "events": [
+            "event: message_start\ndata: {\"type\": \"message_start\", \"message\": {\"id\": \"msg-test\", \"type\": \"message\", \"role\": \"assistant\", \"content\": [], \"model\": \"model-\\u00e9\", \"stop_reason\": null, \"stop_sequence\": null, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 1}}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text"
+          },
+          "events": [
+            "event: content_block_start\ndata: {\"type\": \"content_block_start\", \"index\": 0, \"content_block\": {\"type\": \"text\", \"text\": \"\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text_delta",
+            "value": "\n\u0000 \\漢Za\\  \\<漢é漢é \u0000\taZ漢\"a\\<\"\"\t<漢 😀\t\na< \\ <\u0000😀 &\nZa"
+          },
+          "events": [
+            "event: content_block_delta\ndata: {\"type\": \"content_block_delta\", \"index\": 0, \"delta\": {\"type\": \"text_delta\", \"text\": \"\\n\\u0000\\u2028\\\\\\u6f22Za\\\\  \\\\<\\u007f\\u6f22\\u00e9\\u6f22\\u00e9\\u2028\\u0000\\taZ\\u6f22\\\"a\\\\<\\\"\\\"\\t<\\u6f22\\u2028\\ud83d\\ude00\\t\\na< \\\\\\u2028<\\u0000\\ud83d\\ude00\\u2028&\\nZ\\u007fa\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "success",
+            "value": "end_turn"
+          },
+          "events": [
+            "event: content_block_stop\ndata: {\"type\": \"content_block_stop\", \"index\": 0}\n\n",
+            "event: message_delta\ndata: {\"type\": \"message_delta\", \"delta\": {\"stop_reason\": \"end_turn\", \"stop_sequence\": null}, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 13}}\n\n",
+            "event: message_stop\ndata: {\"type\": \"message_stop\"}\n\n"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "text_unicode_42",
+      "steps": [
+        {
+          "input": {
+            "op": "start"
+          },
+          "events": [
+            "event: message_start\ndata: {\"type\": \"message_start\", \"message\": {\"id\": \"msg-test\", \"type\": \"message\", \"role\": \"assistant\", \"content\": [], \"model\": \"model-\\u00e9\", \"stop_reason\": null, \"stop_sequence\": null, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 1}}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text"
+          },
+          "events": [
+            "event: content_block_start\ndata: {\"type\": \"content_block_start\", \"index\": 0, \"content_block\": {\"type\": \"text\", \"text\": \"\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text_delta",
+            "value": ""
+          },
+          "events": [
+            "event: content_block_delta\ndata: {\"type\": \"content_block_delta\", \"index\": 0, \"delta\": {\"type\": \"text_delta\", \"text\": \"\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "success",
+            "value": "end_turn"
+          },
+          "events": [
+            "event: content_block_stop\ndata: {\"type\": \"content_block_stop\", \"index\": 0}\n\n",
+            "event: message_delta\ndata: {\"type\": \"message_delta\", \"delta\": {\"stop_reason\": \"end_turn\", \"stop_sequence\": null}, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 13}}\n\n",
+            "event: message_stop\ndata: {\"type\": \"message_stop\"}\n\n"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "text_unicode_43",
+      "steps": [
+        {
+          "input": {
+            "op": "start"
+          },
+          "events": [
+            "event: message_start\ndata: {\"type\": \"message_start\", \"message\": {\"id\": \"msg-test\", \"type\": \"message\", \"role\": \"assistant\", \"content\": [], \"model\": \"model-\\u00e9\", \"stop_reason\": null, \"stop_sequence\": null, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 1}}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text"
+          },
+          "events": [
+            "event: content_block_start\ndata: {\"type\": \"content_block_start\", \"index\": 0, \"content_block\": {\"type\": \"text\", \"text\": \"\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text_delta",
+            "value": "  &\n\n\n\"\\Z\"\" a漢\\  &<&Z&漢é\\&<"
+          },
+          "events": [
+            "event: content_block_delta\ndata: {\"type\": \"content_block_delta\", \"index\": 0, \"delta\": {\"type\": \"text_delta\", \"text\": \"\\u2028\\u007f &\\n\\n\\n\\\"\\u007f\\\\\\u007fZ\\u007f\\\"\\\" a\\u6f22\\\\ \\u2028&<&Z&\\u6f22\\u00e9\\\\&<\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "success",
+            "value": "end_turn"
+          },
+          "events": [
+            "event: content_block_stop\ndata: {\"type\": \"content_block_stop\", \"index\": 0}\n\n",
+            "event: message_delta\ndata: {\"type\": \"message_delta\", \"delta\": {\"stop_reason\": \"end_turn\", \"stop_sequence\": null}, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 13}}\n\n",
+            "event: message_stop\ndata: {\"type\": \"message_stop\"}\n\n"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "text_unicode_44",
+      "steps": [
+        {
+          "input": {
+            "op": "start"
+          },
+          "events": [
+            "event: message_start\ndata: {\"type\": \"message_start\", \"message\": {\"id\": \"msg-test\", \"type\": \"message\", \"role\": \"assistant\", \"content\": [], \"model\": \"model-\\u00e9\", \"stop_reason\": null, \"stop_sequence\": null, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 1}}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text"
+          },
+          "events": [
+            "event: content_block_start\ndata: {\"type\": \"content_block_start\", \"index\": 0, \"content_block\": {\"type\": \"text\", \"text\": \"\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text_delta",
+            "value": "<漢 &\\a  \u0000<\n\\<漢 \u0000&éa漢\n\u0000\t&Z漢\t <\t\t\"\t 漢"
+          },
+          "events": [
+            "event: content_block_delta\ndata: {\"type\": \"content_block_delta\", \"index\": 0, \"delta\": {\"type\": \"text_delta\", \"text\": \"<\\u6f22\\u2028&\\\\a \\u2028\\u0000<\\n\\\\<\\u6f22 \\u0000&\\u00e9a\\u6f22\\u007f\\n\\u0000\\t&Z\\u007f\\u6f22\\t\\u2028<\\t\\t\\\"\\t \\u6f22\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "success",
+            "value": "end_turn"
+          },
+          "events": [
+            "event: content_block_stop\ndata: {\"type\": \"content_block_stop\", \"index\": 0}\n\n",
+            "event: message_delta\ndata: {\"type\": \"message_delta\", \"delta\": {\"stop_reason\": \"end_turn\", \"stop_sequence\": null}, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 13}}\n\n",
+            "event: message_stop\ndata: {\"type\": \"message_stop\"}\n\n"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "text_unicode_45",
+      "steps": [
+        {
+          "input": {
+            "op": "start"
+          },
+          "events": [
+            "event: message_start\ndata: {\"type\": \"message_start\", \"message\": {\"id\": \"msg-test\", \"type\": \"message\", \"role\": \"assistant\", \"content\": [], \"model\": \"model-\\u00e9\", \"stop_reason\": null, \"stop_sequence\": null, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 1}}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text"
+          },
+          "events": [
+            "event: content_block_start\ndata: {\"type\": \"content_block_start\", \"index\": 0, \"content_block\": {\"type\": \"text\", \"text\": \"\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text_delta",
+            "value": "\té漢\n😀 😀漢Z😀éZ\u0000  \u0000\t é😀\u0000<\u0000\té<\t😀\t Zé<\\Z\\Z\"\\a😀\"<\"é\té"
+          },
+          "events": [
+            "event: content_block_delta\ndata: {\"type\": \"content_block_delta\", \"index\": 0, \"delta\": {\"type\": \"text_delta\", \"text\": \"\\t\\u00e9\\u007f\\u6f22\\n\\ud83d\\ude00 \\ud83d\\ude00\\u007f\\u6f22Z\\ud83d\\ude00\\u00e9Z\\u0000\\u2028 \\u0000\\t\\u2028\\u00e9\\ud83d\\ude00\\u0000<\\u0000\\t\\u00e9<\\t\\ud83d\\ude00\\u007f\\t\\u2028Z\\u00e9<\\\\Z\\\\Z\\\"\\\\a\\ud83d\\ude00\\\"<\\\"\\u00e9\\t\\u00e9\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "success",
+            "value": "end_turn"
+          },
+          "events": [
+            "event: content_block_stop\ndata: {\"type\": \"content_block_stop\", \"index\": 0}\n\n",
+            "event: message_delta\ndata: {\"type\": \"message_delta\", \"delta\": {\"stop_reason\": \"end_turn\", \"stop_sequence\": null}, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 13}}\n\n",
+            "event: message_stop\ndata: {\"type\": \"message_stop\"}\n\n"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "text_unicode_46",
+      "steps": [
+        {
+          "input": {
+            "op": "start"
+          },
+          "events": [
+            "event: message_start\ndata: {\"type\": \"message_start\", \"message\": {\"id\": \"msg-test\", \"type\": \"message\", \"role\": \"assistant\", \"content\": [], \"model\": \"model-\\u00e9\", \"stop_reason\": null, \"stop_sequence\": null, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 1}}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text"
+          },
+          "events": [
+            "event: content_block_start\ndata: {\"type\": \"content_block_start\", \"index\": 0, \"content_block\": {\"type\": \"text\", \"text\": \"\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text_delta",
+            "value": "  \"\u0000<\\<😀aZ&\"\né&\\ <\\é\n😀\\\n\\\"é漢😀 \t漢\na <Z 😀\"é<漢😀😀 "
+          },
+          "events": [
+            "event: content_block_delta\ndata: {\"type\": \"content_block_delta\", \"index\": 0, \"delta\": {\"type\": \"text_delta\", \"text\": \" \\u2028\\\"\\u0000<\\\\<\\ud83d\\ude00aZ&\\\"\\n\\u00e9&\\\\ <\\\\\\u00e9\\n\\ud83d\\ude00\\\\\\n\\\\\\\"\\u00e9\\u6f22\\ud83d\\ude00 \\t\\u6f22\\na <Z\\u2028\\ud83d\\ude00\\\"\\u00e9<\\u6f22\\ud83d\\ude00\\ud83d\\ude00\\u2028\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "success",
+            "value": "end_turn"
+          },
+          "events": [
+            "event: content_block_stop\ndata: {\"type\": \"content_block_stop\", \"index\": 0}\n\n",
+            "event: message_delta\ndata: {\"type\": \"message_delta\", \"delta\": {\"stop_reason\": \"end_turn\", \"stop_sequence\": null}, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 13}}\n\n",
+            "event: message_stop\ndata: {\"type\": \"message_stop\"}\n\n"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "text_unicode_47",
+      "steps": [
+        {
+          "input": {
+            "op": "start"
+          },
+          "events": [
+            "event: message_start\ndata: {\"type\": \"message_start\", \"message\": {\"id\": \"msg-test\", \"type\": \"message\", \"role\": \"assistant\", \"content\": [], \"model\": \"model-\\u00e9\", \"stop_reason\": null, \"stop_sequence\": null, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 1}}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text"
+          },
+          "events": [
+            "event: content_block_start\ndata: {\"type\": \"content_block_start\", \"index\": 0, \"content_block\": {\"type\": \"text\", \"text\": \"\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text_delta",
+            "value": "a\"&éa😀\\a \\<Z\na&\u0000漢\\a <\t&\t😀漢\n& \"漢&\\\u0000a<<é\t<<&& \u0000"
+          },
+          "events": [
+            "event: content_block_delta\ndata: {\"type\": \"content_block_delta\", \"index\": 0, \"delta\": {\"type\": \"text_delta\", \"text\": \"a\\\"\\u007f&\\u00e9a\\ud83d\\ude00\\\\a \\\\<Z\\na&\\u007f\\u0000\\u6f22\\\\a\\u2028<\\t&\\t\\ud83d\\ude00\\u6f22\\n& \\\"\\u6f22&\\\\\\u0000a<<\\u00e9\\t\\u007f<<&&\\u2028\\u0000\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "success",
+            "value": "end_turn"
+          },
+          "events": [
+            "event: content_block_stop\ndata: {\"type\": \"content_block_stop\", \"index\": 0}\n\n",
+            "event: message_delta\ndata: {\"type\": \"message_delta\", \"delta\": {\"stop_reason\": \"end_turn\", \"stop_sequence\": null}, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 13}}\n\n",
+            "event: message_stop\ndata: {\"type\": \"message_stop\"}\n\n"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "text_unicode_48",
+      "steps": [
+        {
+          "input": {
+            "op": "start"
+          },
+          "events": [
+            "event: message_start\ndata: {\"type\": \"message_start\", \"message\": {\"id\": \"msg-test\", \"type\": \"message\", \"role\": \"assistant\", \"content\": [], \"model\": \"model-\\u00e9\", \"stop_reason\": null, \"stop_sequence\": null, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 1}}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text"
+          },
+          "events": [
+            "event: content_block_start\ndata: {\"type\": \"content_block_start\", \"index\": 0, \"content_block\": {\"type\": \"text\", \"text\": \"\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text_delta",
+            "value": " \n 漢<\\😀"
+          },
+          "events": [
+            "event: content_block_delta\ndata: {\"type\": \"content_block_delta\", \"index\": 0, \"delta\": {\"type\": \"text_delta\", \"text\": \"\\u2028\\n\\u2028\\u6f22<\\\\\\ud83d\\ude00\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "success",
+            "value": "end_turn"
+          },
+          "events": [
+            "event: content_block_stop\ndata: {\"type\": \"content_block_stop\", \"index\": 0}\n\n",
+            "event: message_delta\ndata: {\"type\": \"message_delta\", \"delta\": {\"stop_reason\": \"end_turn\", \"stop_sequence\": null}, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 13}}\n\n",
+            "event: message_stop\ndata: {\"type\": \"message_stop\"}\n\n"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "text_unicode_49",
+      "steps": [
+        {
+          "input": {
+            "op": "start"
+          },
+          "events": [
+            "event: message_start\ndata: {\"type\": \"message_start\", \"message\": {\"id\": \"msg-test\", \"type\": \"message\", \"role\": \"assistant\", \"content\": [], \"model\": \"model-\\u00e9\", \"stop_reason\": null, \"stop_sequence\": null, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 1}}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text"
+          },
+          "events": [
+            "event: content_block_start\ndata: {\"type\": \"content_block_start\", \"index\": 0, \"content_block\": {\"type\": \"text\", \"text\": \"\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text_delta",
+            "value": "😀\\&\"&\"\t<& a \u0000\"\\ 😀😀😀😀\u0000😀\té&a\\\u0000<\u0000\n\n\\Z\u0000"
+          },
+          "events": [
+            "event: content_block_delta\ndata: {\"type\": \"content_block_delta\", \"index\": 0, \"delta\": {\"type\": \"text_delta\", \"text\": \"\\ud83d\\ude00\\\\&\\\"&\\\"\\t<& a\\u2028\\u0000\\\"\\\\ \\ud83d\\ude00\\ud83d\\ude00\\ud83d\\ude00\\u007f\\ud83d\\ude00\\u0000\\ud83d\\ude00\\t\\u00e9&a\\\\\\u0000<\\u0000\\n\\n\\\\Z\\u0000\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "success",
+            "value": "end_turn"
+          },
+          "events": [
+            "event: content_block_stop\ndata: {\"type\": \"content_block_stop\", \"index\": 0}\n\n",
+            "event: message_delta\ndata: {\"type\": \"message_delta\", \"delta\": {\"stop_reason\": \"end_turn\", \"stop_sequence\": null}, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 13}}\n\n",
+            "event: message_stop\ndata: {\"type\": \"message_stop\"}\n\n"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "text_unicode_50",
+      "steps": [
+        {
+          "input": {
+            "op": "start"
+          },
+          "events": [
+            "event: message_start\ndata: {\"type\": \"message_start\", \"message\": {\"id\": \"msg-test\", \"type\": \"message\", \"role\": \"assistant\", \"content\": [], \"model\": \"model-\\u00e9\", \"stop_reason\": null, \"stop_sequence\": null, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 1}}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text"
+          },
+          "events": [
+            "event: content_block_start\ndata: {\"type\": \"content_block_start\", \"index\": 0, \"content_block\": {\"type\": \"text\", \"text\": \"\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text_delta",
+            "value": " \u0000&\"&a &\\&\n\t \"<\\\\😀\ta\\\"Za&\"<éZZé\té\n&é\\ \t\n& \\é😀<é\"é "
+          },
+          "events": [
+            "event: content_block_delta\ndata: {\"type\": \"content_block_delta\", \"index\": 0, \"delta\": {\"type\": \"text_delta\", \"text\": \" \\u0000&\\\"&a\\u2028&\\\\&\\n\\t\\u2028\\\"<\\\\\\\\\\ud83d\\ude00\\ta\\\\\\\"Za\\u007f&\\\"<\\u00e9ZZ\\u00e9\\u007f\\u007f\\t\\u00e9\\n\\u007f&\\u00e9\\\\\\u2028\\t\\n&\\u2028\\\\\\u00e9\\ud83d\\ude00<\\u00e9\\u007f\\\"\\u00e9 \"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "success",
+            "value": "end_turn"
+          },
+          "events": [
+            "event: content_block_stop\ndata: {\"type\": \"content_block_stop\", \"index\": 0}\n\n",
+            "event: message_delta\ndata: {\"type\": \"message_delta\", \"delta\": {\"stop_reason\": \"end_turn\", \"stop_sequence\": null}, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 13}}\n\n",
+            "event: message_stop\ndata: {\"type\": \"message_stop\"}\n\n"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "text_unicode_51",
+      "steps": [
+        {
+          "input": {
+            "op": "start"
+          },
+          "events": [
+            "event: message_start\ndata: {\"type\": \"message_start\", \"message\": {\"id\": \"msg-test\", \"type\": \"message\", \"role\": \"assistant\", \"content\": [], \"model\": \"model-\\u00e9\", \"stop_reason\": null, \"stop_sequence\": null, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 1}}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text"
+          },
+          "events": [
+            "event: content_block_start\ndata: {\"type\": \"content_block_start\", \"index\": 0, \"content_block\": {\"type\": \"text\", \"text\": \"\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text_delta",
+            "value": "Z\u0000<Z\u0000&< \tZ\u0000\tZaZ漢Zé\t<a<😀&< 😀\"Z\\\t"
+          },
+          "events": [
+            "event: content_block_delta\ndata: {\"type\": \"content_block_delta\", \"index\": 0, \"delta\": {\"type\": \"text_delta\", \"text\": \"Z\\u0000<\\u007fZ\\u0000&< \\tZ\\u0000\\tZ\\u007faZ\\u6f22Z\\u00e9\\t<\\u007f\\u007fa<\\ud83d\\ude00&< \\ud83d\\ude00\\\"Z\\\\\\t\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "success",
+            "value": "end_turn"
+          },
+          "events": [
+            "event: content_block_stop\ndata: {\"type\": \"content_block_stop\", \"index\": 0}\n\n",
+            "event: message_delta\ndata: {\"type\": \"message_delta\", \"delta\": {\"stop_reason\": \"end_turn\", \"stop_sequence\": null}, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 13}}\n\n",
+            "event: message_stop\ndata: {\"type\": \"message_stop\"}\n\n"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "text_unicode_52",
+      "steps": [
+        {
+          "input": {
+            "op": "start"
+          },
+          "events": [
+            "event: message_start\ndata: {\"type\": \"message_start\", \"message\": {\"id\": \"msg-test\", \"type\": \"message\", \"role\": \"assistant\", \"content\": [], \"model\": \"model-\\u00e9\", \"stop_reason\": null, \"stop_sequence\": null, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 1}}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text"
+          },
+          "events": [
+            "event: content_block_start\ndata: {\"type\": \"content_block_start\", \"index\": 0, \"content_block\": {\"type\": \"text\", \"text\": \"\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text_delta",
+            "value": " 漢\t<<a\tZZé漢<\t"
+          },
+          "events": [
+            "event: content_block_delta\ndata: {\"type\": \"content_block_delta\", \"index\": 0, \"delta\": {\"type\": \"text_delta\", \"text\": \"\\u2028\\u6f22\\t\\u007f<<a\\tZZ\\u00e9\\u6f22<\\t\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "success",
+            "value": "end_turn"
+          },
+          "events": [
+            "event: content_block_stop\ndata: {\"type\": \"content_block_stop\", \"index\": 0}\n\n",
+            "event: message_delta\ndata: {\"type\": \"message_delta\", \"delta\": {\"stop_reason\": \"end_turn\", \"stop_sequence\": null}, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 13}}\n\n",
+            "event: message_stop\ndata: {\"type\": \"message_stop\"}\n\n"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "text_unicode_53",
+      "steps": [
+        {
+          "input": {
+            "op": "start"
+          },
+          "events": [
+            "event: message_start\ndata: {\"type\": \"message_start\", \"message\": {\"id\": \"msg-test\", \"type\": \"message\", \"role\": \"assistant\", \"content\": [], \"model\": \"model-\\u00e9\", \"stop_reason\": null, \"stop_sequence\": null, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 1}}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text"
+          },
+          "events": [
+            "event: content_block_start\ndata: {\"type\": \"content_block_start\", \"index\": 0, \"content_block\": {\"type\": \"text\", \"text\": \"\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text_delta",
+            "value": "aé Zé\u0000&Z\" <  😀 Z\\漢\t<a😀&& \"😀\\é漢 😀&漢a\n\u0000\"\"😀\\<\"😀漢\t😀Z a\t漢\u0000é"
+          },
+          "events": [
+            "event: content_block_delta\ndata: {\"type\": \"content_block_delta\", \"index\": 0, \"delta\": {\"type\": \"text_delta\", \"text\": \"a\\u00e9 Z\\u00e9\\u0000&Z\\\" <\\u2028 \\ud83d\\ude00\\u2028Z\\\\\\u007f\\u6f22\\t<a\\ud83d\\ude00&& \\\"\\ud83d\\ude00\\\\\\u00e9\\u6f22\\u2028\\ud83d\\ude00&\\u6f22a\\n\\u0000\\\"\\\"\\ud83d\\ude00\\\\<\\\"\\ud83d\\ude00\\u6f22\\t\\ud83d\\ude00Z a\\t\\u6f22\\u0000\\u00e9\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "success",
+            "value": "end_turn"
+          },
+          "events": [
+            "event: content_block_stop\ndata: {\"type\": \"content_block_stop\", \"index\": 0}\n\n",
+            "event: message_delta\ndata: {\"type\": \"message_delta\", \"delta\": {\"stop_reason\": \"end_turn\", \"stop_sequence\": null}, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 13}}\n\n",
+            "event: message_stop\ndata: {\"type\": \"message_stop\"}\n\n"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "text_unicode_54",
+      "steps": [
+        {
+          "input": {
+            "op": "start"
+          },
+          "events": [
+            "event: message_start\ndata: {\"type\": \"message_start\", \"message\": {\"id\": \"msg-test\", \"type\": \"message\", \"role\": \"assistant\", \"content\": [], \"model\": \"model-\\u00e9\", \"stop_reason\": null, \"stop_sequence\": null, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 1}}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text"
+          },
+          "events": [
+            "event: content_block_start\ndata: {\"type\": \"content_block_start\", \"index\": 0, \"content_block\": {\"type\": \"text\", \"text\": \"\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text_delta",
+            "value": "\u0000\n&<&&漢éZ&😀漢\nZ\"\né<😀Z\t \n \n\t\"\u0000&\ta\\a<& \u0000漢aaZ\t& Z<"
+          },
+          "events": [
+            "event: content_block_delta\ndata: {\"type\": \"content_block_delta\", \"index\": 0, \"delta\": {\"type\": \"text_delta\", \"text\": \"\\u0000\\n&<&&\\u6f22\\u007f\\u00e9Z&\\ud83d\\ude00\\u6f22\\nZ\\u007f\\\"\\n\\u00e9<\\ud83d\\ude00Z\\t\\u2028\\n\\u2028\\u007f\\u007f\\n\\t\\\"\\u0000&\\ta\\\\a<&\\u2028\\u0000\\u6f22aa\\u007fZ\\u007f\\t&\\u2028Z<\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "success",
+            "value": "end_turn"
+          },
+          "events": [
+            "event: content_block_stop\ndata: {\"type\": \"content_block_stop\", \"index\": 0}\n\n",
+            "event: message_delta\ndata: {\"type\": \"message_delta\", \"delta\": {\"stop_reason\": \"end_turn\", \"stop_sequence\": null}, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 13}}\n\n",
+            "event: message_stop\ndata: {\"type\": \"message_stop\"}\n\n"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "text_unicode_55",
+      "steps": [
+        {
+          "input": {
+            "op": "start"
+          },
+          "events": [
+            "event: message_start\ndata: {\"type\": \"message_start\", \"message\": {\"id\": \"msg-test\", \"type\": \"message\", \"role\": \"assistant\", \"content\": [], \"model\": \"model-\\u00e9\", \"stop_reason\": null, \"stop_sequence\": null, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 1}}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text"
+          },
+          "events": [
+            "event: content_block_start\ndata: {\"type\": \"content_block_start\", \"index\": 0, \"content_block\": {\"type\": \"text\", \"text\": \"\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text_delta",
+            "value": "aZZ <😀\\\\éZ\u0000 \\😀<\t😀\"\"\u0000&a<a\"é\na Z\\ \n"
+          },
+          "events": [
+            "event: content_block_delta\ndata: {\"type\": \"content_block_delta\", \"index\": 0, \"delta\": {\"type\": \"text_delta\", \"text\": \"aZZ <\\ud83d\\ude00\\\\\\\\\\u00e9Z\\u0000\\u007f\\u2028\\\\\\ud83d\\ude00<\\t\\ud83d\\ude00\\\"\\\"\\u0000&a<a\\u007f\\\"\\u00e9\\na Z\\\\\\u2028\\n\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "success",
+            "value": "end_turn"
+          },
+          "events": [
+            "event: content_block_stop\ndata: {\"type\": \"content_block_stop\", \"index\": 0}\n\n",
+            "event: message_delta\ndata: {\"type\": \"message_delta\", \"delta\": {\"stop_reason\": \"end_turn\", \"stop_sequence\": null}, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 13}}\n\n",
+            "event: message_stop\ndata: {\"type\": \"message_stop\"}\n\n"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "text_unicode_56",
+      "steps": [
+        {
+          "input": {
+            "op": "start"
+          },
+          "events": [
+            "event: message_start\ndata: {\"type\": \"message_start\", \"message\": {\"id\": \"msg-test\", \"type\": \"message\", \"role\": \"assistant\", \"content\": [], \"model\": \"model-\\u00e9\", \"stop_reason\": null, \"stop_sequence\": null, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 1}}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text"
+          },
+          "events": [
+            "event: content_block_start\ndata: {\"type\": \"content_block_start\", \"index\": 0, \"content_block\": {\"type\": \"text\", \"text\": \"\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text_delta",
+            "value": " \"<&\t\u0000\n\né\u0000a\n 漢&Z\u0000漢<<\u0000\ta漢\\a a& \na\\& \t"
+          },
+          "events": [
+            "event: content_block_delta\ndata: {\"type\": \"content_block_delta\", \"index\": 0, \"delta\": {\"type\": \"text_delta\", \"text\": \"\\u2028\\\"<&\\t\\u0000\\u007f\\n\\n\\u00e9\\u0000a\\n\\u2028\\u6f22&Z\\u0000\\u6f22<<\\u0000\\ta\\u6f22\\\\a\\u2028a&\\u2028\\u007f\\na\\\\&\\u2028\\t\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "success",
+            "value": "end_turn"
+          },
+          "events": [
+            "event: content_block_stop\ndata: {\"type\": \"content_block_stop\", \"index\": 0}\n\n",
+            "event: message_delta\ndata: {\"type\": \"message_delta\", \"delta\": {\"stop_reason\": \"end_turn\", \"stop_sequence\": null}, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 13}}\n\n",
+            "event: message_stop\ndata: {\"type\": \"message_stop\"}\n\n"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "text_unicode_57",
+      "steps": [
+        {
+          "input": {
+            "op": "start"
+          },
+          "events": [
+            "event: message_start\ndata: {\"type\": \"message_start\", \"message\": {\"id\": \"msg-test\", \"type\": \"message\", \"role\": \"assistant\", \"content\": [], \"model\": \"model-\\u00e9\", \"stop_reason\": null, \"stop_sequence\": null, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 1}}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text"
+          },
+          "events": [
+            "event: content_block_start\ndata: {\"type\": \"content_block_start\", \"index\": 0, \"content_block\": {\"type\": \"text\", \"text\": \"\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text_delta",
+            "value": "a é\" & \"\u0000\t\n&é😀é\u0000\"😀<\u0000Z 漢\n\n😀\na<😀éZ\\\n<"
+          },
+          "events": [
+            "event: content_block_delta\ndata: {\"type\": \"content_block_delta\", \"index\": 0, \"delta\": {\"type\": \"text_delta\", \"text\": \"a \\u00e9\\\" & \\\"\\u0000\\t\\n&\\u00e9\\ud83d\\ude00\\u00e9\\u0000\\\"\\ud83d\\ude00<\\u0000Z\\u2028\\u007f\\u6f22\\n\\u007f\\u007f\\n\\ud83d\\ude00\\u007f\\na<\\ud83d\\ude00\\u00e9Z\\\\\\n\\u007f<\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "success",
+            "value": "end_turn"
+          },
+          "events": [
+            "event: content_block_stop\ndata: {\"type\": \"content_block_stop\", \"index\": 0}\n\n",
+            "event: message_delta\ndata: {\"type\": \"message_delta\", \"delta\": {\"stop_reason\": \"end_turn\", \"stop_sequence\": null}, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 13}}\n\n",
+            "event: message_stop\ndata: {\"type\": \"message_stop\"}\n\n"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "text_unicode_58",
+      "steps": [
+        {
+          "input": {
+            "op": "start"
+          },
+          "events": [
+            "event: message_start\ndata: {\"type\": \"message_start\", \"message\": {\"id\": \"msg-test\", \"type\": \"message\", \"role\": \"assistant\", \"content\": [], \"model\": \"model-\\u00e9\", \"stop_reason\": null, \"stop_sequence\": null, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 1}}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text"
+          },
+          "events": [
+            "event: content_block_start\ndata: {\"type\": \"content_block_start\", \"index\": 0, \"content_block\": {\"type\": \"text\", \"text\": \"\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text_delta",
+            "value": "aZ\\漢aa<\\&\\\n\\漢Z \u0000😀\"&\né\u0000\u0000é&\\\né\t\n <\u0000\\\u0000\""
+          },
+          "events": [
+            "event: content_block_delta\ndata: {\"type\": \"content_block_delta\", \"index\": 0, \"delta\": {\"type\": \"text_delta\", \"text\": \"aZ\\\\\\u6f22aa<\\\\&\\\\\\n\\\\\\u6f22Z \\u0000\\ud83d\\ude00\\\"&\\n\\u00e9\\u0000\\u0000\\u00e9&\\\\\\n\\u00e9\\t\\n <\\u0000\\\\\\u0000\\\"\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "success",
+            "value": "end_turn"
+          },
+          "events": [
+            "event: content_block_stop\ndata: {\"type\": \"content_block_stop\", \"index\": 0}\n\n",
+            "event: message_delta\ndata: {\"type\": \"message_delta\", \"delta\": {\"stop_reason\": \"end_turn\", \"stop_sequence\": null}, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 13}}\n\n",
+            "event: message_stop\ndata: {\"type\": \"message_stop\"}\n\n"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "text_unicode_59",
+      "steps": [
+        {
+          "input": {
+            "op": "start"
+          },
+          "events": [
+            "event: message_start\ndata: {\"type\": \"message_start\", \"message\": {\"id\": \"msg-test\", \"type\": \"message\", \"role\": \"assistant\", \"content\": [], \"model\": \"model-\\u00e9\", \"stop_reason\": null, \"stop_sequence\": null, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 1}}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text"
+          },
+          "events": [
+            "event: content_block_start\ndata: {\"type\": \"content_block_start\", \"index\": 0, \"content_block\": {\"type\": \"text\", \"text\": \"\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "text_delta",
+            "value": "\\\\ \n\t\t\n\"\n<😀\n\u0000&\téé\\😀<é  "
+          },
+          "events": [
+            "event: content_block_delta\ndata: {\"type\": \"content_block_delta\", \"index\": 0, \"delta\": {\"type\": \"text_delta\", \"text\": \"\\\\\\\\\\u2028\\n\\t\\t\\n\\\"\\n<\\ud83d\\ude00\\n\\u0000&\\t\\u00e9\\u00e9\\\\\\ud83d\\ude00<\\u00e9\\u2028\\u2028\"}}\n\n"
+          ]
+        },
+        {
+          "input": {
+            "op": "success",
+            "value": "end_turn"
+          },
+          "events": [
+            "event: content_block_stop\ndata: {\"type\": \"content_block_stop\", \"index\": 0}\n\n",
+            "event: message_delta\ndata: {\"type\": \"message_delta\", \"delta\": {\"stop_reason\": \"end_turn\", \"stop_sequence\": null}, \"usage\": {\"input_tokens\": 7, \"output_tokens\": 13}}\n\n",
+            "event: message_stop\ndata: {\"type\": \"message_stop\"}\n\n"
+          ]
+        }
+      ]
+    }
+  ]
+}

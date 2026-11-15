@@ -3,13 +3,15 @@ package openaichat
 import (
 	"sort"
 	"strings"
+
+	"github.com/NggKhaiz/FCC/gocore/wirejson"
 )
 
 // ChatToolState is the per-tool semantic state of one Chat stream attempt.
 type ChatToolState struct {
 	ToolID        string
 	Name          string
-	ExtraContent  map[string]any
+	ExtraContent  any
 	Started       bool
 	Open          bool
 	PreStartArgs  string
@@ -218,20 +220,35 @@ func (o *ChatStreamOutput) EnsureToolState(index int) *ChatToolState {
 	o.toolOrder = append(o.toolOrder, index)
 	return state
 }
-func (o *ChatStreamOutput) SetToolExtraContent(index int, extra map[string]any) {
-	if len(extra) > 0 {
+func (o *ChatStreamOutput) SetToolExtraContent(index int, extra any) {
+	if nonEmptyExtraContent(extra) {
 		o.EnsureToolState(index).ExtraContent = extra
+	}
+}
+
+// nonEmptyExtraContent accepts map-shaped JSON metadata. Use wirejson.Object
+// where upstream insertion order must be retained in the emitted SSE bytes.
+func nonEmptyExtraContent(extra any) bool {
+	switch value := extra.(type) {
+	case map[string]any:
+		return len(value) > 0
+	case *wirejson.Object:
+		return value != nil && value.Len() > 0
+	case wirejson.Object:
+		return value.Len() > 0
+	default:
+		return false
 	}
 }
 func (o *ChatStreamOutput) RegisterToolName(index int, name string) {
 	state := o.EnsureToolState(index)
 	state.Name = MergeToolName(state.Name, name)
 }
-func (o *ChatStreamOutput) StartToolBlock(index int, id, name string, extra map[string]any) string {
+func (o *ChatStreamOutput) StartToolBlock(index int, id, name string, extra any) string {
 	state := o.EnsureToolState(index)
 	state.ToolID = id
 	state.Name = name
-	if len(extra) > 0 {
+	if nonEmptyExtraContent(extra) {
 		state.ExtraContent = extra
 	}
 	state.Started = true
@@ -267,9 +284,14 @@ func (o *ChatStreamOutput) CloseAllBlocks() []string {
 	return events
 }
 
-// CloseUnclosedBlocks is the base lifecycle behavior. Protocol writers whose
-// failure cleanup differs must use their own ledger-specific implementation.
+// CloseUnclosedBlocks dispatches to the Anthropic ledger's failure cleanup
+// where present, otherwise using the protocol-neutral lifecycle behavior.
 func (o *ChatStreamOutput) CloseUnclosedBlocks() []string {
+	if sink, ok := o.sink.(interface {
+		closeUnclosedBlocks(*ChatStreamOutput) []string
+	}); ok {
+		return sink.closeUnclosedBlocks(o)
+	}
 	events := o.FlushReasoningReplay(false)
 	events = append(events, o.closeContentBlocks()...)
 	for _, index := range o.toolOrder {

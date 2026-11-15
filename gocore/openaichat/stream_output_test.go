@@ -149,7 +149,7 @@ func TestChatStreamOutputGoldenParity(t *testing.T) {
 						Started bool           `json:"started"`
 						Open    bool           `json:"open"`
 						Content string         `json:"content"`
-					}{index, s.ToolID, s.Name, s.ExtraContent, s.Started, s.Open, s.Content()})
+					}{index, s.ToolID, s.Name, extraMap(s.ExtraContent), s.Started, s.Open, s.Content()})
 				}
 				if !reflect.DeepEqual(state, step.State) {
 					t.Fatalf("%s step %d %s: state got %#v, want %#v", scenario.Name, i, step.Input.Op, state, step.State)
@@ -236,4 +236,9 @@ func TestChatOutputAccessorsAndOpaqueConsumption(t *testing.T) {
 	if !reflect.DeepEqual(unchanged, []string{"other"}) {
 		t.Fatalf("opaque list changed for unopened source: %#v", unchanged)
 	}
+}
+
+func extraMap(value any) map[string]any {
+	result, _ := value.(map[string]any)
+	return result
 }
