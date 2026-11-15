@@ -135,8 +135,9 @@ def stream_usage_cases() -> dict[str, list[dict[str, Any]]]:
         ("merges_sibling", {"model": "m", "stream_options": {"foo": "bar"}}),
         ("non_dict_option_untouched", {"model": "m", "stream_options": ["x"]}),
     ]:
+        original = json.loads(json.dumps(body))
         request_stream_usage(body)
-        request_cases.append({"name": name, "body": body})
+        request_cases.append({"name": name, "input": original, "output": body})
 
     clone_cases: list[dict[str, Any]] = []
     for name, body in [
@@ -338,15 +339,22 @@ def usage_rejection_cases() -> list[dict[str, Any]]:
             True,
         ),
     ]
-    return [
-        {
-            "name": name,
-            "error": descriptor,
-            "expected": expected,
-            "observed": is_stream_usage_rejection(to_python_error(descriptor)),
-        }
-        for name, descriptor, expected in descriptors
-    ]
+    results = []
+    for name, descriptor, expected in descriptors:
+        observed = is_stream_usage_rejection(to_python_error(descriptor))
+        if observed != expected:
+            raise AssertionError(
+                f"{name}: reference returned {observed!r}, expected {expected!r}"
+            )
+        results.append(
+            {
+                "name": name,
+                "error": descriptor,
+                "expected": expected,
+                "observed": observed,
+            }
+        )
+    return results
 
 
 def output_cap_parse_cases() -> list[dict[str, Any]]:
@@ -670,14 +678,14 @@ def output_cap_parse_cases() -> list[dict[str, Any]]:
             None,
         ),
         (
-            "glued_quoted_prefix_not_a_field",
+            "quoted_field_after_word_matches_inside_quote",
             {
                 "kind": "BadRequestError",
                 "message": "x`max_completion_tokens` at most 5",
                 "status_code": 400,
                 "body": None,
             },
-            None,
+            5,
         ),
         (
             "field_at_message_start",
@@ -700,9 +708,65 @@ def output_cap_parse_cases() -> list[dict[str, Any]]:
             512,
         ),
     ]
+    boundary_cases = [
+        ("unicode_letter_prefix", "émax_tokens at most 5", None),
+        ("unicode_ideograph_prefix", "漢max_tokens at most 5", None),
+        ("unicode_lowercase_expands", "İmax_tokens at most 11", 11),
+        ("unicode16_letter_prefix", "\U0001e5d0max_tokens at most 11", None),
+        ("unicode16_decimal_cap", "max_tokens at most \U00010d42\U00010d43", 23),
+        ("unicode16_decimal_prefix", "\U00010d42max_tokens at most 11", None),
+        ("quoted_prefix_and_glued_suffix", "x`max_tokens`x at most 5", None),
+        ("field_end_before_quoted_suffix", "maximum of 9 for max_tokens`x", 9),
+        ("multiple_cap_quotes", "max_tokens at most ``5``", None),
+        (
+            "unicode_space_and_digits",
+            "max_tokens\u00a0at\u00a0most\u00a0\uff11\uff12",
+            12,
+        ),
+        ("arabic_indic_digits", "max_tokens at most ٠٩", 9),
+        (
+            "range_requires_ascii_lower_bound",
+            "range of max_tokens should be [\uff11, 20]",
+            None,
+        ),
+        (
+            "range_allows_unicode_cap",
+            "range of max_tokens should be [1, \uff12\uff10]",
+            20,
+        ),
+        (
+            "zero_first_match_wins",
+            "max_tokens at most 0 then max_tokens at most 9",
+            None,
+        ),
+        (
+            "zero_first_range_wins",
+            "range of max_tokens should be [1, 0] then range of max_tokens should be [1, 100]",
+            None,
+        ),
+        ("multiple_field_quotes", "range of ``max_tokens`` should be [1, 9]", None),
+        ("combining_mark_after_cap", "max_tokens at most 12\u0301", 12),
+    ]
+    cases.extend(
+        (
+            name,
+            {
+                "kind": "BadRequestError",
+                "message": text,
+                "status_code": 400,
+                "body": None,
+            },
+            expected,
+        )
+        for name, text, expected in boundary_cases
+    )
     results = []
     for name, descriptor, expected in cases:
         observed = parse_output_token_cap(to_python_error(descriptor))
+        if observed != expected:
+            raise AssertionError(
+                f"{name}: reference returned {observed!r}, expected {expected!r}"
+            )
         results.append(
             {
                 "name": name,

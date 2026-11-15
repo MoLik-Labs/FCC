@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
-	"maps"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -28,8 +27,9 @@ type leafFixture struct {
 	} `json:"extra_body"`
 	StreamUsage struct {
 		Request []struct {
-			Name string         `json:"name"`
-			Body map[string]any `json:"body"`
+			Name   string         `json:"name"`
+			Input  map[string]any `json:"input"`
+			Output map[string]any `json:"output"`
 		} `json:"request"`
 		Clone []struct {
 			Name           string         `json:"name"`
@@ -57,11 +57,13 @@ type leafFixture struct {
 		Name     string         `json:"name"`
 		Error    map[string]any `json:"error"`
 		Expected bool           `json:"expected"`
+		Observed bool           `json:"observed"`
 	} `json:"usage_rejection"`
 	OutputCapParse []struct {
 		Name     string         `json:"name"`
 		Error    map[string]any `json:"error"`
 		Expected *int           `json:"expected"`
+		Observed *int           `json:"observed"`
 	} `json:"output_cap_parse"`
 	OutputCapClamp []struct {
 		Name           string         `json:"name"`
@@ -146,6 +148,21 @@ func jsonEqual(t *testing.T, label string, expected, actual any) {
 	}
 }
 
+func cloneFixtureMap(t *testing.T, original map[string]any) map[string]any {
+	t.Helper()
+	data, err := json.Marshal(original)
+	if err != nil {
+		t.Fatal(err)
+	}
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	decoder.UseNumber()
+	var clone map[string]any
+	if err := decoder.Decode(&clone); err != nil {
+		t.Fatal(err)
+	}
+	return clone
+}
+
 func intPointerValue(pointer *int) any {
 	if pointer == nil {
 		return nil
@@ -177,12 +194,12 @@ func replayLeafFixture(t *testing.T, fixture *leafFixture) {
 	}
 
 	for _, tc := range fixture.StreamUsage.Request {
-		body := maps.Clone(tc.Body)
+		body := cloneFixtureMap(t, tc.Input)
 		RequestStreamUsage(body)
-		jsonEqual(t, "stream_usage/request/"+tc.Name, tc.Body, body)
+		jsonEqual(t, "stream_usage/request/"+tc.Name, tc.Output, body)
 	}
 	for _, tc := range fixture.StreamUsage.Clone {
-		body := maps.Clone(tc.Input)
+		body := cloneFixtureMap(t, tc.Input)
 		output := CloneWithoutStreamUsage(body)
 		jsonEqual(t, "stream_usage/clone/"+tc.Name, tc.Output, output)
 		jsonEqual(t, "stream_usage/clone/"+tc.Name+"/input", tc.Input, body)
@@ -200,19 +217,21 @@ func replayLeafFixture(t *testing.T, fixture *leafFixture) {
 	}
 
 	for _, tc := range fixture.UsageRejection {
+		jsonEqual(t, "usage_rejection/"+tc.Name+"/reference", tc.Expected, tc.Observed)
 		err := providerpolicy.FromDescriptor(tc.Error)
 		jsonEqual(t, "usage_rejection/"+tc.Name,
-			tc.Expected, IsStreamUsageRejection(err))
+			tc.Observed, IsStreamUsageRejection(err))
 	}
 
 	for _, tc := range fixture.OutputCapParse {
+		jsonEqual(t, "output_cap_parse/"+tc.Name+"/reference", intPointerValue(tc.Expected), intPointerValue(tc.Observed))
 		err := providerpolicy.FromDescriptor(tc.Error)
 		got := ParseOutputTokenCap(err)
 		jsonEqual(t, "output_cap_parse/"+tc.Name,
-			intPointerValue(tc.Expected), intPointerValue(got))
+			intPointerValue(tc.Observed), intPointerValue(got))
 	}
 	for _, tc := range fixture.OutputCapClamp {
-		body := maps.Clone(tc.Input)
+		body := cloneFixtureMap(t, tc.Input)
 		output := ClampOutputTokens(body, tc.Cap)
 		jsonEqual(t, "output_cap_clamp/"+tc.Name, tc.Output, output)
 		jsonEqual(t, "output_cap_clamp/"+tc.Name+"/input", tc.Input, body)

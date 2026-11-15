@@ -79,7 +79,10 @@
     "request": [
       {
         "name": "absent_option",
-        "body": {
+        "input": {
+          "model": "m"
+        },
+        "output": {
           "model": "m",
           "stream_options": {
             "include_usage": true
@@ -88,7 +91,13 @@
       },
       {
         "name": "merges_sibling",
-        "body": {
+        "input": {
+          "model": "m",
+          "stream_options": {
+            "foo": "bar"
+          }
+        },
+        "output": {
           "model": "m",
           "stream_options": {
             "foo": "bar",
@@ -98,7 +107,13 @@
       },
       {
         "name": "non_dict_option_untouched",
-        "body": {
+        "input": {
+          "model": "m",
+          "stream_options": [
+            "x"
+          ]
+        },
+        "output": {
           "model": "m",
           "stream_options": [
             "x"
@@ -829,14 +844,14 @@
       "observed": null
     },
     {
-      "name": "glued_quoted_prefix_not_a_field",
+      "name": "quoted_field_after_word_matches_inside_quote",
       "error": {
         "kind": "BadRequestError",
         "message": "x`max_completion_tokens` at most 5",
         "status_code": 400,
         "body": null
       },
-      "expected": null,
+      "expected": 5,
       "observed": 5
     },
     {
@@ -860,6 +875,193 @@
       },
       "expected": 512,
       "observed": 512
+    },
+    {
+      "name": "unicode_letter_prefix",
+      "error": {
+        "kind": "BadRequestError",
+        "message": "\u00e9max_tokens at most 5",
+        "status_code": 400,
+        "body": null
+      },
+      "expected": null,
+      "observed": null
+    },
+    {
+      "name": "unicode_ideograph_prefix",
+      "error": {
+        "kind": "BadRequestError",
+        "message": "\u6f22max_tokens at most 5",
+        "status_code": 400,
+        "body": null
+      },
+      "expected": null,
+      "observed": null
+    },
+    {
+      "name": "unicode_lowercase_expands",
+      "error": {
+        "kind": "BadRequestError",
+        "message": "\u0130max_tokens at most 11",
+        "status_code": 400,
+        "body": null
+      },
+      "expected": 11,
+      "observed": 11
+    },
+    {
+      "name": "unicode16_letter_prefix",
+      "error": {
+        "kind": "BadRequestError",
+        "message": "\ud839\uddd0max_tokens at most 11",
+        "status_code": 400,
+        "body": null
+      },
+      "expected": null,
+      "observed": null
+    },
+    {
+      "name": "unicode16_decimal_cap",
+      "error": {
+        "kind": "BadRequestError",
+        "message": "max_tokens at most \ud803\udd42\ud803\udd43",
+        "status_code": 400,
+        "body": null
+      },
+      "expected": 23,
+      "observed": 23
+    },
+    {
+      "name": "unicode16_decimal_prefix",
+      "error": {
+        "kind": "BadRequestError",
+        "message": "\ud803\udd42max_tokens at most 11",
+        "status_code": 400,
+        "body": null
+      },
+      "expected": null,
+      "observed": null
+    },
+    {
+      "name": "quoted_prefix_and_glued_suffix",
+      "error": {
+        "kind": "BadRequestError",
+        "message": "x`max_tokens`x at most 5",
+        "status_code": 400,
+        "body": null
+      },
+      "expected": null,
+      "observed": null
+    },
+    {
+      "name": "field_end_before_quoted_suffix",
+      "error": {
+        "kind": "BadRequestError",
+        "message": "maximum of 9 for max_tokens`x",
+        "status_code": 400,
+        "body": null
+      },
+      "expected": 9,
+      "observed": 9
+    },
+    {
+      "name": "multiple_cap_quotes",
+      "error": {
+        "kind": "BadRequestError",
+        "message": "max_tokens at most ``5``",
+        "status_code": 400,
+        "body": null
+      },
+      "expected": null,
+      "observed": null
+    },
+    {
+      "name": "unicode_space_and_digits",
+      "error": {
+        "kind": "BadRequestError",
+        "message": "max_tokens\u00a0at\u00a0most\u00a0\uff11\uff12",
+        "status_code": 400,
+        "body": null
+      },
+      "expected": 12,
+      "observed": 12
+    },
+    {
+      "name": "arabic_indic_digits",
+      "error": {
+        "kind": "BadRequestError",
+        "message": "max_tokens at most \u0660\u0669",
+        "status_code": 400,
+        "body": null
+      },
+      "expected": 9,
+      "observed": 9
+    },
+    {
+      "name": "range_requires_ascii_lower_bound",
+      "error": {
+        "kind": "BadRequestError",
+        "message": "range of max_tokens should be [\uff11, 20]",
+        "status_code": 400,
+        "body": null
+      },
+      "expected": null,
+      "observed": null
+    },
+    {
+      "name": "range_allows_unicode_cap",
+      "error": {
+        "kind": "BadRequestError",
+        "message": "range of max_tokens should be [1, \uff12\uff10]",
+        "status_code": 400,
+        "body": null
+      },
+      "expected": 20,
+      "observed": 20
+    },
+    {
+      "name": "zero_first_match_wins",
+      "error": {
+        "kind": "BadRequestError",
+        "message": "max_tokens at most 0 then max_tokens at most 9",
+        "status_code": 400,
+        "body": null
+      },
+      "expected": null,
+      "observed": null
+    },
+    {
+      "name": "zero_first_range_wins",
+      "error": {
+        "kind": "BadRequestError",
+        "message": "range of max_tokens should be [1, 0] then range of max_tokens should be [1, 100]",
+        "status_code": 400,
+        "body": null
+      },
+      "expected": null,
+      "observed": null
+    },
+    {
+      "name": "multiple_field_quotes",
+      "error": {
+        "kind": "BadRequestError",
+        "message": "range of ``max_tokens`` should be [1, 9]",
+        "status_code": 400,
+        "body": null
+      },
+      "expected": null,
+      "observed": null
+    },
+    {
+      "name": "combining_mark_after_cap",
+      "error": {
+        "kind": "BadRequestError",
+        "message": "max_tokens at most 12\u0301",
+        "status_code": 400,
+        "body": null
+      },
+      "expected": 12,
+      "observed": 12
     }
   ],
   "output_cap_clamp": [

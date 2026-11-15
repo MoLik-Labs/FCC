@@ -267,8 +267,12 @@ each adapter's request/response mapping. Sub-phase 4c-4a is complete:
 the transport-free leaf utilities of the OpenAI-chat family (`/v1` base
 URL policy, `extra_body` guards, streamed-usage helpers and rejection
 classification, output-token cap parsing/clamping, per-attempt tool-call
-identity resolution) now live in `gocore/openaichat/` with golden parity
-under `gocore/testdata/golden_openaichat4c4a.json`. Phase 4c-4b
+identity resolution) now live in `gocore/openaichat/` with golden coverage
+under `gocore/testdata/golden_openaichat4c4a.json`. A subsequent oracle audit
+fixed a case where replay had compared hand-written expectations rather than
+Python observations, and added a 1,570-case quote/Unicode cap differential
+corpus. Go `int` bounds and later Unicode table versions still need attention
+when defining an unrestricted production input contract. Phase 4c-4b
 (stream/tool-call output assembly) is in progress: its tool-name codec,
 Chat body rewriting, streamed-name decoding, and protocol-neutral block
 lifecycle have Python golden coverage. The lifecycle's schema-based tool
