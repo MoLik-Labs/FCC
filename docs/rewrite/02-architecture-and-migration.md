@@ -106,7 +106,8 @@ the two implementations side by side.
 - Cached payloads are read-only shared state. Any mutation starts from a
   deep copy, and edited frames re-serialize to new strings that naturally
   miss the cache.
-- Retention accounting stays monotonic and conservative: it may trigger
-  earlier than an exact serialization, never later.
+- Retention accounting uses a monotonic estimate, not a strict serialized-size
+  or memory bound. Escaping is not counted; see the integration review before
+  relying on the budget as a resource limit.
 - The fast paths are optimization-only. Each has a general fallback, and
   tests pin both paths against the same golden output.

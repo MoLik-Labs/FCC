@@ -2,9 +2,10 @@
 
 ## Decision
 
-The rewrite proceeds in **Go**. The hot-path core in `gocore/` already runs
-there and is proven byte-for-byte against golden data produced by the Python
-reference. This document compares all three candidates the team raised —
+The rewrite proceeds in **Go**. Selected hot-path components in `gocore/`
+are tested against golden data produced by the Python reference; this does not
+establish complete byte-for-byte parity or a finished server. This document
+compares all three candidates the team raised —
 Go, Rust, and Zig — against the actual shape of the product and the actual
 build environment, and states the measured cost of each trade-off.
 

@@ -15,9 +15,8 @@ import (
 const LimitBytes = 1 << 20
 
 // JSONByteSize estimates the UTF-8 JSON size of value without serializing it.
-// Structural delimiters are approximated by fixed overhead so the estimate
-// stays close to, and never systematically below, the serialized size for
-// the payload shapes retained on a stream.
+// Structural delimiters are approximated by fixed overhead. JSON escaping
+// is not counted, so this is not a strict bound on serialized size.
 func JSONByteSize(value any) int {
 	switch v := value.(type) {
 	case nil:
@@ -60,10 +59,10 @@ func JSONByteSize(value any) int {
 	}
 }
 
-// Budget tracks the retained byte tally for one response. Once the limit is
-// exceeded the budget stays limited and every further Retain call is rejected,
-// matching DeliveredResponse._retain. The estimate can only trigger retention
-// earlier than the serialized-size implementation, never later.
+// Budget tracks the estimated retained byte tally for one response. Once the
+// limit is exceeded the budget stays limited and every further Retain call is
+// rejected, matching DeliveredResponse._retain. The estimate is not an exact
+// serialized-size or memory bound.
 type Budget struct {
 	bytes   int
 	limited bool

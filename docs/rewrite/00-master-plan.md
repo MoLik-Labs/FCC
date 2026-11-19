@@ -240,7 +240,7 @@ it is off the hot path.
 | Frame pipeline per 2k-frame request | under 10 ms CPU (measured 5.4 ms) |
 | Live heap per active stream | under 512 KiB steady state (measured 348 KiB) |
 | Payload cache | FIFO, 64 entries, never grows with stream length |
-| Retention | 1 MiB estimated budget, conservative (triggers early, never late) |
+| Retention | 1 MiB estimated budget; not a strict serialized-size or memory bound |
 | Binary | single static file, no runtime dependency, cgo-free |
 
 ## Risks and mitigations

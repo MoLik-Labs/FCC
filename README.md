@@ -36,6 +36,16 @@
 
 Free-tier availability and limits are controlled by each provider and may change.
 
+> **Security:** Admin and Code session endpoints are reachable by remote clients
+> when the server is exposed; they do not have a separate Admin authentication
+> boundary. They can change configuration and operate code sessions. Do not
+> expose them to untrusted networks or the public internet without protection
+> provided by your network or tunnel. Proxy Authentication protects the proxy
+> API; do not assume it also protects Admin.
+>
+> The Go port in [`gocore/`](gocore/README.md) is experimental and incomplete;
+> the Python application remains the supported runtime.
+
 <div align="center">
   <img src="assets/pic.png" alt="Claude Code running with Free Claude Code" width="700">
   <p><em>Claude Code running with FCC.</em></p>
@@ -51,6 +61,9 @@ Free-tier availability and limits are controlled by each provider and may change
 <a id="install"></a>
 
 ### 1. Install
+
+The commands below install the upstream `Alishahryar1/free-claude-code` project,
+not this fork or its in-progress Go port. Review the scripts before running them.
 
 macOS/Linux:
 

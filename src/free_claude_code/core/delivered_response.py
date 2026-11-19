@@ -24,8 +24,8 @@ def _json_byte_size(value: object) -> int:
     compared against a one-megabyte threshold. Walking the object and measuring
     the string/number contents directly avoids a full ``simplejson`` encode on
     every observed frame. Structural delimiters are approximated by fixed
-    overhead so the estimate stays close to, and never systematically below,
-    the serialized size for the JSON shapes retained here.
+    overhead; JSON escaping is not counted, so the estimate is not a strict
+    bound on serialized size or memory use.
     """
     if isinstance(value, str):
         return len(value.encode("utf-8")) + 2
