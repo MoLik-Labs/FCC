@@ -3,6 +3,7 @@ package openaichat
 import (
 	"encoding/json"
 	"strings"
+	"unicode"
 )
 
 // AmbiguousToolCallIdentityError mirrors the reference exception: a
@@ -101,6 +102,20 @@ func (r *ToolCallIdentityResolver) Resolve(rawIndex, rawID any) (int, error) {
 	return slot, nil
 }
 
+// ResolveCurrent mirrors the current Python Chat source resolver's return
+// shape and error messages. Retention-budget charging is not implemented here;
+// callers must account for identity storage separately.
+func (r *ToolCallIdentityResolver) ResolveCurrent(rawIndex, rawID any) (int, *string, error) {
+	slot, err := r.Resolve(rawIndex, rawID)
+	if err != nil {
+		if err == errNoUsableIdentity {
+			return 0, nil, &AmbiguousToolCallIdentityError{message: "Tool fragment has neither a usable index nor an ID."}
+		}
+		return 0, nil, &AmbiguousToolCallIdentityError{message: "Tool fragment has ambiguous identity."}
+	}
+	return slot, r.ToolID(slot), nil
+}
+
 // ToolID returns the learned upstream tool ID for a slot, or nil.
 func (r *ToolCallIdentityResolver) ToolID(slot int) *string {
 	return r.calls[slot].toolID
@@ -155,7 +170,10 @@ func validIndex(value any) *int {
 
 func validToolID(value any) *string {
 	text, ok := value.(string)
-	if !ok || strings.TrimSpace(text) == "" {
+	// Python str.strip() additionally treats U+001C–U+001F as whitespace.
+	if !ok || strings.TrimFunc(text, func(r rune) bool {
+		return unicode.IsSpace(r) || r >= '\x1c' && r <= '\x1f'
+	}) == "" {
 		return nil
 	}
 	return &text

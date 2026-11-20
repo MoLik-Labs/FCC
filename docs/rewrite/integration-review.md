@@ -72,7 +72,12 @@ JSON and output-cap edge fixtures regenerated unchanged.
 
 The historical fixtures remain useful as records of earlier behavior, but a
 green Go test run against them is not a current-reference parity gate. Update
-and test each subsystem against the new Python behavior before release.
+and test each subsystem against the new Python behavior before release. As a
+first migration slice, `golden_chat_identity_current.json` checks the current
+unbudgeted resolver's returned slot, learned ID and error text over 27
+scenarios, including Python-specific control-character whitespace. The new Go
+adapter does not yet implement identity retention budget charging or the
+surrounding source tool-call buffer.
 
 ## Integrated verification
 
