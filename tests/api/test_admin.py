@@ -179,21 +179,14 @@ def _clear_process_config(monkeypatch) -> None:
     for key in (
         "MODEL",
         "MODEL_FALLBACKS",
-        "NVIDIA_NIM_API_KEY",
-        "HUGGINGFACE_API_KEY",
-        "OPENROUTER_API_KEY",
-        "AWS_BEARER_TOKEN_BEDROCK",
         "BEDROCK_BASE_URL",
         "BEDROCK_PROXY",
-        "OLLAMA_API_KEY",
         "ANTHROPIC_AUTH_TOKEN",
         "PROXY_AUTH_ENABLED",
         "TELEGRAM_PROXY_URL",
         "FCC_ENV_FILE",
-        "CLOUDFLARE_API_TOKEN",
         "CLOUDFLARE_ACCOUNT_ID",
         "GITHUB_MODELS_TOKEN",
-        "SAMBANOVA_API_KEY",
         "HOST",
         "PORT",
         "FCC_OPEN_BROWSER",
@@ -206,6 +199,8 @@ def _clear_process_config(monkeypatch) -> None:
     ):
         monkeypatch.delenv(key, raising=False)
     for descriptor in PROVIDER_CATALOG.values():
+        if descriptor.credential_env is not None:
+            monkeypatch.delenv(descriptor.credential_env, raising=False)
         if descriptor.proxy_attr is None:
             continue
         alias = Settings.model_fields[descriptor.proxy_attr].validation_alias
@@ -821,17 +816,7 @@ def test_admin_config_masks_secrets_and_exposes_manifest(monkeypatch, tmp_path):
     assert open_browser_field["type"] == "boolean"
     assert open_browser_field["value"] == "true"
     assert open_browser_field["restart_required"] is False
-    progress_timeout_field = next(
-        field for field in body["fields"] if field["key"] == "PROVIDER_PROGRESS_TIMEOUT"
-    )
-    assert progress_timeout_field["label"] == "Provider Progress Timeout"
-    assert progress_timeout_field["section"] == "runtime"
-    assert progress_timeout_field["type"] == "number"
-    assert progress_timeout_field["value"] == "600.0"
-    assert progress_timeout_field["advanced"] is True
-    assert progress_timeout_field["restart_required"] is False
-    assert "non-empty protocol event" in progress_timeout_field["description"]
-    assert "Independent of HTTP Read Timeout" in progress_timeout_field["description"]
+    assert "PROVIDER_PROGRESS_TIMEOUT" not in {field["key"] for field in body["fields"]}
     model_field_types = {
         field["key"]: field["type"]
         for field in body["fields"]
@@ -1029,30 +1014,6 @@ def test_admin_apply_persists_open_browser_for_next_launch(monkeypatch, tmp_path
     assert "FCC_OPEN_BROWSER=false" in managed_env.read_text(encoding="utf-8")
 
 
-def test_admin_apply_hot_publishes_provider_progress_timeout(monkeypatch, tmp_path):
-    _set_home(monkeypatch, tmp_path)
-    _clear_process_config(monkeypatch)
-    app = create_test_app()
-
-    response = post_config(
-        _local_client(app),
-        "/admin/api/config/apply",
-        json={"values": {"PROVIDER_PROGRESS_TIMEOUT": 900}},
-    )
-
-    assert response.status_code == 200
-    body = response.json()
-    assert body["applied"] is True
-    assert body["pending_fields"] == []
-    assert body["restart"]["required"] is False
-    assert (
-        provider_manager_for_app(app).current_settings().provider_progress_timeout
-        == 900.0
-    )
-    managed_env = tmp_path / ".fcc" / ".env"
-    assert "PROVIDER_PROGRESS_TIMEOUT=900" in managed_env.read_text(encoding="utf-8")
-
-
 def test_admin_apply_hot_publishes_ordered_model_fallbacks(monkeypatch, tmp_path):
     _set_home(monkeypatch, tmp_path)
     _clear_process_config(monkeypatch)
@@ -1111,7 +1072,7 @@ def test_admin_apply_null_removes_model_fallbacks(monkeypatch, tmp_path):
     assert "MODEL_FALLBACKS=" not in env_file.read_text(encoding="utf-8")
 
 
-def test_admin_rejects_invalid_provider_progress_timeout_without_writing(
+def test_admin_ignores_retired_progress_setting_without_writing(
     monkeypatch,
     tmp_path,
 ):
@@ -1127,9 +1088,12 @@ def test_admin_rejects_invalid_provider_progress_timeout_without_writing(
 
     assert response.status_code == 200
     body = response.json()
-    assert body["applied"] is False
-    assert body["valid"] is False
-    assert any("PROVIDER_PROGRESS_TIMEOUT" in error for error in body["errors"])
+    assert body["applied"] is True
+    assert body["valid"] is True
+    assert body["errors"] == []
+    assert "provider_progress_timeout" not in (
+        provider_manager_for_app(app).current_settings().model_dump()
+    )
     managed_env = tmp_path / ".fcc" / ".env"
     assert "PROVIDER_PROGRESS_TIMEOUT=" not in managed_env.read_text(encoding="utf-8")
 

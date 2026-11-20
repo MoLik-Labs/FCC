@@ -10,14 +10,13 @@ from openai import AsyncOpenAI
 from free_claude_code.core.failures import ExecutionFailure, FailureKind
 from free_claude_code.core.gemini.replay import (
     ReplayBundle,
-    decode_bundle,
     encode_bundle,
 )
 from free_claude_code.core.history_replay import ReplayOrigin, ReplayRecord
 from free_claude_code.providers.deepseek.client import _PROFILE, DeepSeekChatBehavior
-from free_claude_code.providers.gemini.client import _PROFILE as GOOGLE_PROFILE
 from free_claude_code.providers.google_openai.provider import GoogleChatBehavior
 from free_claude_code.providers.openai_chat import OpenAIChatTransport
+from free_claude_code.providers.vertex.client import _PROFILE as GOOGLE_PROFILE
 from tests.providers.support import immediate_admission
 from tests.providers.test_gemini_transport import chat_response, collect, gemini_request
 from tests.providers.test_lmstudio import (
@@ -84,12 +83,7 @@ async def test_plain_reasoning_survives_gemini_round_trip(visible, with_call, fi
         signatures = [
             p["thoughtSignature"] for p in content["parts"] if "thoughtSignature" in p
         ]
-        assert signatures, (
-            "native reasoning needs a replay carrier even when thoughts are hidden"
-        )
-        bundle = decode_bundle(signatures[0])
-        assert bundle is not None
-        assert bundle.records[0].native[field] == "original thought"
+        assert not signatures
         result = (
             {
                 "functionResponse": {
@@ -114,7 +108,7 @@ async def test_plain_reasoning_survives_gemini_round_trip(visible, with_call, fi
             )
         )
     assistant = next(m for m in sent[1]["messages"] if m["role"] == "assistant")
-    assert assistant["reasoning_content"] == "original thought"
+    assert assistant["reasoning_content"] == ("original thought" if visible else "")
     assert "original thought" not in json.dumps(assistant.get("content"))
 
 

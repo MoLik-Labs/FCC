@@ -20,7 +20,6 @@ from free_claude_code.core.openai_responses import (
     OpenAIResponsesRequest,
 )
 from free_claude_code.core.reasoning import ReasoningEffort, ReasoningPolicy
-from free_claude_code.core.stream_recovery import ContinuationSeed
 from free_claude_code.providers.admission import ProviderAdmissionController
 from free_claude_code.providers.lmstudio import LMStudioProvider
 from tests.application.test_execution import (
@@ -35,8 +34,10 @@ from tests.providers.support import (
     REASONING_OFF,
     REASONING_ON,
     SDKStreamDouble,
+    continuation_seed,
     immediate_admission,
     make_provider_config,
+    sdk_chat_chunk,
 )
 
 
@@ -401,7 +402,7 @@ async def test_continuation_prefix_counts_before_generation(lmstudio_provider, w
         await anext(
             getattr(lmstudio_provider, f"stream_{wire}")(
                 request,
-                continuation=ContinuationSeed("large " * 10000, "consider this"),
+                continuation=continuation_seed("large " * 10000, "consider this"),
             )
         )
     assert error.value.kind is FailureKind.CONTEXT_WINDOW_EXCEEDED
@@ -413,7 +414,7 @@ async def test_continuation_prefix_counts_before_generation(lmstudio_provider, w
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("wire", ["messages", "responses"])
-async def test_primary_context_validation_counts_toward_progress_timeout(
+async def test_cancelling_primary_context_validation_closes_lookup(
     wire,
 ):
     body = GatedBody()
@@ -432,17 +433,18 @@ async def test_primary_context_validation_counts_toward_progress_timeout(
         providers = {"provider": provider, "fallback": fallback}
         executor = ProviderExecutor(
             AsyncMock(side_effect=lambda name, _api_key_number: providers[name]),
-            progress_timeout_seconds=0.05,
         )
         route = _routed_request if wire == "messages" else _routed_responses_request
         routed = route(_target("fallback", "fallback-model"))
         stream = getattr(executor, f"stream_{wire}")(
-            routed, raw_log_payload=dict, request_id="context-timeout"
+            routed, raw_log_payload=dict, request_id="context-cancel"
         )
         async with asyncio.timeout(2):
-            with pytest.raises(ExecutionFailure) as error:
-                await anext(stream)
-        assert error.value.kind is FailureKind.TIMEOUT
+            task = asyncio.ensure_future(anext(stream))
+            await body.started.wait()
+            task.cancel()
+            with pytest.raises(asyncio.CancelledError):
+                await task
         assert body.started.is_set()
         assert body.close_count == 1
         assert fallback.stream_calls == []
@@ -469,14 +471,18 @@ async def test_stream_messages_text(lmstudio_provider):
     mock_chunk.usage = MagicMock(completion_tokens=5, prompt_tokens=10)
 
     async def mock_stream():
-        yield mock_chunk
+        yield sdk_chat_chunk(mock_chunk)
 
     with patch.object(
         lmstudio_provider._client.chat.completions, "create", new_callable=AsyncMock
     ) as mock_create:
         mock_create.return_value = SDKStreamDouble(mock_stream())
 
-        events = [event async for event in lmstudio_provider.stream_messages(req)]
+        events = [
+            frame
+            async for event in lmstudio_provider.stream_messages(req)
+            for frame in event.frames
+        ]
 
         assert any(
             '"text_delta"' in event and "Hello back!" in event for event in events
@@ -503,7 +509,7 @@ async def test_stream_messages_passes_exact_reasoning_budget_via_extra_body(
     mock_chunk.usage = MagicMock(completion_tokens=1, prompt_tokens=1)
 
     async def mock_stream():
-        yield mock_chunk
+        yield sdk_chat_chunk(mock_chunk)
 
     with patch.object(
         lmstudio_provider._client.chat.completions, "create", new_callable=AsyncMock
@@ -511,11 +517,12 @@ async def test_stream_messages_passes_exact_reasoning_budget_via_extra_body(
         mock_create.return_value = SDKStreamDouble(mock_stream())
 
         events = [
-            event
+            frame
             async for event in lmstudio_provider.stream_messages(
                 req,
                 reasoning=policy,
             )
+            for frame in event.frames
         ]
 
     await_args = mock_create.await_args
@@ -663,7 +670,11 @@ async def test_metadata_http_policy_preserves_the_generation_client(
     async with provider_with_http(handler, base_url=provider_url) as provider:
         assert await provider._loaded_context_length() == 4096
         output = "".join(
-            [event async for event in stream_request(provider, "messages")]
+            [
+                frame
+                async for packet in stream_request(provider, "messages")
+                for frame in packet.frames
+            ]
         )
         assert "hello" in output
         assert "message_stop" in output
@@ -716,7 +727,11 @@ async def test_metadata_failure_is_cached_without_retry_and_allows_generation(fa
         assert await provider._loaded_context_length() is None
         assert await provider._loaded_context_length() is None
         output = "".join(
-            [event async for event in stream_request(provider, "messages")]
+            [
+                frame
+                async for packet in stream_request(provider, "messages")
+                for frame in packet.frames
+            ]
         )
         assert "hello" in output
         assert "message_stop" in output
@@ -822,7 +837,9 @@ async def test_cancelled_context_lookup_does_not_poison_other_requests(cancel_ow
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("wire", ["messages", "responses"])
-async def test_request_timeout_while_waiting_for_cache_leaves_refresh_running(wire):
+async def test_request_cancellation_while_waiting_for_cache_leaves_refresh_running(
+    wire,
+):
     body = GatedBody()
     calls = 0
 
@@ -834,19 +851,20 @@ async def test_request_timeout_while_waiting_for_cache_leaves_refresh_running(wi
     async with provider_with_http(handler) as provider, asyncio.TaskGroup() as group:
         owner = group.create_task(provider._loaded_context_length())
         await asyncio.wait_for(body.started.wait(), 2)
-        executor = ProviderExecutor(
-            AsyncMock(return_value=provider), progress_timeout_seconds=0.05
-        )
+        executor = ProviderExecutor(AsyncMock(return_value=provider))
         routed = (
             _routed_request() if wire == "messages" else _routed_responses_request()
         )
         stream = getattr(executor, f"stream_{wire}")(
-            routed, raw_log_payload=dict, request_id="cache-wait-timeout"
+            routed, raw_log_payload=dict, request_id="cache-wait-cancel"
         )
         async with asyncio.timeout(2):
-            with pytest.raises(ExecutionFailure) as error:
-                await anext(stream)
-        assert error.value.kind is FailureKind.TIMEOUT
+            task = asyncio.ensure_future(anext(stream))
+            await asyncio.sleep(0)
+            assert not task.done()
+            task.cancel()
+            with pytest.raises(asyncio.CancelledError):
+                await task
         assert not owner.done()
         assert body.close_count == 0
         body.release.set()
@@ -879,7 +897,7 @@ async def test_closing_validated_stream_closes_upstream_and_releases_admission(w
         stream = stream_request(provider, wire)
         try:
             async with asyncio.timeout(2):
-                first = await anext(stream)
+                first = "".join((await anext(stream)).frames)
             assert (
                 "message_start" in first
                 if wire == "messages"
@@ -890,7 +908,13 @@ async def test_closing_validated_stream_closes_upstream_and_releases_admission(w
         assert body.close_count == 1
         assert not provider._client.is_closed()
         async with asyncio.timeout(2):
-            output = "".join([event async for event in stream_request(provider, wire)])
+            output = "".join(
+                [
+                    frame
+                    async for packet in stream_request(provider, wire)
+                    for frame in packet.frames
+                ]
+            )
         assert "hello" in output
         assert generations == 2
 
@@ -909,7 +933,6 @@ async def test_context_rejection_before_first_event_allows_fallback(wire):
         providers = {"provider": provider, "fallback": fallback}
         executor = ProviderExecutor(
             AsyncMock(side_effect=lambda name, _api_key_number: providers[name]),
-            progress_timeout_seconds=2,
         )
         route = _routed_request if wire == "messages" else _routed_responses_request
         stream = getattr(executor, f"stream_{wire}")(
@@ -917,7 +940,7 @@ async def test_context_rejection_before_first_event_allows_fallback(wire):
             raw_log_payload=dict,
             request_id="context-fallback",
         )
-        output = [event async for event in stream]
+        output = [frame async for event in stream for frame in event.frames]
         assert output == [
             "event: message_stop\ndata: {}\n\n"
             if wire == "messages"

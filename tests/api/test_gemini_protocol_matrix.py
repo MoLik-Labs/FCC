@@ -10,12 +10,10 @@ from fastapi.testclient import TestClient
 
 from free_claude_code.config.model_refs import ModelFallback
 from free_claude_code.config.settings import Settings
-from free_claude_code.core.gemini.replay import decode_bundle
 from free_claude_code.core.gemini.response import GeminiResponseAccumulator
 from free_claude_code.providers.base import BaseProvider
 from free_claude_code.providers.custom import CustomProvider
 from free_claude_code.providers.runtime.config import build_custom_provider_config
-from free_claude_code.providers.stream_recovery import RecoveryHoldbackBuffer
 from tests.api.support import create_test_app, provider_manager_for_app
 from tests.api.test_delivered_stream_recovery import text_events
 from tests.providers.support import immediate_admission
@@ -155,10 +153,6 @@ def test_full_http_to_upstream_matrix_keeps_route_controls_and_credentials(
 def test_gemini_http_fallback_keeps_one_response_across_egresses(
     first_wire, streaming, structured, monkeypatch
 ):
-    monkeypatch.setattr(
-        "free_claude_code.providers.stream_recovery.RecoveryHoldbackBuffer",
-        lambda: RecoveryHoldbackBuffer(max_bytes=1),
-    )
     sent = []
 
     def reply(request):
@@ -228,7 +222,7 @@ def test_gemini_http_fallback_keeps_one_response_across_egresses(
     with TestClient(app) as client:
         response = client.post(f"/v1beta/models/public:{suffix}", json=payload)
         assert provider_manager_for_app(app)._current.active_leases == 0
-    if structured:
+    if structured and streaming:
         assert [body["model"] for body in sent] == ["first"]
         if streaming:
             assert '"error"' in response.text and '"finishReason"' not in response.text
@@ -245,12 +239,14 @@ def test_gemini_http_fallback_keeps_one_response_across_egresses(
             value = aggregate.result()
         else:
             value = response.json()
-        assert value["candidates"][0]["content"]["parts"] == [{"text": "Before Hello"}]
+        assert value["candidates"][0]["content"]["parts"] == [
+            {"text": "Before Hello" if streaming else "Hello"}
+        ]
         assert value["modelVersion"] == "public"
 
 
 @pytest.mark.parametrize("streaming", [False, True])
-def test_public_fallback_keeps_completed_reasoning_from_original_provider(streaming):
+def test_public_fallback_omits_hidden_unsigned_history(streaming):
     sent = []
 
     def reply(request):
@@ -303,7 +299,7 @@ def test_public_fallback_keeps_completed_reasoning_from_original_provider(stream
         )
     assert response.status_code == 200, response.text
     assert [body["model"] for body in sent] == ["first", "second"]
-    assert "original hidden thought" in json.dumps(sent[1]["input"])
+    assert "original hidden thought" not in json.dumps(sent[1]["input"])
     if streaming:
         aggregate = GeminiResponseAccumulator()
         for line in response.text.splitlines():
@@ -317,12 +313,4 @@ def test_public_fallback_keeps_completed_reasoning_from_original_provider(stream
         for part in value["candidates"][0]["content"]["parts"]
         if "thoughtSignature" in part
     ]
-    assert len(signatures) == 1
-    bundle = decode_bundle(signatures[0])
-    assert bundle is not None
-    assert len(bundle.records) == 1
-    assert (
-        bundle.records[0].origin.protocol == "chat"
-        and bundle.records[0].origin.model == "first"
-    )
-    assert bundle.records[0].native == {"reasoning_content": "original hidden thought"}
+    assert not signatures

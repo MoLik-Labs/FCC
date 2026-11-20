@@ -71,3 +71,42 @@ def test_fast_path_frames_match_regex_path_on_random_streams(monkeypatch):
         fast_tail = fast.finish_frames()
         monkeypatch.setattr(decoder_module, "_FAST_PATH", False)
         assert fast_tail == slow.finish_frames()
+
+
+def test_event_name_does_not_treat_unicode_separator_as_a_line_break():
+    from free_claude_code.core.anthropic.stream_contracts import sse_event_name
+
+    frame = 'data: {"text":"hello\u2028event: error"}\n\n'
+    assert sse_event_name(frame) == ""
+
+
+@pytest.mark.parametrize(
+    "frame",
+    [
+        "event: error\ndata: {bad json}\n\n",
+        'event: response.failed\ndata: {"type":"ok"} trailing\n\n',
+        "event: error\n\n",
+        'data: {"error":{"code":"invalid"}}\n\n',
+        'data: {"type":"response.failed","response":{"error":{"type":"overloaded"}}}\n\n',
+        'event: ping\ndata: {"error":{"type":"not_failure"}}\n\n',
+        ": error text\n\n",
+    ],
+)
+def test_failure_fast_scan_matches_full_outcome_observer(frame):
+    from free_claude_code.api.request_outcomes import _FAILURE_EVENTS, _observe_event
+    from free_claude_code.core.anthropic.stream_contracts import (
+        failure_reason_from_frame,
+    )
+    from free_claude_code.core.request_outcomes import (
+        RequestOutcome,
+        current_request_outcome,
+    )
+
+    outcome = RequestOutcome()
+    token = current_request_outcome.set(outcome)
+    try:
+        for event in parse_sse_text(frame, event_names=_FAILURE_EVENTS):
+            _observe_event(event)
+    finally:
+        current_request_outcome.reset(token)
+    assert failure_reason_from_frame(frame, _FAILURE_EVENTS) == outcome.failure_reason

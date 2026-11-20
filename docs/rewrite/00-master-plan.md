@@ -1,5 +1,12 @@
 # FCC rewrite master plan
 
+> **Reference revision change:** The phase completion and benchmark results
+> below describe the Python reference at the earlier branch base (`56ee72e`).
+> The newer Python implementation changes stream ownership, recovery, provider
+> policy and tool assembly. Existing Go fixtures and ports must be revalidated
+> against it; their historical completion labels are not current parity claims.
+> See [integration review](integration-review.md) for the migration gates.
+
 ## Objective
 
 Rewrite the Python service into a single statically compiled, high-throughput

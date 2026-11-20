@@ -51,9 +51,8 @@ def replace_frame_data(frame: str, payload: Mapping[str, object]) -> str:
 class FramePayloadCache:
     """Memoize decimal-aware frame parses across one response's delivery stages.
 
-    A single SSE frame is inspected by several delivery stages (tool-call
-    holdback, finalization, publication, evidence). Each stage otherwise
-    re-parsed the identical frame string. The cache keeps the *pristine* parse
+    A single SSE frame can be inspected by continuation, publication and
+    evidence stages. The cache keeps the *pristine* parse
     so the common read-only path parses once; callers that edit a payload must
     copy it first, and edited frames are re-serialized to new strings (cache
     misses), preserving the original frame semantics exactly.

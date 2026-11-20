@@ -38,13 +38,13 @@ The merge base is `56ee72e`.
    previously described the partial port as byte-for-byte complete and omitted
    later packages and limitations; both documents now clarify their scope.
 
-The trial merge produced conflicts in `api/admin_routes.py`,
+The integration produced conflicts in `api/admin_routes.py`,
 `api/stream_delivery.py`, `api/tool_call_buffer.py` (modified/deleted),
 `core/delivered_response.py`, and `tests/api/test_antigravity_routes.py`.
-The trial was aborted without changing either branch. In particular, `main`
-removed Antigravity connection endpoints; preserve that deliberate removal rather
-than resurrecting obsolete routes while retaining remote access for supported
-Admin routes.
+The working branch integrates the new packet release path and preserves remote
+Admin access. `main` removed Antigravity connection endpoints; the integration
+retains that removal rather than resurrecting obsolete routes. This is not yet
+an approval to merge the working branch into `main`.
 
 Before merging: resolve and review all conflicts; test the combined Python and
 Go code, regenerate reference fixtures, check formatting, lint, type checks,
@@ -52,13 +52,45 @@ race tests, security-sensitive routes and browser tests; then benchmark the
 combined path against an appropriate baseline. Record unavailable checks and
 failures rather than treating historical branch-only results as a merge gate.
 
-## Branch-only verification
+## Fixture migration inventory
 
-On the reviewed branch, Go formatting, `go vet`, `go test ./...` and
-`go test -race ./...` passed. The Python test suite passed with 9,794 tests
-and 10 skips using two workers. These results do not test the trial merge,
-regenerated fixtures against `main`, Playwright browsers, or performance of
-the integrated pipeline.
+A trial regeneration against the integrated Python reference was run in an
+isolated directory, without overwriting historical fixtures. The base SSE/JSON
+fixture was regenerated after fixing malformed named-error handling. The ASCII
+JSON and output-cap edge fixtures regenerated unchanged.
+
+- The phase 2, 4a, 4b, 4c-2, 4c-3c and streamed-name generators import
+  interfaces removed or relocated by the new reference.
+- Phase 3b still reads the removed delivery sequence field; 4c-1, 4c-3a,
+  4c-4a, tool-name and stream-output generators depend on changed signatures,
+  state or lifecycle operations. Anthropic Chat output now emits complete
+  tool calls rather than the prior start/delta/stop interface.
+- Phase 3 overlap and stream generators run but produce different events,
+  sizes or sequence fields. The 4c-3b recovery generator also produces different
+  execution-state/timing results. These changes need semantic review and Go
+  reimplementation, not a blind fixture refresh.
+
+The historical fixtures remain useful as records of earlier behavior, but a
+green Go test run against them is not a current-reference parity gate. Update
+and test each subsystem against the new Python behavior before release.
+
+## Integrated verification
+
+The integrated Python test suite passed 11,528 tests with 13 skips on Linux
+using two workers and a pip-installed environment; the SDK test bridge now
+uses the same `httpx2` response type as the Gemini SDK. Go formatting, `go vet`,
+`go test ./...` and `go test -race ./...` passed against the committed fixtures.
+Repository-wide Ruff and `ty check src tests` passed. Repository-wide `ty check`
+still reports diagnostics in historical benchmark/generator scripts that need
+migration; it is not a green CI gate. Playwright browsers and other operating
+systems have not been tested here.
+
+`bench_local/bench_public_delivery.py` exercises the new packet-based Messages
+path. On this sandbox, repeated 2,004-frame runs gave approximately 334–343 ms
+for `main` and 273 ms for the integrated code after a warm-up; output SHA-256
+was identical (`5cde2bedb002bf497ba4f28c158340f2e596613d1c9fb5307f9ecf205d1ab6b8`).
+These are noisy component measurements, not an end-to-end throughput claim or
+proof that the earlier 56% improvement survives every new path.
 
 At review time the remote had only `main` and the active working branch. No
 obsolete remote branch was identified for deletion. Preserve the working

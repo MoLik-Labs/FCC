@@ -33,30 +33,32 @@ the Go tests. For example:
 
 ```bash
 .venv/bin/python bench_local/generate_golden.py
-.venv/bin/python bench_local/generate_golden_phase2.py
 cd gocore
 go test ./...
 go vet ./...
 gofmt -l .
 ```
 
-Other phases have their own `generate_golden_*` scripts. Committed fixtures
-capture the reference revision used to generate them; passing Go tests alone
-cannot prove compatibility with a newer Python reference. When the Python
-implementation changes, regenerate the affected fixtures and investigate
-behavioral differences rather than treating fixture drift as an automatic update.
+Other phases have their own `generate_golden_*` scripts. Many still target the
+older Python reference and cannot currently run against the newer packet-based
+implementation. Committed fixtures capture the reference revision used to
+generate them; passing Go tests alone cannot prove compatibility with a newer
+Python reference. See the [integration review](../docs/rewrite/integration-review.md)
+for the generator inventory and known divergences.
 
 ## Benchmark
 
 From the repository root:
 
 ```bash
-.venv/bin/python bench_local/bench_golden.py
+.venv/bin/python bench_local/bench_public_delivery.py
 cd gocore
 go run ./cmd/bench
 go test -bench=HotPath -benchmem ./sse/
 ```
 
+The historical `bench_golden.py` targets the removed API-level tool buffer and
+is not directly comparable to the new packet-based public delivery benchmark.
 These are component benchmarks, not measurements of the complete FCC server.
 Results depend on the machine, runtime and implementation revision. Historical
 measurements and the language decision are documented in

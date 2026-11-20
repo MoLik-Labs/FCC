@@ -31777,7 +31777,7 @@
     {
       "frame": "event: error\ndata: not-json\n\n",
       "event": "error",
-      "failure": null,
+      "failure": "error",
       "data_text": "not-json",
       "has_object_data": false
     }

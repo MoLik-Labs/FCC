@@ -29,6 +29,7 @@ from free_claude_code.config.settings import Settings
 from free_claude_code.core.anthropic.models import MessagesRequest
 from free_claude_code.core.openai_responses import OpenAIResponsesRequest
 from free_claude_code.core.reasoning import DEFAULT_REASONING_POLICY, ReasoningPolicy
+from free_claude_code.core.stream_output import StreamOutput
 from free_claude_code.harnesses import (
     claude_desktop_integration,
     claude_integration,
@@ -115,9 +116,9 @@ class _ModelListingProvider(BaseProvider):
         request_headers: Mapping[str, str] | None = None,
         model_info: ProviderModelInfo | None = None,
         continuation=None,
-    ) -> AsyncIterator[str]:
+    ) -> AsyncIterator[StreamOutput]:
         if False:
-            yield ""
+            yield StreamOutput(("",))
 
     async def stream_responses(
         self,
@@ -130,9 +131,9 @@ class _ModelListingProvider(BaseProvider):
         request_headers: Mapping[str, str] | None = None,
         model_info: ProviderModelInfo | None = None,
         continuation=None,
-    ) -> AsyncIterator[str]:
+    ) -> AsyncIterator[StreamOutput]:
         if False:
-            yield ""
+            yield StreamOutput(("",))
 
 
 @pytest.fixture
@@ -289,7 +290,11 @@ def admin_base_url(
     }
 
     async def fixture_provider(
-        provider_id: str, _settings: Settings, _admission_registry, _api_key_number
+        provider_id: str,
+        _settings: Settings,
+        _admission_registry,
+        _api_key_number,
+        _history_cache=None,
     ) -> BaseProvider:
         if provider_id not in providers:
             raise AssertionError(f"Missing browser fixture provider: {provider_id}")
@@ -297,11 +302,17 @@ def admin_base_url(
 
     manager = ProviderRuntimeManager(
         get_settings(),
-        runtime_factory=lambda snapshot, admission_registry: ProviderRuntime(
-            snapshot,
-            admission_registry,
-            {(provider_id, 1): provider for provider_id, provider in providers.items()},
-            provider_constructor=fixture_provider,
+        runtime_factory=lambda snapshot, admission_registry, history_cache=None: (
+            ProviderRuntime(
+                snapshot,
+                admission_registry,
+                None,
+                {
+                    (provider_id, 1): provider
+                    for provider_id, provider in providers.items()
+                },
+                provider_constructor=fixture_provider,
+            )
         ),
     )
     runtime = ApplicationRuntime(

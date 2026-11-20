@@ -7,13 +7,16 @@ from typing import Any, Literal
 
 import simplejson
 
+from .chat_completions.response import ChatResponseAccumulator
 from .gemini.response import gemini_parts
 from .history_replay import (
+    protected_reasoning,
     readable_reasoning,
-    unencrypted_responses_replay,
+    unprotected_replay,
 )
-from .openai_responses import is_client_search
-from .stream_recovery import RECOVERY_RETENTION_BYTES, DeliveredPrefix
+from .openai_responses import is_client_call
+from .recovery_limits import RECOVERY_RETENTION_BYTES
+from .stream_recovery import CompletedCall, ContinuationSeed, DeliveredPrefix
 from .token_estimation import estimate_text_tokens
 
 
@@ -50,16 +53,6 @@ def _json_byte_size(value: object) -> int:
         return 2 + sum(_json_byte_size(item) + 1 for item in value)
     return len(str(value).encode("utf-8"))
 
-
-CLIENT_CALL_TYPES = frozenset(
-    {
-        "function_call",
-        "custom_tool_call",
-        "computer_call",
-        "local_shell_call",
-        "apply_patch_call",
-    }
-)
 
 _HEADER_KINDS = frozenset({"message_start", "response.created"})
 _GEMINI_PART_KEYS = frozenset({"text", "thought", "thoughtSignature", "functionCall"})
@@ -130,17 +123,6 @@ _HANDOFF_SAFE_REASONS = frozenset({None, "opaque_reasoning", "opaque_delta"})
 _REASONING_ITEM_TYPES = frozenset({"thinking", "redacted_thinking", "reasoning"})
 
 
-def client_call(item: dict[str, Any]) -> bool:
-    kind = item.get("type")
-    if kind == "tool_search_call":
-        return is_client_search(item)
-    return kind in CLIENT_CALL_TYPES or (
-        kind == "shell_call"
-        and isinstance(item.get("environment"), dict)
-        and item["environment"].get("type") == "local"
-    )
-
-
 def is_structured_text_format(value: object) -> bool:
     return isinstance(value, dict) and value.get("type") in (
         "json_schema",
@@ -172,20 +154,23 @@ def responses_text_constraint(data: dict[str, Any]) -> str | None:
 class DeliveredResponse:
     """Track this response only; the harness continues to own conversation history."""
 
-    def __init__(self, wire_api: Literal["messages", "responses", "gemini"]) -> None:
+    def __init__(
+        self, wire_api: Literal["messages", "responses", "gemini", "chat"]
+    ) -> None:
         self.wire_api = wire_api
         self.items: dict[int, dict[str, Any]] = {}
         self.closed: set[int] = set()
         self._text_closed: set[tuple[int, str, int]] = set()
         self._part_closed: set[tuple[int, str, int]] = set()
         self.header: dict[str, Any] = {}
-        self.sequence = -1
         self.unsafe_reason: str | None = None
         self._text_constraint: str | None = None
         self._bytes = 0
         self._limited = False
         self._limited_output_tokens = 0
         self.progress = 0
+        self._completed_calls: set[CompletedCall] = set()
+        self._chat_response = ChatResponseAccumulator() if wire_api == "chat" else None
 
     def _retain(self, value: object) -> bool:
         if self._limited:
@@ -196,6 +181,7 @@ class DeliveredResponse:
             self._limited = True
             self.unsafe_reason = "retention_limit"
             self.items.clear()
+            self._completed_calls.clear()
             self.closed.clear()
             self._text_closed.clear()
             self._part_closed.clear()
@@ -207,6 +193,9 @@ class DeliveredResponse:
         return self._limited
 
     def observe(self, data: dict[str, Any], *, count_progress: bool = True) -> None:
+        if self.wire_api == "chat":
+            self._chat(data, count_progress=count_progress)
+            return
         if self.wire_api == "gemini":
             self._gemini(data, count_progress=count_progress)
             return
@@ -214,9 +203,6 @@ class DeliveredResponse:
         if not isinstance(kind, str):
             self.unsafe_reason = "unknown_event"
             return
-        sequence = data.get("sequence_number")
-        if isinstance(sequence, int):
-            self.sequence = max(self.sequence, sequence)
         if kind in _HEADER_KINDS and not self.header:
             self.header = deepcopy(data.get("message", data.get("response", {})))
         delta = data.get("delta", "")
@@ -236,8 +222,7 @@ class DeliveredResponse:
             text += block.get("text", "") + block.get("thinking", "")
             if (
                 block.get("type") == "redacted_thinking"
-                and (record := unencrypted_responses_replay(block.get("data")))
-                is not None
+                and (record := unprotected_replay(block.get("data"))) is not None
             ):
                 text += "".join(text for text, _ in readable_reasoning(record.native))
         if count_progress and (
@@ -248,7 +233,7 @@ class DeliveredResponse:
             or (kind == "content_block_start" and block.get("type") == "tool_use")
             or (
                 kind == "response.output_item.done"
-                and client_call(data.get("item", {}))
+                and is_client_call(data.get("item", {}))
             )
         ):
             self.progress += 1
@@ -259,6 +244,59 @@ class DeliveredResponse:
                 self._responses(kind, data)
         if self._limited:
             self._limited_output_tokens += estimate_text_tokens(text)
+
+    def _chat(self, data: dict[str, Any], *, count_progress: bool) -> None:
+        if "error" in data:
+            return
+        if not self.header:
+            self.header = {
+                key: deepcopy(data[key])
+                for key in ("id", "model", "created", "object")
+                if key in data
+            }
+        if data.get("usage") is not None:
+            self.header["usage"] = deepcopy(data["usage"])
+        for choice in data.get("choices", []):
+            delta = choice.get("delta") or {}
+            if count_progress and any(
+                value for key, value in delta.items() if key != "role"
+            ):
+                self.progress += 1
+            if choice["index"] != 0:
+                self.unsafe_reason = "multiple_choices"
+            if choice.get("logprobs") is not None:
+                self._text_constraint = "text_logprobs"
+            if protected_reasoning(delta):
+                self.unsafe_reason = "opaque_reasoning"
+            if any(
+                key
+                not in {
+                    "role",
+                    "content",
+                    "tool_calls",
+                    "reasoning",
+                    "reasoning_content",
+                    "reasoning_details",
+                }
+                and value is not None
+                for key, value in delta.items()
+            ):
+                self.unsafe_reason = "unsupported_output"
+            if delta.get("content") is not None and not isinstance(
+                delta["content"], str
+            ):
+                self.unsafe_reason = "unsupported_output"
+            if choice.get("finish_reason") is not None:
+                self.closed.add(choice["index"])
+        if not self._retain(data):
+            self._chat_response = None
+            return
+        assert self._chat_response is not None
+        self._chat_response.feed(data)
+        self.items = {
+            index: choice["message"]
+            for index, choice in self._chat_response.choices.items()
+        }
 
     def _gemini(self, data: dict[str, Any], *, count_progress: bool) -> None:
         if not self.header:
@@ -342,7 +380,7 @@ class DeliveredResponse:
                     if block.get("type") == "redacted_thinking"
                     else block.get("signature")
                 )
-                if unencrypted_responses_replay(value) is None:
+                if unprotected_replay(value) is None:
                     self.unsafe_reason = "opaque_reasoning"
         elif kind == "content_block_delta":
             delta = data.get("delta", {})
@@ -359,7 +397,7 @@ class DeliveredResponse:
                 block["signature"] = block.get("signature", "") + delta.get(
                     "signature", ""
                 )
-                if unencrypted_responses_replay(block["signature"]) is None:
+                if unprotected_replay(block["signature"]) is None:
                     self.unsafe_reason = "opaque_delta"
             else:
                 self.unsafe_reason = "opaque_delta"
@@ -378,11 +416,13 @@ class DeliveredResponse:
             if not self._retain(item):
                 return
             self.items[index] = deepcopy(item)
-            if item.get("type") not in _RESPONSES_ITEM_TYPES and not client_call(item):
+            if item.get("type") not in _RESPONSES_ITEM_TYPES and not is_client_call(
+                item
+            ):
                 self.unsafe_reason = "native_content"
             if (
                 item.get("encrypted_content")
-                and unencrypted_responses_replay(item["encrypted_content"]) is None
+                and unprotected_replay(item["encrypted_content"]) is None
             ):
                 self.unsafe_reason = "opaque_reasoning"
             if any(part.get("type") == "refusal" for part in item.get("content") or []):
@@ -469,43 +509,49 @@ class DeliveredResponse:
         elif kind not in _RESPONSES_UNKNOWN_EXCLUSIONS:
             self.unsafe_reason = "unknown_event"
 
+    def complete_calls(self, calls: tuple[CompletedCall, ...]) -> None:
+        if not self._limited:
+            self._completed_calls.update(calls)
+
     def snapshot(self) -> DeliveredPrefix:
         text: list[str] = []
         thinking: list[str] = []
-        has_calls = False
-        for index, item in sorted(self.items.items()):
+        has_calls = bool(self._completed_calls)
+        for _, item in sorted(self.items.items()):
             kind = item.get("type")
-            if self.wire_api == "gemini":
+            if self.wire_api == "chat":
+                if isinstance(item.get("content"), str):
+                    text.append(item["content"])
+                thinking.extend(value for value, _ in readable_reasoning(item))
+
+            elif self.wire_api == "gemini":
                 if "text" in item:
                     (thinking if item.get("thought") else text).append(item["text"])
-                if "functionCall" in item:
-                    has_calls = True
+
             elif self.wire_api == "messages":
                 if kind == "text":
                     text.append(item.get("text", ""))
                 elif kind == "thinking":
                     thinking.append(item.get("thinking", ""))
-                elif kind == "redacted_thinking":
-                    if (
-                        record := unencrypted_responses_replay(item.get("data"))
-                    ) is not None:
-                        thinking.extend(
-                            text for text, _ in readable_reasoning(record.native)
-                        )
-                elif kind == "tool_use" and index in self.closed:
-                    has_calls = True
+                elif (
+                    kind == "redacted_thinking"
+                    and (record := unprotected_replay(item.get("data"))) is not None
+                ):
+                    thinking.extend(
+                        text for text, _ in readable_reasoning(record.native)
+                    )
+
             elif kind == "message":
                 text.extend(part.get("text", "") for part in item.get("content") or [])
             elif kind == "reasoning":
+                record = unprotected_replay(item.get("encrypted_content"))
                 thinking.extend(
-                    part.get("text", "")
-                    for part in [
-                        *(item.get("summary") or []),
-                        *(item.get("content") or []),
-                    ]
+                    value
+                    for value, _ in readable_reasoning(
+                        record.native if record else item
+                    )
                 )
-            elif client_call(item) and index in self.closed:
-                has_calls = True
+
         unsafe_reason = self._text_constraint or self.unsafe_reason
         return DeliveredPrefix(
             "".join(text),
@@ -515,6 +561,9 @@ class DeliveredResponse:
             self.can_handoff,
             unsafe_reason,
             retained_bytes=self._bytes,
+            continuation=ContinuationSeed(
+                self.wire_api, tuple(item for _, item in sorted(self.items.items()))
+            ),
         )
 
     def output_tokens(self, output: list[dict[str, Any]] | None = None) -> int:
@@ -539,7 +588,7 @@ class DeliveredResponse:
         )
 
     def closing_events(self) -> list[dict[str, Any]]:
-        if self.wire_api == "gemini":
+        if self.wire_api in {"gemini", "chat"}:
             return []
         events: list[dict[str, Any]] = []
         for index, item in sorted(self.items.items()):
@@ -596,6 +645,15 @@ class DeliveredResponse:
 
     def handoff_events(self) -> list[dict[str, Any]]:
         """Signal handoff; the public writer fills output and usage after closure."""
+        if self.wire_api == "chat":
+            return [
+                {
+                    **deepcopy(self.header),
+                    "choices": [
+                        {"index": 0, "delta": {}, "finish_reason": "tool_calls"}
+                    ],
+                }
+            ]
         if self.wire_api == "gemini":
             return [
                 {

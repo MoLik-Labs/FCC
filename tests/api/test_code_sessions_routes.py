@@ -4,6 +4,7 @@ import uuid
 import httpx
 import pytest
 import pytest_asyncio
+from fastapi.routing import APIRoute
 
 from free_claude_code.application.code_sessions import CodeService
 from free_claude_code.application.errors import ApplicationUnavailableError
@@ -243,6 +244,7 @@ async def test_code_routes_accept_tunnel_clients(code_api, headers):
         if getattr(route, "path", "") == "/admin/api/code/events"
     )
     assert not code_router.dependencies
+    assert isinstance(events_route, APIRoute)
     assert not events_route.dependencies
     assert harness.connections == []
 

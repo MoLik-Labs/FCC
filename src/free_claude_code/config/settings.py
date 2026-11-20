@@ -13,7 +13,11 @@ from pydantic import (
 )
 
 from .api_keys import ApiKeyList
-from .constants import DEFAULT_MODEL, HTTP_CONNECT_TIMEOUT_DEFAULT
+from .constants import (
+    DEFAULT_MODEL,
+    HTTP_CONNECT_TIMEOUT_DEFAULT,
+    PROVIDER_MAX_ATTEMPTS_DEFAULT,
+)
 from .custom_providers import CustomProviderDefinition, decode_custom_providers
 from .model_refs import ModelFallback, ModelFallbacks
 from .provider_catalog import (
@@ -608,14 +612,10 @@ class Settings(BaseModel):
     provider_max_concurrency: int = Field(
         default=2, gt=0, validation_alias="PROVIDER_MAX_CONCURRENCY"
     )
-    provider_progress_timeout: float = Field(
-        default=600.0,
+    provider_max_attempts: int = Field(
+        default=PROVIDER_MAX_ATTEMPTS_DEFAULT,
         gt=0,
-        # Responses metadata adds 60 seconds before encoding this as a u64.
-        # The next representable float below 2**64 leaves more than that margin.
-        lt=float(1 << 64),
-        allow_inf_nan=False,
-        validation_alias="PROVIDER_PROGRESS_TIMEOUT",
+        validation_alias="PROVIDER_MAX_ATTEMPTS",
     )
     reasoning_policy: ReasoningPreference = Field(
         default=ReasoningPreference.CLIENT,

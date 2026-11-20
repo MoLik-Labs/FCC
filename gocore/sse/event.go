@@ -116,6 +116,27 @@ func FrameData(frame string) (map[string]any, bool) {
 	return decodeObject(builder.String())
 }
 
+// pythonTruthy implements the JSON value truthiness used by Python's `or`.
+func pythonTruthy(value any) bool {
+	switch v := value.(type) {
+	case nil:
+		return false
+	case bool:
+		return v
+	case string:
+		return v != ""
+	case json.Number:
+		f, err := v.Float64()
+		return err != nil || f != 0
+	case []any:
+		return len(v) != 0
+	case map[string]any:
+		return len(v) != 0
+	default:
+		return true
+	}
+}
+
 // FailureReason inspects a frame for a terminal failure event. Healthy frames
 // are rejected by a plain substring scan before any line splitting or JSON
 // decoding, exactly like failure_reason_from_frame. It returns "" when the
@@ -151,8 +172,9 @@ func FailureReason(frame string, failureEvents map[string]struct{}) string {
 	if dataBuilder.Len() > 0 {
 		decoder := json.NewDecoder(strings.NewReader(dataBuilder.String()))
 		decoder.UseNumber()
-		if err := decoder.Decode(&parsed); err != nil {
-			return ""
+		if err := decoder.Decode(&parsed); err != nil || !json.Valid([]byte(dataBuilder.String())) {
+			// A named failure remains a failure even if its data is malformed.
+			return eventName
 		}
 	} else {
 		// Python substitutes an empty object when a named failure event
@@ -167,8 +189,12 @@ func FailureReason(frame string, failureEvents map[string]struct{}) string {
 
 	kind := eventName
 	if kind == "" {
-		if typed, isString := data["type"].(string); isString {
-			kind = typed
+		if typed := data["type"]; pythonTruthy(typed) {
+			var isString bool
+			kind, isString = typed.(string)
+			if !isString {
+				return ""
+			}
 		} else if _, hasError := data["error"]; hasError {
 			kind = "error"
 		}
@@ -188,11 +214,12 @@ func FailureReason(frame string, failureEvents map[string]struct{}) string {
 	if nested, isMap := payload["error"].(map[string]any); isMap {
 		errorObject = nested
 	}
-	if code, isString := errorObject["code"].(string); isString && code != "" {
-		return code
+	reason := errorObject["code"]
+	if !pythonTruthy(reason) {
+		reason = errorObject["type"]
 	}
-	if typ, isString := errorObject["type"].(string); isString && typ != "" {
-		return typ
+	if text, isString := reason.(string); isString {
+		return text
 	}
 	return kind
 }

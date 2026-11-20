@@ -17,8 +17,8 @@ from free_claude_code.providers.admission import (
     ProviderAdmissionController,
     ProviderOperationKind,
 )
-from free_claude_code.providers.failure_policy import ProviderRecoveryExhausted
 from free_claude_code.providers.model_listing import ModelListResponseError
+from free_claude_code.providers.recovery_errors import ProviderRecoveryExhausted
 from free_claude_code.providers.runtime.discovery import _provider_query_failure_reason
 
 
@@ -145,8 +145,9 @@ async def test_real_admission_cooldown_retains_discovery_failure(error):
 
 
 def test_recovery_wrapper_cycles_do_not_hang_classification():
-    wrapper = ProviderRecoveryExhausted(RuntimeError("secret-canary"))
-    wrapper.last_error = wrapper
+    error = RuntimeError("unclassified failure")
+    wrapper = ProviderRecoveryExhausted(error)
+    error.__cause__ = wrapper
     assert (
         _provider_query_failure_reason(wrapper)
         == "Could not load models. Check the provider's settings and retry."

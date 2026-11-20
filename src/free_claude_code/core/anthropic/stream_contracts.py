@@ -89,9 +89,8 @@ def parse_sse_text(
 
 def sse_event_name(frame: str) -> str:
     """Return an SSE frame's named event without decoding its JSON payload."""
-    # splitlines is a C-level scan and only an ``event:`` prefix line is used,
-    # so exotic separators inside JSON text cannot change the result.
-    for line in frame.splitlines():
+    # JSON strings may contain Unicode separators that are not SSE line endings.
+    for line in _SSE_LINE_BREAKS.split(frame):
         if line.startswith("event:"):
             return line[6:].strip()
     return ""
@@ -128,7 +127,8 @@ def failure_reason_from_frame(frame: str, failure_events: frozenset[str]) -> str
     try:
         parsed = json.loads("\n".join(data_parts)) if data_parts else {}
     except json.JSONDecodeError:
-        return None
+        # The full SSE parser still reports a named error with malformed data.
+        parsed = {"raw": "\n".join(data_parts)}
     data = parsed if isinstance(parsed, dict) else {"value": parsed}
 
     kind = event_name or data.get("type") or ("error" if "error" in data else None)
