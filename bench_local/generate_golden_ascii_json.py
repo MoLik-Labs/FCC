@@ -5,11 +5,14 @@ import math
 import random
 import struct
 from pathlib import Path
+from typing import cast
+
+from free_claude_code.core.json_types import load_json_value
 
 OUTPUT = Path("gocore/testdata/golden_ascii_json.json")
 
 
-def main():
+def main() -> None:
     inputs = [
         "{}",
         '{"z":1,"a":{"y":true,"x":["é😀\\u007f",null]}}',
@@ -22,13 +25,16 @@ def main():
     ]
     randomizer = random.Random(61824)
     while len(inputs) < 1005:
-        value = struct.unpack(">d", randomizer.getrandbits(64).to_bytes(8, "big"))[0]
+        value = cast(
+            float, struct.unpack(">d", randomizer.getrandbits(64).to_bytes(8, "big"))[0]
+        )
         if math.isfinite(value):
             inputs.append(json.dumps(value))
     fixture = {
         "schema": "ascii-json-v1",
         "cases": [
-            {"input": text, "output": json.dumps(json.loads(text))} for text in inputs
+            {"input": text, "output": json.dumps(load_json_value(text))}
+            for text in inputs
         ],
     }
     OUTPUT.write_text(

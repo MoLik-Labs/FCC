@@ -23,9 +23,10 @@ reported 671–745 ns and 432 B per operation without a budget versus 732–780 
 and 464 B with a budget, over three short runs. This includes constructing the
 budget and excludes ID-byte charging; it is not a full-stream performance claim.
 
-This is only an identity-accounting slice, not source-buffer parity. The Go
-counter uses machine integers and assumes representable values; Python has
-arbitrary-precision integers. UTF-8 ID charging assumes valid scalar text, and
-the Go error currently mirrors the message rather than all Python failure
-metadata. The larger source-order buffer, publication path and current provider
-adapter remain to be ported and checked against Python before release.
+This is only an identity-accounting slice. The Go counter uses machine integers
+and assumes representable values; Python has arbitrary-precision integers.
+UTF-8 ID charging assumes valid scalar text, and the Go error currently mirrors
+the message rather than all Python failure metadata. The standalone
+source-order buffer is now covered separately in the ordered-buffer checkpoint;
+the publication path and current provider adapter remain to be ported and
+checked against Python before release.
