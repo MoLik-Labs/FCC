@@ -291,7 +291,8 @@ function setActiveView(viewId, { scroll = false } = {}) {
   });
 
   if (scroll) {
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    window.scrollTo({ top: 0, behavior: reducedMotion ? "instant" : "smooth" });
   }
   if (activeView.id === "code") window.CodeSessions.activate(window.location.pathname);
   else window.CodeSessions.deactivate();

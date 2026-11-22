@@ -218,3 +218,27 @@ def test_admin_loads_current_release_assets_before_rendering_dynamic_content(
     assert "/admin/assets/admin.js" not in requested_paths
     assert not any("/chat_sessions." in path for path in requested_paths)
     assert page_errors == []
+
+
+@pytest.mark.parametrize(
+    ("reduced_motion", "expected_behavior"),
+    [("reduce", "instant"), ("no-preference", "smooth")],
+)
+def test_navigation_respects_reduced_motion(
+    page: Page, admin_base_url: str, reduced_motion: str, expected_behavior: str
+) -> None:
+    page.emulate_media(reduced_motion=reduced_motion)
+    page.goto(f"{admin_base_url}/admin")
+    expect(page.locator('[data-provider="nvidia_nim"]')).to_be_visible()
+    page.evaluate("""() => {
+      window.recordedScroll = null;
+      window.scrollTo = options => { window.recordedScroll = options; };
+    }""")
+
+    page.get_by_role("button", name="Model Config", exact=True).click()
+
+    expect(page.locator("#view-model_config")).to_be_visible()
+    assert page.evaluate("window.recordedScroll") == {
+        "top": 0,
+        "behavior": expected_behavior,
+    }
