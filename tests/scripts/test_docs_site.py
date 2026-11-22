@@ -17,6 +17,7 @@ class DocumentationSiteTests(unittest.TestCase):
             self.assertTrue((output / ".nojekyll").is_file())
             self.assertTrue((output / "assets" / "admin-page.png").is_file())
             self.assertTrue((output / "assets" / "browser-code-session.png").is_file())
+            self.assertTrue((output / "assets" / "fox-mark.svg").is_file())
             validate_site(output)
 
     def test_quick_starts_use_the_fork_and_warn_about_upstream_updater(self) -> None:

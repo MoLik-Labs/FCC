@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title">
+  <title id="title">Oh My Fox mark</title>
+  <rect width="128" height="128" rx="30" fill="#172723"/>
+  <path d="M20 29 45 41 64 35 83 41 108 29 102 75 88 94 64 108 40 94 26 75Z" fill="#ed8a51"/>
+  <path d="M31 45 46 52 37 66ZM97 45 82 52 91 66Z" fill="#713f36"/>
+  <path d="M31 73 50 81 64 73 78 81 97 73 88 92 64 105 40 92Z" fill="#f8eee1"/>
+  <path d="m52 85 12 8 12-8-12 14Z" fill="#172723"/>
+  <path d="m37 68 11 3M91 68l-11 3" fill="none" stroke="#172723" stroke-width="4" stroke-linecap="round"/>
+</svg>

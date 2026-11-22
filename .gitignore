@@ -19,3 +19,5 @@ llama_cache
 /src/free_claude_code/assets/macos/fcc-desktop-*
 
 /site-build/
+
+/ohmyfox/rust/target/

@@ -26,3 +26,26 @@ claim state-of-the-art agent performance.
 
 See `research.md` for the source inventory and remaining feature, performance,
 license and security gates, and `remote-access.md` for the trust boundary.
+
+## Rust core checkpoint
+
+On Linux, Rust 1.88.0 ran `cargo fmt --check`, Clippy with `-D warnings`,
+`cargo test --locked --offline` (seven tests), and the help command. The Go
+prototype's `go test ./...` and the documentation builder/tests also passed.
+These are local component tests, not evidence of model, filesystem, FCC,
+tunnel, sandbox, performance or cross-platform parity. The Rust CI matrix is
+configured for Linux, macOS and Windows but has not been observed running.
+
+The sandbox could not reach `static.rust-lang.org` or crates.io. For this local
+check only, compiler components were unpacked from third-party npm `@rustbin`
+packages outside the repository, without running their install scripts. Their
+contents were not independently verified against official Rust release checksums;
+therefore local results carry a toolchain provenance limitation. The CI workflow
+is configured to install Rust 1.88.0 using the usual Rust distribution instead.
+No compiler binaries are included in this repository.
+
+The updated bilingual site was tested locally in headless Chromium at 1440,
+390 and 320 pixels: no overflow, page/HTTP errors or axe WCAG 2/2.1 A/AA
+violations were detected, and mobile menu/Escape navigation worked. The fox
+mark loaded at desktop and narrow widths. This is not cross-browser or physical
+device testing and does not mean GitHub Pages is publicly deployed.

@@ -84,6 +84,7 @@ def build(output: Path) -> None:
     images.mkdir(exist_ok=True)
     for name in SCREENSHOTS:
         shutil.copy2(ROOT / "assets" / name, images / name)
+    shutil.copy2(ROOT / "ohmyfox" / "brand" / "fox-mark.svg", images / "fox-mark.svg")
     (output / ".nojekyll").touch()
     validate_site(output)
 

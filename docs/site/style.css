@@ -912,3 +912,43 @@ pre:focus-visible,
   outline: 3px solid #8bc63e;
   outline-offset: 3px;
 }
+
+/* Independent Oh My Fox project; FCC retains its own identity. */
+.fox-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  padding: 24px;
+  margin: 24px 0;
+  border: 1px solid #ead7c8;
+  border-radius: 8px;
+  background: #fff9f3;
+}
+.fox-card img {
+  flex: 0 0 64px;
+}
+.fox-card h3 {
+  margin: 3px 0 4px;
+  font-size: 21px;
+}
+.fox-card p {
+  margin: 0 0 8px;
+}
+.fox-card-label {
+  color: #704430;
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+@media (max-width: 520px) {
+  .fox-card {
+    padding: 18px;
+    gap: 14px;
+  }
+  .fox-card img {
+    width: 48px;
+    height: 48px;
+    flex-basis: 48px;
+  }
+}

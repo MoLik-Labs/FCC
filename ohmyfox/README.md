@@ -1,4 +1,30 @@
-# Oh My Fox — experimental read-only prototype
+# Oh My Fox
+
+<img src="brand/fox-mark.svg" alt="" width="72" height="72">
+
+**An independent agent project, in development.** Rust is the chosen language
+for its new core. The Rust state machine is not yet connected to a model,
+workspace or FCC, and its CLI currently only reports help and version. The
+working Go prototype below remains available during migration. See the
+[identity guide](brand/README.md) and [research and roadmap](../docs/oh-my-fox/research.md).
+
+## Rust core (experimental)
+
+With Rust 1.88 or newer, from `ohmyfox/rust/`:
+
+```sh
+cargo test --locked --offline
+cargo run --locked --offline -- --help
+```
+
+The core validates bounded, sequential tool-call batches and requires a separate
+per-call decision before a tool declared mutating can be claimed. It provides
+no execution, sandbox, endpoint, transport, credential handling or real user
+approval interface. Its policy depends on the integrator classifying tools
+correctly; a read-only tool can still expose sensitive information. It must not
+be used as the sole security boundary. See [architecture and migration](rust/README.md).
+
+## Go read-only prototype (retained during migration)
 
 Oh My Fox is a separate Go module exploring a coding-assistant tool loop. It is
 **not** a complete coding agent or an Oh My Pi fork, and has not been benchmarked

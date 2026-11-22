@@ -57,26 +57,31 @@ inventory notes, not legal advice or blanket permission to transplant files.
   inspected; they have not received a comprehensive feature or security review.
   There is no evidence for a claim that Oh My Fox is the strongest agent.
 
-## Language choice
+## Language choice and migration
 
-Use **Go provisionally** for this independent prototype: FCC already has Go
-parity work, and Go offers straightforward deployment and concurrent I/O. Rust
-is also credible for robust isolation and high-performance native tools; Codex
-and portions of Oh My Pi demonstrate that ecosystem. There is **no measured
-Go-versus-Rust Oh My Fox benchmark**, and neither language alone makes an agent
-faster or safer. Do not reuse historical speculative speedups as measurements.
-Go 1.22 is the local bootstrap/test compatibility target, not a supported release
-toolchain choice; upgrade and review security support before release.
+**Rust is the selected implementation language for Oh My Fox**, replacing the
+previous provisional Go choice. Neither language alone guarantees performance
+or security; no comparative Oh My Fox benchmark has been run. FCC's existing
+Python runtime, remote access and streaming are unaffected by this decision.
+The Go parity work for FCC is separate from Oh My Fox.
+
+`ohmyfox/rust/` now contains a dependency-free state machine and a minimal
+help/version CLI. It validates bounded batches and tracks per-call approval and
+execution claims, but does not connect to a model, perform I/O, sandbox, or
+implement a user approval UI. The Go implementation at `ohmyfox/` remains the
+only runnable read-only model-connected prototype until Rust reaches tested
+parity; it is not a complete coding agent. Go 1.22 was the local bootstrap/test
+compatibility target, not a release recommendation.
 
 ## Current prototype and gates
 
-`ohmyfox/` is an independent Go module with an explicit remote-or-local
-OpenAI-compatible Chat endpoint, bounded non-streaming tool loop, and two
-workspace inspection tools. It is read-only and experimental, not a complete
-coding agent. There is no editing, shell, approvals, sandbox, streaming, session
-persistence, TUI, MCP, plugins, direct Anthropic/Gemini protocol, model routing,
-parallel subagents or FCC launcher integration. It makes network calls only to
-the user-selected endpoint; prompts and requested file contents are sent there.
+The Go prototype has an explicit remote-or-local OpenAI-compatible Chat
+endpoint and two workspace inspection tools. It has no editing, shell, approval
+UI, sandbox, streaming, session persistence, TUI, MCP, plugins, direct
+Anthropic/Gemini protocol, model routing, parallel subagents or FCC launcher
+integration. Prompts and requested file contents are sent to the selected
+endpoint. See the [Rust architecture and migration plan](../../ohmyfox/rust/README.md)
+for the staged replacement and verification requirements.
 
 Before adding mutation or command execution: implement reviewed capability-based
 approval, a real OS/container isolation strategy, cancellation and process-tree
