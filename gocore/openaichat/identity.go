@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"strings"
 	"unicode"
+
+	"github.com/NggKhaiz/FCC/gocore/retention"
 )
 
 // AmbiguousToolCallIdentityError mirrors the reference exception: a
@@ -31,7 +33,8 @@ type toolCallIdentity struct {
 // ToolCallIdentityResolver keeps upstream indexes and IDs separate from
 // locally allocated slots within one Chat response attempt.
 type ToolCallIdentityResolver struct {
-	calls []toolCallIdentity
+	calls  []toolCallIdentity
+	budget *retention.PendingBudget
 }
 
 // CallSnapshot is an immutable view of one resolved logical slot.
@@ -47,6 +50,12 @@ func NewToolCallIdentityResolver() *ToolCallIdentityResolver {
 	return &ToolCallIdentityResolver{}
 }
 
+// NewToolCallIdentityResolverWithBudget attaches the current source-buffer
+// budget. Only ResolveCurrent charges it; Resolve retains historical behavior.
+func NewToolCallIdentityResolverWithBudget(budget *retention.PendingBudget) *ToolCallIdentityResolver {
+	return &ToolCallIdentityResolver{budget: budget}
+}
+
 // Allocate reserves a new logical slot, including for already-completed calls.
 func (r *ToolCallIdentityResolver) Allocate() int {
 	slot := len(r.calls)
@@ -57,6 +66,10 @@ func (r *ToolCallIdentityResolver) Allocate() int {
 // Resolve maps a raw upstream fragment identity to a logical slot,
 // learning missing fields and rejecting unidentified or ambiguous fragments.
 func (r *ToolCallIdentityResolver) Resolve(rawIndex, rawID any) (int, error) {
+	return r.resolve(rawIndex, rawID, nil)
+}
+
+func (r *ToolCallIdentityResolver) resolve(rawIndex, rawID any, budget *retention.PendingBudget) (int, error) {
 	index := validIndex(rawIndex)
 	toolID := validToolID(rawID)
 	if index == nil && toolID == nil {
@@ -91,27 +104,39 @@ func (r *ToolCallIdentityResolver) Resolve(rawIndex, rawID any) (int, error) {
 	if len(matches) == 1 {
 		slot = matches[0]
 	} else {
+		if budget != nil {
+			if err := budget.Add(32, 1); err != nil {
+				return 0, err
+			}
+		}
 		slot = r.Allocate()
 	}
 	if index != nil {
 		r.calls[slot].index = index
 	}
 	if toolID != nil {
+		if budget != nil && r.calls[slot].toolID == nil {
+			if err := budget.Add(len(*toolID), 0); err != nil {
+				return 0, err
+			}
+		}
 		r.calls[slot].toolID = toolID
 	}
 	return slot, nil
 }
 
 // ResolveCurrent mirrors the current Python Chat source resolver's return
-// shape and error messages. Retention-budget charging is not implemented here;
-// callers must account for identity storage separately.
+// shape, error messages and optional identity-retention charges.
 func (r *ToolCallIdentityResolver) ResolveCurrent(rawIndex, rawID any) (int, *string, error) {
-	slot, err := r.Resolve(rawIndex, rawID)
+	slot, err := r.resolve(rawIndex, rawID, r.budget)
 	if err != nil {
 		if err == errNoUsableIdentity {
 			return 0, nil, &AmbiguousToolCallIdentityError{message: "Tool fragment has neither a usable index nor an ID."}
 		}
-		return 0, nil, &AmbiguousToolCallIdentityError{message: "Tool fragment has ambiguous identity."}
+		if err == errAmbiguousIdentity {
+			return 0, nil, &AmbiguousToolCallIdentityError{message: "Tool fragment has ambiguous identity."}
+		}
+		return 0, nil, err
 	}
 	return slot, r.ToolID(slot), nil
 }

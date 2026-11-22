@@ -75,9 +75,15 @@ green Go test run against them is not a current-reference parity gate. Update
 and test each subsystem against the new Python behavior before release. As a
 first migration slice, `golden_chat_identity_current.json` checks the current
 unbudgeted resolver's returned slot, learned ID and error text over 27
-scenarios, including Python-specific control-character whitespace. The new Go
-adapter does not yet implement identity retention budget charging or the
-surrounding source tool-call buffer.
+scenarios, including Python-specific control-character whitespace. The separate
+`golden_chat_identity_budget.json` now checks ten current-reference budget
+scenarios, including exact limits, UTF-8 ID sizes, repeated IDs, partial state
+on a rejected ID charge, and rejection without mutation for a failed slot
+charge. The Go pending-budget primitive accounts for bytes and records and
+preserves failed-add atomicity. It uses machine integers, assumes representable
+counters and valid UTF-8 inputs, and only models the error message, not the
+full Python execution-failure metadata. The surrounding current source
+tool-call buffer is still not ported.
 
 ## Integrated verification
 

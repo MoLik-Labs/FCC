@@ -1,0 +1,412 @@
+{
+  "schema": "chat-identity-budget-v1",
+  "scenarios": [
+    {
+      "name": "new_and_repeated_identity",
+      "max_bytes": 100,
+      "max_records": 2,
+      "steps": [
+        {
+          "index": 0,
+          "id": "alpha",
+          "slot": 0,
+          "tool_id": "alpha",
+          "error": null,
+          "bytes": 37,
+          "records": 1,
+          "calls": [
+            {
+              "index": 0,
+              "tool_id": "alpha"
+            }
+          ]
+        },
+        {
+          "index": 0,
+          "id": "alpha",
+          "slot": 0,
+          "tool_id": "alpha",
+          "error": null,
+          "bytes": 37,
+          "records": 1,
+          "calls": [
+            {
+              "index": 0,
+              "tool_id": "alpha"
+            }
+          ]
+        },
+        {
+          "index": 1,
+          "id": "β",
+          "slot": 1,
+          "tool_id": "β",
+          "error": null,
+          "bytes": 71,
+          "records": 2,
+          "calls": [
+            {
+              "index": 0,
+              "tool_id": "alpha"
+            },
+            {
+              "index": 1,
+              "tool_id": "β"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "exact_slot_limit",
+      "max_bytes": 32,
+      "max_records": 1,
+      "steps": [
+        {
+          "index": 2,
+          "id": null,
+          "slot": 0,
+          "tool_id": null,
+          "error": null,
+          "bytes": 32,
+          "records": 1,
+          "calls": [
+            {
+              "index": 2,
+              "tool_id": null
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "id": null,
+          "slot": 0,
+          "tool_id": null,
+          "error": null,
+          "bytes": 32,
+          "records": 1,
+          "calls": [
+            {
+              "index": 2,
+              "tool_id": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "slot_byte_limit_then_retry",
+      "max_bytes": 31,
+      "max_records": 1,
+      "steps": [
+        {
+          "index": 0,
+          "id": null,
+          "slot": null,
+          "tool_id": null,
+          "error": "Buffered response exceeded the pending output limit.",
+          "bytes": 0,
+          "records": 0,
+          "calls": []
+        },
+        {
+          "index": 0,
+          "id": null,
+          "slot": null,
+          "tool_id": null,
+          "error": "Buffered response exceeded the pending output limit.",
+          "bytes": 0,
+          "records": 0,
+          "calls": []
+        }
+      ]
+    },
+    {
+      "name": "id_limit_after_new_slot",
+      "max_bytes": 34,
+      "max_records": 1,
+      "steps": [
+        {
+          "index": 0,
+          "id": "abc",
+          "slot": null,
+          "tool_id": null,
+          "error": "Buffered response exceeded the pending output limit.",
+          "bytes": 32,
+          "records": 1,
+          "calls": [
+            {
+              "index": 0,
+              "tool_id": null
+            }
+          ]
+        },
+        {
+          "index": 0,
+          "id": "ab",
+          "slot": 0,
+          "tool_id": "ab",
+          "error": null,
+          "bytes": 34,
+          "records": 1,
+          "calls": [
+            {
+              "index": 0,
+              "tool_id": "ab"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "utf8_id_exact_and_over_limit",
+      "max_bytes": 36,
+      "max_records": 1,
+      "steps": [
+        {
+          "index": 0,
+          "id": "🦊x",
+          "slot": null,
+          "tool_id": null,
+          "error": "Buffered response exceeded the pending output limit.",
+          "bytes": 32,
+          "records": 1,
+          "calls": [
+            {
+              "index": 0,
+              "tool_id": null
+            }
+          ]
+        },
+        {
+          "index": 0,
+          "id": "🦊",
+          "slot": 0,
+          "tool_id": "🦊",
+          "error": null,
+          "bytes": 36,
+          "records": 1,
+          "calls": [
+            {
+              "index": 0,
+              "tool_id": "🦊"
+            }
+          ]
+        },
+        {
+          "index": 0,
+          "id": "🦊",
+          "slot": 0,
+          "tool_id": "🦊",
+          "error": null,
+          "bytes": 36,
+          "records": 1,
+          "calls": [
+            {
+              "index": 0,
+              "tool_id": "🦊"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "record_limit_retains_first_slot",
+      "max_bytes": 1000,
+      "max_records": 1,
+      "steps": [
+        {
+          "index": 0,
+          "id": null,
+          "slot": 0,
+          "tool_id": null,
+          "error": null,
+          "bytes": 32,
+          "records": 1,
+          "calls": [
+            {
+              "index": 0,
+              "tool_id": null
+            }
+          ]
+        },
+        {
+          "index": 1,
+          "id": null,
+          "slot": null,
+          "tool_id": null,
+          "error": "Buffered response exceeded the pending output limit.",
+          "bytes": 32,
+          "records": 1,
+          "calls": [
+            {
+              "index": 0,
+              "tool_id": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "id_added_to_existing_slot_without_record_charge",
+      "max_bytes": 35,
+      "max_records": 1,
+      "steps": [
+        {
+          "index": 0,
+          "id": null,
+          "slot": 0,
+          "tool_id": null,
+          "error": null,
+          "bytes": 32,
+          "records": 1,
+          "calls": [
+            {
+              "index": 0,
+              "tool_id": null
+            }
+          ]
+        },
+        {
+          "index": 0,
+          "id": "abc",
+          "slot": 0,
+          "tool_id": "abc",
+          "error": null,
+          "bytes": 35,
+          "records": 1,
+          "calls": [
+            {
+              "index": 0,
+              "tool_id": "abc"
+            }
+          ]
+        },
+        {
+          "index": 0,
+          "id": "abc",
+          "slot": 0,
+          "tool_id": "abc",
+          "error": null,
+          "bytes": 35,
+          "records": 1,
+          "calls": [
+            {
+              "index": 0,
+              "tool_id": "abc"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "invalid_identity_does_not_charge",
+      "max_bytes": 100,
+      "max_records": 1,
+      "steps": [
+        {
+          "index": -1,
+          "id": "  ",
+          "slot": null,
+          "tool_id": null,
+          "error": "Tool fragment has neither a usable index nor an ID.",
+          "bytes": 0,
+          "records": 0,
+          "calls": []
+        },
+        {
+          "index": 0,
+          "id": null,
+          "slot": 0,
+          "tool_id": null,
+          "error": null,
+          "bytes": 32,
+          "records": 1,
+          "calls": [
+            {
+              "index": 0,
+              "tool_id": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "ambiguous_identity_does_not_charge",
+      "max_bytes": 200,
+      "max_records": 3,
+      "steps": [
+        {
+          "index": 0,
+          "id": null,
+          "slot": 0,
+          "tool_id": null,
+          "error": null,
+          "bytes": 32,
+          "records": 1,
+          "calls": [
+            {
+              "index": 0,
+              "tool_id": null
+            }
+          ]
+        },
+        {
+          "index": null,
+          "id": "x",
+          "slot": 1,
+          "tool_id": "x",
+          "error": null,
+          "bytes": 65,
+          "records": 2,
+          "calls": [
+            {
+              "index": 0,
+              "tool_id": null
+            },
+            {
+              "index": null,
+              "tool_id": "x"
+            }
+          ]
+        },
+        {
+          "index": 0,
+          "id": "x",
+          "slot": null,
+          "tool_id": null,
+          "error": "Tool fragment has ambiguous identity.",
+          "bytes": 65,
+          "records": 2,
+          "calls": [
+            {
+              "index": 0,
+              "tool_id": null
+            },
+            {
+              "index": null,
+              "tool_id": "x"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "zero_record_budget",
+      "max_bytes": 100,
+      "max_records": 0,
+      "steps": [
+        {
+          "index": 0,
+          "id": null,
+          "slot": null,
+          "tool_id": null,
+          "error": "Buffered response exceeded the pending output limit.",
+          "bytes": 0,
+          "records": 0,
+          "calls": []
+        }
+      ]
+    }
+  ]
+}
