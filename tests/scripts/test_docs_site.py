@@ -19,6 +19,32 @@ class DocumentationSiteTests(unittest.TestCase):
             self.assertTrue((output / "assets" / "browser-code-session.png").is_file())
             validate_site(output)
 
+    def test_quick_starts_use_the_fork_and_warn_about_upstream_updater(self) -> None:
+        root = Path(__file__).resolve().parents[2]
+        readme = (root / "README.md").read_text(encoding="utf-8")
+        quick_start = readme.split("## Quick Start", 1)[1].split(
+            "## Choose A Provider", 1
+        )[0]
+        self.assertIn("https://github.com/MoLik-Labs/FCC.git", quick_start)
+        self.assertIn("uv sync --locked", quick_start)
+        self.assertIn("uv run fcc-server", quick_start)
+        self.assertNotIn("raw.githubusercontent.com/Alishahryar1", quick_start)
+        for name in ("index.html", "vi.html"):
+            with self.subTest(page=name):
+                page = (root / "docs" / "site" / name).read_text(encoding="utf-8")
+                quick_start = page.split('id="quickstart"', 1)[1].split(
+                    'id="first-request"', 1
+                )[0]
+                self.assertIn("https://github.com/MoLik-Labs/FCC.git", quick_start)
+                self.assertIn("uv sync --locked", quick_start)
+                self.assertIn("uv run fcc-server", quick_start)
+                self.assertNotIn("raw.githubusercontent.com/Alishahryar1", quick_start)
+                maintenance = page.split('id="maintenance"', 1)[1].split(
+                    'id="troubleshooting"', 1
+                )[0]
+                self.assertIn("fcc-update", maintenance)
+                self.assertIn("upstream", maintenance)
+
     def test_missing_target_fragment_duplicate_id_and_alt_are_rejected(self) -> None:
         examples = (
             '<a href="missing.html">missing</a>',

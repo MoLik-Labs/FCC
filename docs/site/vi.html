@@ -181,40 +181,32 @@
               </p>
             </div>
             <div class="notice">
-              <strong>Hãy biết bạn đang cài gì.</strong> Các lệnh dưới đây cài
-              dự án upstream <code>Alishahryar1/free-claude-code</code>, không
-              phải fork này hay bản Go thử nghiệm. Xem nội dung script trước khi
-              chạy. Để chạy mã của checkout này, xem
-              <a href="#development">Phát triển</a>.
+              <strong>Cài fork này từ mã nguồn.</strong> Lệnh dùng nhánh phát
+              triển hiện tại của MoLik-Labs/FCC, không phải bản phát hành
+              upstream. Python là runtime; bản Go vẫn đang thử nghiệm.
             </div>
             <div class="steps">
               <article class="step">
                 <span class="step-number">01</span>
                 <div>
-                  <h3>Cài FCC</h3>
+                  <h3>Lấy mã của fork</h3>
                   <p>
-                    Chọn ít nhất một coding agent khi trình cài đặt yêu cầu. Có
-                    thể bật tối ưu token tùy chọn.
+                    Cài <a href="https://git-scm.com/downloads">Git</a> và
+                    <a
+                      href="https://docs.astral.sh/uv/getting-started/installation/"
+                      >uv</a
+                    >. Mở terminal hoặc Windows PowerShell, chạy:
                   </p>
-                  <p class="code-label">MACOS / LINUX</p>
                   <pre
                     tabindex="0"
-                  ><code>curl -fsSL "https://raw.githubusercontent.com/Alishahryar1/free-claude-code/main/scripts/install.sh" | sh</code></pre>
-                  <p class="code-label">WINDOWS POWERSHELL</p>
-                  <pre
-                    tabindex="0"
-                  ><code>&amp; ([scriptblock]::Create((irm "https://raw.githubusercontent.com/Alishahryar1/free-claude-code/main/scripts/install.ps1")))</code></pre>
-                  <p class="fine">
-                    Xem trước
-                    <a
-                      href="https://github.com/Alishahryar1/free-claude-code/blob/main/scripts/install.sh"
-                      >install.sh</a
-                    >
-                    hoặc
-                    <a
-                      href="https://github.com/Alishahryar1/free-claude-code/blob/main/scripts/install.ps1"
-                      >install.ps1</a
-                    >. Upstream có thể thay đổi độc lập với tài liệu này.
+                  ><code>git clone --branch arena/5fe6a43f-fcc https://github.com/MoLik-Labs/FCC.git
+cd FCC
+uv sync --locked</code></pre>
+                  <p>
+                    Đây là nhánh đang phát triển; sau khi tích hợp vào main,
+                    chọn nhánh phù hợp. uv có thể cài Python 3.14.10. Bạn cần tự
+                    cài coding agent; cách này không tạo shortcut desktop hay tự
+                    cài công cụ tùy chọn.
                   </p>
                 </div>
               </article>
@@ -222,15 +214,11 @@
                 <span class="step-number">02</span>
                 <div>
                   <h3>Khởi động server</h3>
+                  <p>Trong thư mục FCC trên Windows, macOS hoặc Linux:</p>
+                  <pre tabindex="0"><code>uv run fcc-server</code></pre>
                   <p>
-                    Trên Windows hoặc macOS, mở
-                    <strong>Free Claude Code</strong> từ Start hoặc
-                    Applications. Trên Linux:
-                  </p>
-                  <pre tabindex="0"><code>fcc-server</code></pre>
-                  <p>
-                    Giữ terminal mở và dùng địa chỉ Admin trong log. Trên
-                    desktop cũng có thể mở Admin từ tray hoặc menu bar.
+                    Giữ terminal mở và dùng địa chỉ Admin trong log. Trong
+                    terminal thứ hai, vào lại thư mục này để chạy client.
                   </p>
                 </div>
               </article>
@@ -261,12 +249,12 @@
                 <div>
                   <h3>Chạy agent</h3>
                   <p>
-                    Ví dụ với Claude Code hoặc Codex; launcher có thể tự khởi
-                    động FCC:
+                    Cài agent riêng, rồi chạy Claude Code hoặc Codex từ thư mục
+                    checkout; launcher có thể tự khởi động FCC:
                   </p>
-                  <pre tabindex="0"><code>fcc-claude
+                  <pre tabindex="0"><code>uv run fcc-claude
 # hoặc
-fcc-codex</code></pre>
+uv run fcc-codex</code></pre>
                   <p>
                     Chọn mô hình FCC trong client nếu có bộ chọn mô hình. Xem
                     <a href="#clients">các launcher và tích hợp</a>.
@@ -388,6 +376,11 @@ fcc-codex</code></pre>
                 client.
               </p>
             </div>
+            <p>
+              Với bản mã nguồn, cài agent riêng và thêm
+              <code>uv run</code> trước các lệnh launcher dưới đây khi đang ở
+              thư mục FCC.
+            </p>
             <div
               class="table-wrap"
               role="region"
@@ -643,31 +636,35 @@ fcc-codex</code></pre>
                 <tbody>
                   <tr>
                     <td>Xem phiên bản</td>
-                    <td><code>fcc-server --version</code></td>
+                    <td><code>uv run fcc-server --version</code></td>
                   </tr>
                   <tr>
                     <td>Chẩn đoán</td>
-                    <td><code>fcc-doctor</code></td>
+                    <td><code>uv run fcc-doctor</code></td>
                   </tr>
                   <tr>
                     <td>Cập nhật</td>
-                    <td>Dừng FCC, sau đó chạy <code>fcc-update</code>.</td>
+                    <td>
+                      Dừng FCC, chạy <code>git pull --ff-only</code> và
+                      <code>uv sync --locked</code> trong checkout.
+                    </td>
                   </tr>
                   <tr>
                     <td>Gỡ cài đặt</td>
                     <td>
-                      Dừng FCC, thoát ứng dụng liên quan và dùng uninstaller
-                      tương ứng.
+                      Dừng FCC và ứng dụng liên quan, sao lưu dữ liệu rồi xóa
+                      thư mục mã nguồn nếu không còn cần.
                     </td>
                   </tr>
                 </tbody>
               </table>
             </div>
             <p>
-              Gỡ FCC xóa lệnh, desktop launcher và <code>~/.fcc/</code>; giữ lại
-              uv, Python, coding agent, RTK và Headroom. Sao lưu dữ liệu cần
-              thiết trước khi gỡ. Script upstream thao tác trên bản cài
-              upstream, không nhất thiết là checkout này.
+              Checkout chứa <code>.venv</code>; dữ liệu FCC như
+              <code>~/.fcc/</code> nằm riêng và không bị xóa cùng checkout.
+              Không dùng <code>fcc-update</code>
+              cho fork này: updater đi kèm gọi installer upstream. Script cài và
+              gỡ upstream không quản lý checkout này.
             </p>
             <a
               class="text-link"
@@ -711,10 +708,11 @@ fcc-codex</code></pre>
               <details>
                 <summary>Báo cáo lỗi như thế nào?</summary>
                 <p>
-                  Chạy <code>fcc-doctor</code>; ghi lại phiên bản, mô hình đang
-                  dùng, mappings, các bước tái hiện và lỗi đầy đủ. Xóa key và dữ
-                  liệu riêng tư trước khi chia sẻ. Issues đang tắt trên fork này;
-                  chỉ dùng tracker upstream cho lỗi của upstream và bản phát hành của họ.
+                  Chạy <code>uv run fcc-doctor</code> trong checkout; ghi lại
+                  phiên bản, mô hình đang dùng, mappings, các bước tái hiện và
+                  lỗi đầy đủ. Xóa key và dữ liệu riêng tư trước khi chia sẻ.
+                  Issues đang tắt trên fork này; chỉ dùng tracker upstream cho
+                  lỗi của upstream và bản phát hành của họ.
                 </p>
               </details>
             </div>
@@ -734,7 +732,7 @@ fcc-codex</code></pre>
             </p>
             <pre
               tabindex="0"
-            ><code>git clone https://github.com/MoLik-Labs/FCC.git
+            ><code>git clone --branch arena/5fe6a43f-fcc https://github.com/MoLik-Labs/FCC.git
 cd FCC
 uv sync --locked
 uv run fcc-server</code></pre>

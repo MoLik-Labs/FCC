@@ -37,5 +37,5 @@ it to a branch does not itself publish a site or change repository settings.
 
 Links to project source and reference material point to the `main` branch of
 `MoLik-Labs/FCC`; they represent the published documentation after these
-changes reach that branch. The installation commands explicitly refer to the
-upstream project and are not an installer for this fork.
+changes reach that branch. The quick start clones the current development branch
+of this fork; the upstream installer and updater do not install this checkout.

@@ -96,67 +96,31 @@ Free-tier availability and limits are controlled by each provider and may change
 
 ## Quick Start
 
-### Run this fork from source
-
-Install [uv](https://docs.astral.sh/uv/) and clone this repository:
-
-```bash
-git clone https://github.com/MoLik-Labs/FCC.git
-cd FCC
-uv sync --locked
-uv run fcc-server
-```
-
-The default clone uses the repository's default branch. Features described on a
-working branch are available only when using a revision that contains them.
-The project requires Python 3.14.10; uv can provision it. Use the Admin URL in
-the server log to configure a provider. For launcher commands in this checkout,
-use `uv run`, for example `uv run fcc-claude`.
-
-### Install the upstream release
-
 <a id="install"></a>
 
-### 1. Install
+### 1. Install this fork from source
 
-The commands below install the upstream `Alishahryar1/free-claude-code` project,
-not this fork or its in-progress Go port. Review the scripts before running them.
-
-macOS/Linux:
+Install [Git](https://git-scm.com/downloads) and [uv](https://docs.astral.sh/uv/getting-started/installation/) first. In a terminal (or Windows PowerShell), run:
 
 ```bash
-curl -fsSL "https://raw.githubusercontent.com/Alishahryar1/free-claude-code/main/scripts/install.sh" | sh
+git clone --branch arena/5fe6a43f-fcc https://github.com/MoLik-Labs/FCC.git
+cd FCC
+uv sync --locked
 ```
 
-Windows PowerShell:
-
-```powershell
-& ([scriptblock]::Create((irm "https://raw.githubusercontent.com/Alishahryar1/free-claude-code/main/scripts/install.ps1")))
-```
-
-When prompted, choose at least one coding agent and optionally enable [RTK](https://github.com/rtk-ai/rtk) + [Headroom](https://github.com/headroomlabs-ai/headroom) token optimization for supported agents.
+This checks out the current development branch of **this fork**, not an upstream release. The branch is still under development; after these changes are integrated into `main`, use the desired available branch instead. Python 3.14.10 is required; uv can provision it. This source setup does not install coding agents, create desktop shortcuts or provide the upstream installer's optional setup. Install the client you intend to use separately.
 
 ### 2. Start FCC
 
-#### Windows
-
-Open **Free Claude Code** from your desktop or Start menu.
-
-#### macOS
-
-Open **Free Claude Code** from your desktop or Applications folder.
-
-#### Linux
-
-Run:
+From the `FCC` checkout on Windows, macOS or Linux:
 
 ```bash
-fcc-server
+uv run fcc-server
 ```
 
-FCC opens the Admin UI after starting. On Windows and macOS, use the tray or
-menu-bar icon to open Admin, restart, or quit. When using `fcc-server`, keep its
-terminal open.
+Keep the terminal open and open the Admin URL shown in the server log. In a
+second terminal, change into the same checkout before running a launcher with
+`uv run`.
 
 <a id="nvidia-nim-provider"></a>
 
@@ -177,70 +141,72 @@ in Admin.
 
 ### 4. Run Your Coding Agent
 
+Install your chosen agent separately, then run one of these commands from the checkout:
+
 Claude Code:
 
 ```bash
-fcc-claude
+uv run fcc-claude
 ```
 
 Codex:
 
 ```bash
-fcc-codex
+uv run fcc-codex
 ```
 
 Pi:
 
 ```bash
-fcc-pi
+uv run fcc-pi
 ```
 
 OpenCode 2:
 
 ```bash
-fcc-opencode
+uv run fcc-opencode
 ```
 
 Cline:
 
 ```bash
-fcc-cline
+uv run fcc-cline
 ```
 
 Hermes:
 
 ```bash
-fcc-hermes
+uv run fcc-hermes
 ```
 
 DeepSeek Harness Web:
 
 ```bash
-fcc-dsh
+uv run fcc-dsh
 ```
 
 Grok Build:
 
 ```bash
-fcc-grok
+uv run fcc-grok
 ```
 
 Muse Code:
 
 ```bash
-fcc-muse
+uv run fcc-muse
 ```
 
 Aider:
 
 ```bash
-fcc-aider
+uv run fcc-aider
 ```
 
 Antigravity CLI:
 
 ```bash
-fcc-agy
+uv run fcc-agy
 ```
 
 Other clients and SDKs can call FCC directly. See [Use The API Directly](#use-the-api-directly).
@@ -571,11 +537,11 @@ in **Admin UI → Messaging**, then click **Apply**.
 | Reply with `/clear` | Delete the selected message and the chain of replies to it. Keep other conversations. |
 
 <details>
-<summary><strong>Voice notes</strong></summary>
+<summary><strong>Voice notes (upstream installer options)</strong></summary>
 
 NVIDIA NIM transcription support is included in every installation. In **Admin UI → Messaging → Voice**, enable voice notes, select `nvidia_nim`, and choose a supported model. Configure your **NVIDIA NIM API key** on the Providers page.
 
-For local Whisper on CPU or CUDA, re-run the installer with the local voice option:
+For an upstream installation, local Whisper can be installed with the upstream installer options below. These scripts do not install this fork:
 
 macOS/Linux:
 
@@ -611,25 +577,20 @@ After installing local support, restart `fcc-server`. In **Admin UI → Messagin
 
 ## Manage Your Installation
 
-Run `fcc-server --version` to check the installed version without starting FCC.
+For the source checkout, run `uv run fcc-server --version` or `uv run fcc-doctor` from the `FCC` directory. To update the same checked-out branch, stop FCC and run:
 
-### Update
-
-Stop all running FCC commands, then run:
-
-```sh
-fcc-update
+```bash
+git pull --ff-only
+uv sync --locked
 ```
 
-The packaged `fcc-update` invokes the upstream installer and updates to its
-latest FCC release unless already up to date; it does not update a checkout of
-this fork.
+Review local changes before updating. Do **not** use the packaged `fcc-update` for this fork: it runs the upstream installer and can install or update the upstream release instead.
 
-If `fcc-update` is unavailable or fails, try running the [install command](#install) again.
+To remove a source checkout, stop FCC and connected clients, back up any data you need, then remove the checkout directory manually. Its `.venv` is inside that directory. FCC data such as `~/.fcc/` is separate; removing the checkout does not remove it. The platform installers and uninstallers below are **upstream-only** and can alter an upstream installation and its data; they are not needed to install or remove this checkout.
 
-To reinstall FCC or change optional components while already up to date, run the [installer](#install) directly.
+### Upstream-only options
 
-For local voice support, include `--voice-local` (macOS/Linux) or `-VoiceLocal` (Windows), plus your `--torch-backend` or `-TorchBackend` option if used.
+The following Muse Code, voice and uninstall scripts are provided by the upstream project, not this fork. Review them before use. The source setup above does not automatically install local Whisper, RTK, Headroom or coding agents.
 
 ### Muse Code on native Windows
 
@@ -675,10 +636,10 @@ Windows PowerShell:
 
 ## Project Links
 
-For a problem after installation, run the command below and paste its output into your bug report.
+For a problem with this checkout, run the command below from the repository and redact credentials and private data before sharing the output.
 
 ```bash
-fcc-doctor
+uv run fcc-doctor
 ```
 
 - [This repository and its pull requests](https://github.com/MoLik-Labs/FCC) — issues are currently disabled on this fork.

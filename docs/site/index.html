@@ -184,44 +184,34 @@
               </p>
             </div>
             <div class="notice">
-              <strong>Know what you are installing.</strong> The installers
-              below target the upstream
-              <code>Alishahryar1/free-claude-code</code> project, not this fork
-              or its experimental Go port. Inspect the linked scripts before
-              executing them. To run this checkout instead, see
-              <a href="#development">Development</a>.
+              <strong>This installs the fork from source.</strong> The commands
+              use the current development branch of MoLik-Labs/FCC, not the
+              upstream release. The Go port is experimental; Python remains the
+              runtime.
             </div>
             <div class="steps">
               <article class="step">
                 <span class="step-number">01</span>
                 <div>
-                  <h3>Install FCC</h3>
+                  <h3>Get the fork</h3>
                   <p>
-                    Choose an installer for your operating system. Select at
-                    least one coding agent when prompted; optional token
-                    optimization can be configured during installation.
+                    Install <a href="https://git-scm.com/downloads">Git</a> and
+                    <a
+                      href="https://docs.astral.sh/uv/getting-started/installation/"
+                      >uv</a
+                    >. In a terminal or Windows PowerShell, run:
                   </p>
-                  <p class="code-label">MACOS / LINUX</p>
                   <pre
                     tabindex="0"
-                  ><code>curl -fsSL "https://raw.githubusercontent.com/Alishahryar1/free-claude-code/main/scripts/install.sh" | sh</code></pre>
-                  <p class="code-label">WINDOWS POWERSHELL</p>
-                  <pre
-                    tabindex="0"
-                  ><code>&amp; ([scriptblock]::Create((irm "https://raw.githubusercontent.com/Alishahryar1/free-claude-code/main/scripts/install.ps1")))</code></pre>
-                  <p class="fine">
-                    Review
-                    <a
-                      href="https://github.com/Alishahryar1/free-claude-code/blob/main/scripts/install.sh"
-                      >install.sh</a
-                    >
-                    or
-                    <a
-                      href="https://github.com/Alishahryar1/free-claude-code/blob/main/scripts/install.ps1"
-                      >install.ps1</a
-                    >
-                    first. Installers and releases may change independently of
-                    this guide.
+                  ><code>git clone --branch arena/5fe6a43f-fcc https://github.com/MoLik-Labs/FCC.git
+cd FCC
+uv sync --locked</code></pre>
+                  <p>
+                    The branch is under development. After integration into
+                    main, choose an available branch as needed. uv can provision
+                    Python 3.14.10. Install coding agents separately; this
+                    source setup does not create desktop shortcuts or install
+                    optional tools.
                   </p>
                 </div>
               </article>
@@ -229,16 +219,12 @@
                 <span class="step-number">02</span>
                 <div>
                   <h3>Start the server</h3>
+                  <p>From the FCC checkout on Windows, macOS or Linux:</p>
+                  <pre tabindex="0"><code>uv run fcc-server</code></pre>
                   <p>
-                    On Windows or macOS, open
-                    <strong>Free Claude Code</strong> from Start or
-                    Applications. On Linux, run:
-                  </p>
-                  <pre tabindex="0"><code>fcc-server</code></pre>
-                  <p>
-                    Keep the terminal open. Use the Admin URL printed in the
-                    server log. Desktop users can also open Admin from the tray
-                    or menu bar.
+                    Keep the terminal open and use the Admin URL from the log.
+                    In a second terminal, return to this checkout to run a
+                    client.
                   </p>
                 </div>
               </article>
@@ -268,12 +254,13 @@
                 <div>
                   <h3>Launch your agent</h3>
                   <p>
-                    For example, launch Claude Code or Codex from a terminal.
-                    The launcher can start FCC automatically.
+                    Install the agent separately, then launch Claude Code or
+                    Codex from a terminal in the checkout. The launcher can
+                    start FCC automatically.
                   </p>
-                  <pre tabindex="0"><code>fcc-claude
+                  <pre tabindex="0"><code>uv run fcc-claude
 # or
-fcc-codex</code></pre>
+uv run fcc-codex</code></pre>
                   <p>
                     Use the agent’s model picker when available. See
                     <a href="#clients">all launchers and integrations</a>.
@@ -401,6 +388,11 @@ fcc-codex</code></pre>
                 integrations, browser sessions, and direct API clients.
               </p>
             </div>
+            <p>
+              For this source checkout, install the agent separately and prefix
+              the launcher commands below with <code>uv run</code> from the FCC
+              directory.
+            </p>
             <div
               class="table-wrap"
               role="region"
@@ -671,35 +663,35 @@ fcc-codex</code></pre>
                 <tbody>
                   <tr>
                     <td>Check version</td>
-                    <td><code>fcc-server --version</code></td>
+                    <td><code>uv run fcc-server --version</code></td>
                   </tr>
                   <tr>
                     <td>Diagnose</td>
-                    <td><code>fcc-doctor</code></td>
+                    <td><code>uv run fcc-doctor</code></td>
                   </tr>
                   <tr>
                     <td>Update</td>
                     <td>
-                      Stop running FCC commands, then run
-                      <code>fcc-update</code>.
+                      Stop FCC, then run <code>git pull --ff-only</code> and
+                      <code>uv sync --locked</code> in the checkout.
                     </td>
                   </tr>
                   <tr>
                     <td>Uninstall</td>
                     <td>
-                      Stop FCC and quit connected apps; use the platform
-                      uninstaller linked below.
+                      Stop FCC and connected apps, back up data, then remove the
+                      source checkout if no longer needed.
                     </td>
                   </tr>
                 </tbody>
               </table>
             </div>
             <p>
-              Uninstalling FCC removes its commands, desktop launcher and
-              <code>~/.fcc/</code>; it keeps uv, Python, coding agents, RTK and
-              Headroom. Back up data you need before uninstalling. The upstream
-              installers and uninstallers operate on the upstream installation,
-              not necessarily this checkout.
+              The source checkout contains its own <code>.venv</code>; FCC data
+              such as <code>~/.fcc/</code> is separate and is not removed with
+              the checkout. Do not use <code>fcc-update</code> for this fork:
+              the packaged updater invokes the upstream installer. Upstream
+              install and uninstall scripts do not manage this checkout.
             </p>
             <a
               class="text-link"
@@ -745,11 +737,12 @@ fcc-codex</code></pre>
               <details>
                 <summary>I need to report a bug</summary>
                 <p>
-                  Run <code>fcc-doctor</code>, reproduce the problem and record
-                  the FCC version, active model, model mappings, steps and
-                  complete error. Redact credentials and private data before
-                  sharing. Issues are currently disabled on this fork; use the
-                  upstream tracker only for upstream issues and releases.
+                  Run <code>uv run fcc-doctor</code> from the checkout,
+                  reproduce the problem and record the FCC version, active
+                  model, model mappings, steps and complete error. Redact
+                  credentials and private data before sharing. Issues are
+                  currently disabled on this fork; use the upstream tracker only
+                  for upstream issues and releases.
                 </p>
               </details>
             </div>
@@ -770,7 +763,7 @@ fcc-codex</code></pre>
             </p>
             <pre
               tabindex="0"
-            ><code>git clone https://github.com/MoLik-Labs/FCC.git
+            ><code>git clone --branch arena/5fe6a43f-fcc https://github.com/MoLik-Labs/FCC.git
 cd FCC
 uv sync --locked
 uv run fcc-server</code></pre>
