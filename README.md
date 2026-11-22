@@ -53,9 +53,9 @@ python3 -m http.server 8000 --directory site-build
 Open `http://localhost:8000/` on the same machine. The builder requires a new
 or empty output directory; see the documentation build guide for repeat builds.
 
-## Oh My Fox (experimental)
+## Oh My Molik (experimental)
 
-[Oh My Fox](ohmyfox/README.md) is a separate experimental agent project. Its
+[Oh My Molik](ohmymolik/README.md) is a separate experimental agent project. Its
 Rust core is under development; the existing Go prototype can inspect files
 read-only via an explicit local or remote Chat Completions endpoint. The Rust
 core does not yet connect to models or execute tools. Neither implementation is

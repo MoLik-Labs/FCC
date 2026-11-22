@@ -1,4 +1,4 @@
-use oh_my_fox::{Access, Action, Limits, Message, ModelReply, Session, Tool, ToolCall};
+use oh_my_molik::{Access, Action, Limits, Message, ModelReply, Session, Tool, ToolCall};
 
 fn tools() -> Vec<Tool> {
     vec![

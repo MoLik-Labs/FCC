@@ -1,0 +1,484 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light" />
+    <title>Oh My Molik — Theme collection</title>
+    <meta
+      name="description"
+      content="Explore Oh My Molik's visual identity and theme tokens."
+    />
+    <link rel="stylesheet" href="molik.css" />
+  </head>
+  <body>
+    <a class="skip" href="#themes">Skip to themes</a>
+    <header class="top">
+      <a class="brand" href="index.html"
+        ><img src="assets/molik-mark.svg" alt="" width="36" height="36" /><span
+          >Oh My Molik</span
+        ></a
+      ><a class="back" href="index.html">← FCC documentation</a>
+    </header>
+    <main>
+      <section class="hero">
+        <div class="hero-text">
+          <span class="eyebrow">MOLIK LABS / DESIGN SYSTEM 01</span>
+          <h1>Make room<br />for <em>good work.</em></h1>
+          <p>
+            One thoughtful workspace, different ways to feel at home. Explore
+            the Oh My Molik identity and a quieter palette for every kind of
+            session.
+          </p>
+          <a class="button" href="#themes"
+            >Explore the themes <span aria-hidden="true">↘</span></a
+          >
+        </div>
+        <div class="hero-mark">
+          <img
+            src="assets/molik-mark.svg"
+            alt="Oh My Molik monogram"
+            width="232"
+            height="232"
+          /><span>A CLEARER WAY FORWARD</span>
+        </div>
+      </section>
+      <section id="themes" class="collection">
+        <div class="section-heading">
+          <div>
+            <span class="eyebrow">THE COLLECTION / 05</span>
+            <h2>Find your focus.</h2>
+          </div>
+          <p>
+            Forest and Catppuccin Mocha lead the collection, with three
+            carefully balanced alternatives. Every foreground token is checked
+            against both background surfaces.
+          </p>
+        </div>
+        <div class="notice">
+          <strong>Design preview, not an active theme switcher.</strong> These
+          are Rust color tokens and illustrative terminal mockups. The agent TUI
+          and theme persistence are not implemented yet.
+        </div>
+        <div class="themes">
+          <article
+            class="theme-card"
+            id="forest"
+            data-theme="forest"
+            style="
+              --bg: #0b211b;
+              --surface: #18362b;
+              --text: #e4f4e8;
+              --muted: #a8c7b3;
+              --accent: #a9e6c0;
+              --success: #a7da9f;
+              --warning: #f1d395;
+              --error: #f4b1a8;
+            "
+          >
+            <div class="theme-meta">
+              <div>
+                <span class="eyebrow">01 / SIGNATURE</span>
+                <h2>Forest</h2>
+                <p>Grounded, quiet and focused.</p>
+              </div>
+              <span class="palette-swatch" aria-hidden="true"
+                ><span
+                  style="background: #0b211b"
+                  title="background: #0B211B"
+                ></span
+                ><span
+                  style="background: #18362b"
+                  title="surface: #18362B"
+                ></span
+                ><span style="background: #e4f4e8" title="text: #E4F4E8"></span
+                ><span style="background: #a8c7b3" title="muted: #A8C7B3"></span
+                ><span
+                  style="background: #a9e6c0"
+                  title="accent: #A9E6C0"
+                ></span
+                ><span
+                  style="background: #a7da9f"
+                  title="success: #A7DA9F"
+                ></span
+                ><span
+                  style="background: #f1d395"
+                  title="warning: #F1D395"
+                ></span
+                ><span style="background: #f4b1a8" title="error: #F4B1A8"></span
+              ></span>
+            </div>
+            <div
+              class="terminal"
+              aria-label="Illustrative terminal styling, not a running session"
+            >
+              <div class="terminal-bar">
+                <span class="terminal-label">OH MY MOLIK</span
+                ><span>theme / forest</span>
+              </div>
+              <div class="terminal-body">
+                <p><span class="accent">›</span> Explore the workspace</p>
+                <p class="muted">A considered space for your next idea.</p>
+                <p>
+                  <span class="success">●</span> ready
+                  <span class="warning">●</span> review
+                  <span class="error">●</span> attention
+                </p>
+                <div class="terminal-footer">
+                  Design preview · no live agent session
+                </div>
+              </div>
+            </div>
+            <p class="theme-colors">
+              <span>background <code>#0B211B</code></span
+              ><span>surface <code>#18362B</code></span
+              ><span>text <code>#E4F4E8</code></span
+              ><span>muted <code>#A8C7B3</code></span
+              ><span>accent <code>#A9E6C0</code></span
+              ><span>success <code>#A7DA9F</code></span
+              ><span>warning <code>#F1D395</code></span
+              ><span>error <code>#F4B1A8</code></span>
+            </p>
+          </article>
+          <article
+            class="theme-card"
+            id="catppuccin-mocha"
+            data-theme="catppuccin-mocha"
+            style="
+              --bg: #1e1e2e;
+              --surface: #313244;
+              --text: #cdd6f4;
+              --muted: #a6adc8;
+              --accent: #cba6f7;
+              --success: #a6e3a1;
+              --warning: #f9e2af;
+              --error: #f38ba8;
+            "
+          >
+            <div class="theme-meta">
+              <div>
+                <span class="eyebrow">02 / COMMUNITY</span>
+                <h2>Catppuccin Mocha</h2>
+                <p>A familiar, gentle dark palette.</p>
+              </div>
+              <span class="palette-swatch" aria-hidden="true"
+                ><span
+                  style="background: #1e1e2e"
+                  title="background: #1E1E2E"
+                ></span
+                ><span
+                  style="background: #313244"
+                  title="surface: #313244"
+                ></span
+                ><span style="background: #cdd6f4" title="text: #CDD6F4"></span
+                ><span style="background: #a6adc8" title="muted: #A6ADC8"></span
+                ><span
+                  style="background: #cba6f7"
+                  title="accent: #CBA6F7"
+                ></span
+                ><span
+                  style="background: #a6e3a1"
+                  title="success: #A6E3A1"
+                ></span
+                ><span
+                  style="background: #f9e2af"
+                  title="warning: #F9E2AF"
+                ></span
+                ><span style="background: #f38ba8" title="error: #F38BA8"></span
+              ></span>
+            </div>
+            <div
+              class="terminal"
+              aria-label="Illustrative terminal styling, not a running session"
+            >
+              <div class="terminal-bar">
+                <span class="terminal-label">OH MY MOLIK</span
+                ><span>theme / catppuccin-mocha</span>
+              </div>
+              <div class="terminal-body">
+                <p><span class="accent">›</span> Explore the workspace</p>
+                <p class="muted">A considered space for your next idea.</p>
+                <p>
+                  <span class="success">●</span> ready
+                  <span class="warning">●</span> review
+                  <span class="error">●</span> attention
+                </p>
+                <div class="terminal-footer">
+                  Design preview · no live agent session
+                </div>
+              </div>
+            </div>
+            <p class="theme-colors">
+              <span>background <code>#1E1E2E</code></span
+              ><span>surface <code>#313244</code></span
+              ><span>text <code>#CDD6F4</code></span
+              ><span>muted <code>#A6ADC8</code></span
+              ><span>accent <code>#CBA6F7</code></span
+              ><span>success <code>#A6E3A1</code></span
+              ><span>warning <code>#F9E2AF</code></span
+              ><span>error <code>#F38BA8</code></span>
+            </p>
+          </article>
+          <article
+            class="theme-card"
+            id="ocean"
+            data-theme="ocean"
+            style="
+              --bg: #102332;
+              --surface: #203c4b;
+              --text: #e2f1f5;
+              --muted: #a9c5ce;
+              --accent: #8ed5e0;
+              --success: #a9ddbe;
+              --warning: #f3d596;
+              --error: #f3b1ad;
+            "
+          >
+            <div class="theme-meta">
+              <div>
+                <span class="eyebrow">03 / DARK</span>
+                <h2>Ocean</h2>
+                <p>Cool, open and easy to read.</p>
+              </div>
+              <span class="palette-swatch" aria-hidden="true"
+                ><span
+                  style="background: #102332"
+                  title="background: #102332"
+                ></span
+                ><span
+                  style="background: #203c4b"
+                  title="surface: #203C4B"
+                ></span
+                ><span style="background: #e2f1f5" title="text: #E2F1F5"></span
+                ><span style="background: #a9c5ce" title="muted: #A9C5CE"></span
+                ><span
+                  style="background: #8ed5e0"
+                  title="accent: #8ED5E0"
+                ></span
+                ><span
+                  style="background: #a9ddbe"
+                  title="success: #A9DDBE"
+                ></span
+                ><span
+                  style="background: #f3d596"
+                  title="warning: #F3D596"
+                ></span
+                ><span style="background: #f3b1ad" title="error: #F3B1AD"></span
+              ></span>
+            </div>
+            <div
+              class="terminal"
+              aria-label="Illustrative terminal styling, not a running session"
+            >
+              <div class="terminal-bar">
+                <span class="terminal-label">OH MY MOLIK</span
+                ><span>theme / ocean</span>
+              </div>
+              <div class="terminal-body">
+                <p><span class="accent">›</span> Explore the workspace</p>
+                <p class="muted">A considered space for your next idea.</p>
+                <p>
+                  <span class="success">●</span> ready
+                  <span class="warning">●</span> review
+                  <span class="error">●</span> attention
+                </p>
+                <div class="terminal-footer">
+                  Design preview · no live agent session
+                </div>
+              </div>
+            </div>
+            <p class="theme-colors">
+              <span>background <code>#102332</code></span
+              ><span>surface <code>#203C4B</code></span
+              ><span>text <code>#E2F1F5</code></span
+              ><span>muted <code>#A9C5CE</code></span
+              ><span>accent <code>#8ED5E0</code></span
+              ><span>success <code>#A9DDBE</code></span
+              ><span>warning <code>#F3D596</code></span
+              ><span>error <code>#F3B1AD</code></span>
+            </p>
+          </article>
+          <article
+            class="theme-card"
+            id="dusk"
+            data-theme="dusk"
+            style="
+              --bg: #272333;
+              --surface: #393449;
+              --text: #f0eaf5;
+              --muted: #c7b8d0;
+              --accent: #d8b8e7;
+              --success: #b8ddb9;
+              --warning: #efd199;
+              --error: #f2b0b4;
+            "
+          >
+            <div class="theme-meta">
+              <div>
+                <span class="eyebrow">04 / DARK</span>
+                <h2>Dusk</h2>
+                <p>Soft violet for late sessions.</p>
+              </div>
+              <span class="palette-swatch" aria-hidden="true"
+                ><span
+                  style="background: #272333"
+                  title="background: #272333"
+                ></span
+                ><span
+                  style="background: #393449"
+                  title="surface: #393449"
+                ></span
+                ><span style="background: #f0eaf5" title="text: #F0EAF5"></span
+                ><span style="background: #c7b8d0" title="muted: #C7B8D0"></span
+                ><span
+                  style="background: #d8b8e7"
+                  title="accent: #D8B8E7"
+                ></span
+                ><span
+                  style="background: #b8ddb9"
+                  title="success: #B8DDB9"
+                ></span
+                ><span
+                  style="background: #efd199"
+                  title="warning: #EFD199"
+                ></span
+                ><span style="background: #f2b0b4" title="error: #F2B0B4"></span
+              ></span>
+            </div>
+            <div
+              class="terminal"
+              aria-label="Illustrative terminal styling, not a running session"
+            >
+              <div class="terminal-bar">
+                <span class="terminal-label">OH MY MOLIK</span
+                ><span>theme / dusk</span>
+              </div>
+              <div class="terminal-body">
+                <p><span class="accent">›</span> Explore the workspace</p>
+                <p class="muted">A considered space for your next idea.</p>
+                <p>
+                  <span class="success">●</span> ready
+                  <span class="warning">●</span> review
+                  <span class="error">●</span> attention
+                </p>
+                <div class="terminal-footer">
+                  Design preview · no live agent session
+                </div>
+              </div>
+            </div>
+            <p class="theme-colors">
+              <span>background <code>#272333</code></span
+              ><span>surface <code>#393449</code></span
+              ><span>text <code>#F0EAF5</code></span
+              ><span>muted <code>#C7B8D0</code></span
+              ><span>accent <code>#D8B8E7</code></span
+              ><span>success <code>#B8DDB9</code></span
+              ><span>warning <code>#EFD199</code></span
+              ><span>error <code>#F2B0B4</code></span>
+            </p>
+          </article>
+          <article
+            class="theme-card"
+            id="dawn"
+            data-theme="dawn"
+            style="
+              --bg: #f9f6f0;
+              --surface: #ede7dc;
+              --text: #252e29;
+              --muted: #4d5e53;
+              --accent: #176048;
+              --success: #24633b;
+              --warning: #805100;
+              --error: #9c3d3d;
+            "
+          >
+            <div class="theme-meta">
+              <div>
+                <span class="eyebrow">05 / LIGHT</span>
+                <h2>Dawn</h2>
+                <p>Warm clarity for daylight work.</p>
+              </div>
+              <span class="palette-swatch" aria-hidden="true"
+                ><span
+                  style="background: #f9f6f0"
+                  title="background: #F9F6F0"
+                ></span
+                ><span
+                  style="background: #ede7dc"
+                  title="surface: #EDE7DC"
+                ></span
+                ><span style="background: #252e29" title="text: #252E29"></span
+                ><span style="background: #4d5e53" title="muted: #4D5E53"></span
+                ><span
+                  style="background: #176048"
+                  title="accent: #176048"
+                ></span
+                ><span
+                  style="background: #24633b"
+                  title="success: #24633B"
+                ></span
+                ><span
+                  style="background: #805100"
+                  title="warning: #805100"
+                ></span
+                ><span style="background: #9c3d3d" title="error: #9C3D3D"></span
+              ></span>
+            </div>
+            <div
+              class="terminal"
+              aria-label="Illustrative terminal styling, not a running session"
+            >
+              <div class="terminal-bar">
+                <span class="terminal-label">OH MY MOLIK</span
+                ><span>theme / dawn</span>
+              </div>
+              <div class="terminal-body">
+                <p><span class="accent">›</span> Explore the workspace</p>
+                <p class="muted">A considered space for your next idea.</p>
+                <p>
+                  <span class="success">●</span> ready
+                  <span class="warning">●</span> review
+                  <span class="error">●</span> attention
+                </p>
+                <div class="terminal-footer">
+                  Design preview · no live agent session
+                </div>
+              </div>
+            </div>
+            <p class="theme-colors">
+              <span>background <code>#F9F6F0</code></span
+              ><span>surface <code>#EDE7DC</code></span
+              ><span>text <code>#252E29</code></span
+              ><span>muted <code>#4D5E53</code></span
+              ><span>accent <code>#176048</code></span
+              ><span>success <code>#24633B</code></span
+              ><span>warning <code>#805100</code></span
+              ><span>error <code>#9C3D3D</code></span>
+            </p>
+          </article>
+        </div>
+      </section>
+      <section class="closing">
+        <div>
+          <span class="eyebrow">THE NAME / THE MARK</span>
+          <h2>Oh My Molik.</h2>
+          <p>
+            A distinct agent project by MoLik Labs. Built to be understandable,
+            adaptable, and honest about what it can do.
+          </p>
+        </div>
+        <a
+          href="https://github.com/MoLik-Labs/FCC/blob/main/ohmymolik/README.md"
+          >Read the project notes ↗</a
+        >
+      </section>
+    </main>
+    <footer>
+      <span>OH MY MOLIK / EXPERIMENTAL</span
+      ><span
+        >Catppuccin Mocha palette © Catppuccin, MIT.
+        <a href="https://github.com/catppuccin/catppuccin">Source</a></span
+      >
+    </footer>
+  </body>
+</html>

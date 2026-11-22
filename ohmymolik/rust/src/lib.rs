@@ -3,6 +3,9 @@
 //! This crate does not perform I/O, enforce a sandbox, or authenticate the user
 //! responding to approval requests. Its caller is responsible for those tasks.
 #![forbid(unsafe_code)]
+pub mod sse;
+pub mod stream;
+pub mod theme;
 
 use std::collections::{HashSet, VecDeque};
 use std::fmt;

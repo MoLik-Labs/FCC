@@ -1,4 +1,4 @@
-name: Oh My Fox Rust core
+name: Oh My Molik Rust core
 
 on:
   pull_request:
@@ -10,7 +10,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: oh-my-fox-rust-${{ github.ref }}
+  group: oh-my-molik-rust-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -23,7 +23,7 @@ jobs:
     timeout-minutes: 20
     defaults:
       run:
-        working-directory: ohmyfox/rust
+        working-directory: ohmymolik/rust
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
       - uses: dtolnay/rust-toolchain@df2a88e9fe4098bad09cb42c3dec7187f15861fc

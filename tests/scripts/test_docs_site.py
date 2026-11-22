@@ -14,10 +14,11 @@ class DocumentationSiteTests(unittest.TestCase):
             build(output)
             self.assertTrue((output / "index.html").is_file())
             self.assertTrue((output / "vi.html").is_file())
+            self.assertTrue((output / "molik.html").is_file())
             self.assertTrue((output / ".nojekyll").is_file())
             self.assertTrue((output / "assets" / "admin-page.png").is_file())
             self.assertTrue((output / "assets" / "browser-code-session.png").is_file())
-            self.assertTrue((output / "assets" / "fox-mark.svg").is_file())
+            self.assertTrue((output / "assets" / "molik-mark.svg").is_file())
             validate_site(output)
 
     def test_quick_starts_use_the_fork_and_warn_about_upstream_updater(self) -> None:
@@ -45,6 +46,21 @@ class DocumentationSiteTests(unittest.TestCase):
                 )[0]
                 self.assertIn("fcc-update", maintenance)
                 self.assertIn("upstream", maintenance)
+
+    def test_molik_gallery_tracks_the_rust_theme_tokens(self) -> None:
+        import re
+
+        root = Path(__file__).resolve().parents[2]
+        rust = (root / "ohmymolik/rust/src/theme.rs").read_text(encoding="utf-8")
+        gallery = (root / "docs/site/molik.html").read_text(encoding="utf-8")
+        blocks = list(re.finditer(r'Theme \{\s*name: "([a-z-]+)",(.*?)\n    \}', rust, re.S))
+        self.assertEqual(len(blocks), 5)
+        for block in blocks:
+            name = block.group(1)
+            with self.subTest(theme=name):
+                self.assertIn(f'id="{name}"', gallery)
+                for match in re.finditer(r'([a-z]+): "(#[A-F0-9]{6})"', block.group(2)):
+                    self.assertIn(f"{match.group(1)} <code>{match.group(2)}</code>", gallery)
 
     def test_missing_target_fragment_duplicate_id_and_alt_are_rejected(self) -> None:
         examples = (

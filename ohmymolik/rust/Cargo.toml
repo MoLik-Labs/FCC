@@ -1,15 +1,15 @@
 [package]
-name = "oh-my-fox"
+name = "oh-my-molik"
 version = "0.1.0"
 edition = "2021"
 rust-version = "1.88"
-description = "Experimental bounded agent core for Oh My Fox"
+description = "Experimental bounded agent core for Oh My Molik"
 license = "AGPL-3.0-only"
 publish = false
 
 [lib]
-name = "oh_my_fox"
+name = "oh_my_molik"
 
 [[bin]]
-name = "oh-my-fox"
+name = "oh-my-molik"
 path = "src/main.rs"

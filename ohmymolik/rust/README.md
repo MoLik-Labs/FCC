@@ -1,7 +1,7 @@
-# Oh My Fox: Rust core
+# Oh My Molik: Rust core
 
 This is an experimental, dependency-free foundation, not a coding agent yet.
-The CLI only supports help and version. The model-connected Go prototype is
+The CLI supports help, version and inspection of theme tokens. The model-connected Go prototype is
 retained separately until Rust is verified to replace it. FCC remains Python;
 this project does not change its server, streaming, or remote/tunnel support.
 
@@ -14,11 +14,39 @@ cargo fmt --all -- --check
 cargo clippy --locked --offline --all-targets -- -D warnings
 cargo test --locked --offline
 cargo run --locked --offline -- --help
+cargo run --locked --offline -- theme list
+cargo run --locked --offline -- theme show forest
 ```
 
 The lockfile is committed. There are no third-party crates today. CI checks
 Linux, macOS and Windows using the official Rust toolchain; a workflow definition
 is not evidence that remote checks have run or passed.
+
+## Themes and stream framing
+
+`theme list` and `theme show NAME` expose the Forest, Catppuccin Mocha,
+Ocean, Dusk and Dawn design tokens. They do not configure or render an agent
+TUI. Color contrast tests cover text and semantic tokens on both base and
+surface colors; these tests do not guarantee accessibility for every UI state.
+See the [brand guide](../brand/README.md) for attribution and preview.
+
+The SSE decoder processes UTF-8 bytes incrementally, including split multibyte
+characters, BOM, CR/LF/CRLF and multiline `data` fields. It bounds individual
+lines and accumulated event fields, rejects malformed UTF-8, and discards
+incomplete events on EOF. It deliberately ignores `id` and `retry`; it is not
+an HTTP client, JSON parser, reconnect implementation, provider adapter, or
+proof of end-to-end streaming. If any frame in a `push` call is invalid, that
+call returns an error and its events are not returned; discard the decoder.
+Callers must bound each input chunk and enforce overall response/time limits.
+
+`stream::Assembler` accepts already-decoded deltas for exactly one provider
+choice. It bounds bytes and call indexes, assembles interleaved fragments and
+rejects gaps, reused IDs, mixed assistant content/tool calls and incompatible
+finish reasons. A failed append poisons the assembler. Only a finished reply
+can be submitted to the session; no partial tool call can be dispatched. The
+adapter must validate JSON, tool type, one choice and protocol ordering, and
+must discard partial output on interruption or retry. It must not replay chunks
+or silently treat an unsupported finish reason as success.
 
 ## Boundaries
 

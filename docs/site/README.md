@@ -39,3 +39,7 @@ Links to project source and reference material point to the `main` branch of
 `MoLik-Labs/FCC`; they represent the published documentation after these
 changes reach that branch. The quick start clones the current development branch
 of this fork; the upstream installer and updater do not install this checkout.
+
+The Oh My Molik [theme collection](molik.html) is a static design preview;
+it does not demonstrate a working agent UI or theme persistence. The builder
+copies the vector mark from `ohmymolik/brand/` into the published site.

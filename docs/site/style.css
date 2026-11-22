@@ -913,8 +913,8 @@ pre:focus-visible,
   outline-offset: 3px;
 }
 
-/* Independent Oh My Fox project; FCC retains its own identity. */
-.fox-card {
+/* Independent Oh My Molik project; FCC retains its own identity. */
+.molik-card {
   display: flex;
   align-items: flex-start;
   gap: 20px;
@@ -924,17 +924,17 @@ pre:focus-visible,
   border-radius: 8px;
   background: #fff9f3;
 }
-.fox-card img {
+.molik-card img {
   flex: 0 0 64px;
 }
-.fox-card h3 {
+.molik-card h3 {
   margin: 3px 0 4px;
   font-size: 21px;
 }
-.fox-card p {
+.molik-card p {
   margin: 0 0 8px;
 }
-.fox-card-label {
+.molik-card-label {
   color: #704430;
   font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
   font-size: 11px;
@@ -942,11 +942,11 @@ pre:focus-visible,
   letter-spacing: 0.04em;
 }
 @media (max-width: 520px) {
-  .fox-card {
+  .molik-card {
     padding: 18px;
     gap: 14px;
   }
-  .fox-card img {
+  .molik-card img {
     width: 48px;
     height: 48px;
     flex-basis: 48px;

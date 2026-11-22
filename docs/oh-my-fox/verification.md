@@ -1,4 +1,4 @@
-# Oh My Fox and remote access: verification checkpoint
+# Oh My Molik (formerly Oh My Fox) and remote access: verification checkpoint
 
 This is an incremental checkpoint, not an approval to release the Go rewrite or
 claim state-of-the-art agent performance.
@@ -49,3 +49,22 @@ The updated bilingual site was tested locally in headless Chromium at 1440,
 violations were detected, and mobile menu/Escape navigation worked. The fox
 mark loaded at desktop and narrow widths. This is not cross-browser or physical
 device testing and does not mean GitHub Pages is publicly deployed.
+
+## Oh My Molik rename and theme / streaming checkpoint
+
+- Rust 1.88.0: fmt, Clippy (`-D warnings`) and **16 offline tests** passed on
+  Linux. The new tests cover SSE chunk boundaries and invalid input; delta
+  assembly, size limits and finish reasons; and palette contrast and CLI output.
+  This does not verify HTTP, a provider or real streamed model output.
+- The toolchain provenance limitation above still applies. The CI matrix has not
+  been observed; Linux local tests do not prove Windows/macOS behavior.
+- The retained Go prototype passed `go vet`, `go test` and `go test -race`
+  using Go 1.22.12; race testing required `CGO_ENABLED=1` in this environment.
+- Documentation tests passed (**5 tests, 12 subtests**), Ruff and Pyrefly passed
+  for the changed Python files, and the site builder validated local links.
+  Headless Chromium and axe checks found no overflow, page/HTTP errors or
+  WCAG 2/2.1 A/AA violations for the gallery and EN/VI pages at 1440, 390 and
+  320 pixels. This is not cross-browser or physical-device validation.
+- The selected reference image is user-provided. The vector mark is a manual
+  interpretation; no legal trademark clearance is claimed. Themes are token
+  sets with illustrative previews, not a functioning theme-switching TUI.

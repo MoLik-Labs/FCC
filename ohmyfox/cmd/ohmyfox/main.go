@@ -1,4 +1,4 @@
-// Oh My Fox is an experimental, read-only coding assistant.
+// Oh My Molik is an experimental, read-only coding assistant.
 package main
 
 import (
@@ -20,7 +20,7 @@ func main() {
 	maxTurns := flag.Int("max-turns", 8, "Maximum model turns (1-32)")
 	promptStdin := flag.Bool("prompt-stdin", false, "Read prompt from standard input instead of command-line arguments")
 	flag.Usage = func() {
-		fmt.Fprintln(flag.CommandLine.Output(), "Oh My Fox (experimental read-only preview)")
+		fmt.Fprintln(flag.CommandLine.Output(), "Oh My Molik (experimental read-only preview)")
 		fmt.Fprintln(flag.CommandLine.Output(), "Usage: ohmyfox --endpoint URL --model MODEL [options] 'prompt'")
 		fmt.Fprintln(flag.CommandLine.Output(), "Optional bearer token: OMF_API_KEY environment variable")
 		flag.PrintDefaults()
