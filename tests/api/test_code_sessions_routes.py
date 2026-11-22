@@ -290,6 +290,43 @@ async def test_code_routes_accept_tunnel_clients(
 
 
 @pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "origin",
+    [
+        "https://fcc.example.trycloudflare.com",
+        "https://fcc.example.ngrok.app",
+        "https://fcc.example.ts.net",
+    ],
+)
+async def test_remote_clients_can_create_and_read_code_sessions(
+    code_api: tuple[httpx.AsyncClient, CodeService, FakeHarness, Path, FastAPI],
+    origin: str,
+) -> None:
+    _, _, harness, folder, app = code_api
+    async with httpx.AsyncClient(
+        transport=httpx.ASGITransport(app=app, client=("203.0.113.10", 54321)),
+        base_url=origin,
+        headers={"Origin": origin, "X-Forwarded-Proto": "https"},
+    ) as remote:
+        bootstrap = await remote.get("/admin/api/code/bootstrap")
+        assert bootstrap.status_code == 200
+        response = await remote.post(
+            "/admin/api/code/sessions",
+            json={
+                "session_id": str(uuid.uuid4()),
+                "cwd": str(folder),
+                "harness": "codex",
+            },
+        )
+        assert response.status_code == 201
+        session = response_object(response)
+        detail = await remote.get(f"/admin/api/code/sessions/{session['id']}")
+        assert detail.status_code == 200
+        assert detail.headers["cache-control"] == "no-store"
+        assert harness.connections == []
+
+
+@pytest.mark.asyncio
 @pytest.mark.parametrize("cancelled", [False, True])
 async def test_folder_selection_only_returns_to_requesting_form(
     code_api: tuple[httpx.AsyncClient, CodeService, FakeHarness, Path, FastAPI],

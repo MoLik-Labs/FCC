@@ -618,8 +618,10 @@ uv run fcc-codex</code></pre>
               network or tunnel layer with controls you trust; a tunnel URL by
               itself is not an authorization policy. Review its provider’s
               access configuration and test that unauthorized users cannot reach
-              Admin or Code before use. Preserve the local server and all
-              credentials on a trusted host.
+              Admin or Code before use. Remote HTTP transmits tokens and request
+              contents without HTTP transport encryption; use HTTPS or a
+              properly protected private tunnel, including for Claude Desktop.
+              Preserve the server and credentials on a trusted host.
             </p>
             <h3>Credential hygiene</h3>
             <ul>
@@ -791,7 +793,13 @@ uv run fcc-server</code></pre>
                 href="https://github.com/MoLik-Labs/FCC/blob/main/docs/rewrite/00-master-plan.md"
                 >rewrite plan</a
               >. Fixture success alone does not establish current-provider or
-              full-service parity.
+              full-service parity. The separate
+              <a
+                href="https://github.com/MoLik-Labs/FCC/blob/main/ohmyfox/README.md"
+                >Oh My Fox</a
+              >
+              prototype is currently read-only and is not a complete coding
+              agent.
             </p>
           </section>
           <section class="doc-section" id="pages">

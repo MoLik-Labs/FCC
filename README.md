@@ -53,6 +53,14 @@ python3 -m http.server 8000 --directory site-build
 Open `http://localhost:8000/` on the same machine. The builder requires a new
 or empty output directory; see the documentation build guide for repeat builds.
 
+## Oh My Fox (experimental)
+
+[Oh My Fox](ohmyfox/README.md) is a separate, early Go prototype for a
+read-only coding assistant that can use FCC or another explicit Chat
+Completions endpoint, local or remote. It is not yet a full coding agent or an
+Oh My Pi replacement. See the [research and roadmap](docs/oh-my-fox/research.md)
+for the source inventory, limitations and outstanding safety gates.
+
 ## Features
 
 - Route any supported harness to models from any supported provider.
@@ -79,7 +87,9 @@ Free-tier availability and limits are controlled by each provider and may change
 > boundary. They can change configuration and operate code sessions. Do not
 > expose them to untrusted networks or the public internet without protection
 > provided by your network or tunnel. Proxy Authentication protects the proxy
-> API; do not assume it also protects Admin.
+> API; do not assume it also protects Admin. Remote HTTP sends credentials
+> and request contents without HTTP transport encryption; use HTTPS or a
+> properly protected private tunnel, including for Claude Desktop gateways.
 >
 > The Go port in [`gocore/`](gocore/README.md) is experimental and incomplete;
 > the Python application remains the supported runtime.

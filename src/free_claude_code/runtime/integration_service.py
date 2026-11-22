@@ -632,7 +632,7 @@ class IntegrationService:
             ) from None
         except ValueError:
             raise InvalidRequestError(
-                "Could not configure Claude Desktop. Check its configuration JSON and FCC disconnect record, and ensure FCC uses a localhost address and a nonempty managed token."
+                "Could not configure Claude Desktop. Check its configuration JSON and FCC disconnect record, and ensure FCC uses a valid HTTP or HTTPS address and a nonempty managed token."
             ) from None
         except OSError:
             raise ApplicationUnavailableError(

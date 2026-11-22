@@ -594,7 +594,9 @@ uv run fcc-codex</code></pre>
               xa khi được cấu hình phù hợp. Giới hạn truy cập tại lớp mạng hoặc
               tunnel; chỉ có URL tunnel không đồng nghĩa với chính sách phân
               quyền. Kiểm tra cấu hình của nhà cung cấp và xác minh người không
-              được phép không thể vào Admin hoặc Code trước khi sử dụng.
+              được phép không thể vào Admin hoặc Code trước khi sử dụng. HTTP từ
+              xa không mã hóa token và nội dung ở lớp HTTP; dùng HTTPS hoặc
+              tunnel riêng được bảo vệ phù hợp, kể cả với Claude Desktop.
             </p>
             <h3>Bảo vệ thông tin xác thực</h3>
             <ul>
@@ -758,7 +760,12 @@ uv run fcc-server</code></pre>
                 href="https://github.com/MoLik-Labs/FCC/blob/main/docs/rewrite/00-master-plan.md"
                 >kế hoạch rewrite</a
               >. Test fixture thành công chưa chứng minh parity toàn bộ service
-              hoặc provider hiện tại.
+              hoặc provider hiện tại. Bản thử nghiệm
+              <a
+                href="https://github.com/MoLik-Labs/FCC/blob/main/ohmyfox/README.md"
+                >Oh My Fox</a
+              >
+              riêng hiện chỉ đọc và chưa phải coding agent hoàn chỉnh.
             </p>
           </section>
           <section class="doc-section" id="pages">
