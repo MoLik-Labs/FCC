@@ -7,7 +7,9 @@ import json
 import re
 from collections.abc import Iterable
 from dataclasses import dataclass
-from typing import Any
+from typing import cast
+
+from free_claude_code.core.json_types import JsonObject, JsonValue, load_json_value
 
 from .server_tool_types import (
     SERVER_TOOL_USE,
@@ -43,7 +45,7 @@ _ALLOWED_BLOCK_START_TYPES = frozenset(
 @dataclass(frozen=True, slots=True)
 class SSEEvent:
     event: str
-    data: dict[str, Any]
+    data: JsonObject
     raw: str
 
 
@@ -77,7 +79,7 @@ def parse_sse_lines(
 # Compiled once: this runs for every SSE frame, and a pattern string would pay
 # a regex-cache lookup on each call while also splitting on exotic Unicode line
 # separators that may legally appear inside a JSON payload.
-_SSE_LINE_BREAKS = re.compile(r"\r\n|\r|\n")
+_SSE_LINE_BREAKS: re.Pattern[str] = re.compile(r"\r\n|\r|\n")
 
 
 def parse_sse_text(
@@ -110,26 +112,29 @@ def failure_reason_from_frame(frame: str, failure_events: frozenset[str]) -> str
     if "error" not in frame and "response.failed" not in frame:
         return None
 
-    event_name = ""
+    event_name: str = ""
     data_parts: list[str] = []
-    for line in _SSE_LINE_BREAKS.split(frame):
+    # The pattern has no capturing groups, so split yields only strings.
+    for line in cast(list[str], _SSE_LINE_BREAKS.split(frame)):
         if line.startswith("event:"):
             event_name = line[6:].strip()
         elif line.startswith("data:"):
             data_parts.append(line[5:].lstrip(" "))
 
-    if event_name:
-        if event_name not in failure_events:
-            return None
-    elif not data_parts:
+    if event_name and event_name not in failure_events:
+        return None
+    if not event_name and not data_parts:
         return None
 
     try:
-        parsed = json.loads("\n".join(data_parts)) if data_parts else {}
+        parsed: JsonValue = load_json_value("\n".join(data_parts)) if data_parts else {}
     except json.JSONDecodeError:
         # The full SSE parser still reports a named error with malformed data.
         parsed = {"raw": "\n".join(data_parts)}
-    data = parsed if isinstance(parsed, dict) else {"value": parsed}
+    if isinstance(parsed, dict):
+        data: JsonObject = parsed
+    else:
+        data = {"value": parsed}
 
     kind = event_name or data.get("type") or ("error" if "error" in data else None)
     if not isinstance(kind, str) or kind not in failure_events:
@@ -139,7 +144,7 @@ def failure_reason_from_frame(frame: str, failure_events: frozenset[str]) -> str
     error = payload.get("error")
     error = error if isinstance(error, dict) else payload
     reason = error.get("code") or error.get("type")
-    return reason if isinstance(reason, str) else str(kind)
+    return reason if isinstance(reason, str) else kind
 
 
 def _append_event(
@@ -154,9 +159,9 @@ def _append_event(
     if event_names is not None and current_event and current_event not in event_names:
         return
     data_text = "\n".join(data_parts)
-    data: dict[str, Any]
+    data: JsonObject
     try:
-        parsed = json.loads(data_text) if data_text else {}
+        parsed = load_json_value(data_text) if data_text else {}
         data = parsed if isinstance(parsed, dict) else {"value": parsed}
     except json.JSONDecodeError:
         data = {"raw": data_text}

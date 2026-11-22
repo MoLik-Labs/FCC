@@ -12,16 +12,25 @@ from free_claude_code.core.chat_completions.tool_calls import (
     AmbiguousToolCallIdentityError,
     ToolCallIdentityResolver,
 )
+from free_claude_code.core.json_types import (
+    JsonObject,
+    JsonValue,
+    json_object,
+    json_objects,
+    load_json_value,
+)
 
 DATA = Path("gocore/testdata")
 
 
-def main():
-    historical = json.loads((DATA / "golden_openaichat4c4a.json").read_text())
-    inputs = [
+def main() -> None:
+    historical = json_object(
+        load_json_value((DATA / "golden_openaichat4c4a.json").read_text())
+    )
+    inputs: list[JsonObject] = [
         previous
-        for previous in historical["identity"]
-        if all(step["op"] == "resolve" for step in previous["steps"])
+        for previous in json_objects(historical["identity"])
+        if all(step["op"] == "resolve" for step in json_objects(previous["steps"]))
     ]
     inputs.extend(
         {
@@ -33,15 +42,19 @@ def main():
         }
         for code in range(0x1C, 0x20)
     )
-    scenarios = []
+    scenarios: list[JsonValue] = []
     for previous in inputs:
         resolver = ToolCallIdentityResolver()
-        steps = []
-        for previous_step in previous["steps"]:
+        steps: list[JsonValue] = []
+        for previous_step in json_objects(previous["steps"]):
             index, call_id = previous_step["index"], previous_step["id"]
             try:
                 slot, learned_id = resolver.resolve(index, call_id)
-                result = {"slot": slot, "tool_id": learned_id, "error": None}
+                result: JsonObject = {
+                    "slot": slot,
+                    "tool_id": learned_id,
+                    "error": None,
+                }
             except AmbiguousToolCallIdentityError as exc:
                 result = {"slot": None, "tool_id": None, "error": str(exc)}
             steps.append({"index": index, "id": call_id, **result})

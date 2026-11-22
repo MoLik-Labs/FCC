@@ -14,11 +14,12 @@ import statistics
 import time
 
 from free_claude_code.api.stream_delivery import PublicResponseStream
+from free_claude_code.core.json_types import JsonObject
 from free_claude_code.core.stream_delivery import StreamDeliveryState
 from free_claude_code.core.stream_output import StreamOutput
 
 
-def frame(payload):
+def frame(payload: JsonObject) -> str:
     return f"event: {payload['type']}\ndata: {json.dumps(payload)}\n\n"
 
 

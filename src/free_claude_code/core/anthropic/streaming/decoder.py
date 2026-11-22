@@ -44,11 +44,11 @@ class AnthropicSSEDecoder:
             pieces = chunk.split("\n\n")
             remainder = pieces[-1]
             if len(pieces) > 1:
-                frames = tuple(f"{piece}\n\n" for piece in pieces[:-1])
+                fast_frames = tuple(f"{piece}\n\n" for piece in pieces[:-1])
                 if remainder:
                     self._parts.append(remainder)
                 self._boundary_tail = remainder[-3:]
-                return frames
+                return fast_frames
             if remainder:
                 self._parts.append(remainder)
             self._boundary_tail = chunk[-3:]

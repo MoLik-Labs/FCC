@@ -38,7 +38,7 @@ def _observe_event(event: SSEEvent) -> None:
     error = payload.get("error")
     error = error if isinstance(error, dict) else payload
     reason = error.get("code") or error.get("type")
-    record_request_failure(reason if isinstance(reason, str) else str(kind))
+    record_request_failure(reason if isinstance(reason, str) else kind)
 
 
 class RequestOutcomeMiddleware:
@@ -48,10 +48,11 @@ class RequestOutcomeMiddleware:
         self._app = app
 
     async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
+        path: str = scope.get("path", "")
         if (
             scope["type"] != "http"
             or scope.get("method") != "POST"
-            or generation_api(scope.get("path", "")) is None
+            or generation_api(path) is None
         ):
             await self._app(scope, receive, send)
             return
@@ -79,19 +80,20 @@ class RequestOutcomeMiddleware:
                 raise
             if message["type"] == "http.response.start":
                 status_code = message["status"]
+                raw_headers: list[tuple[bytes, bytes]] = message.get("headers", [])
                 if (
-                    Headers(raw=message.get("headers", []))
+                    Headers(raw=raw_headers)
                     .get("content-type", "")
                     .startswith("text/event-stream")
                 ):
                     # Framing only; failure detection uses the cheap text scan.
                     decoder = AnthropicSSEDecoder()
             elif message["type"] == "http.response.body":
-                completed = not message.get("more_body", False)
+                more_body: bool = message.get("more_body", False)
+                completed = not more_body
                 if decoder is not None:
-                    text = text_decoder.decode(
-                        message.get("body", b""), final=completed
-                    )
+                    body: bytes = message.get("body", b"")
+                    text = text_decoder.decode(body, final=completed)
                     # Healthy streams never carry failure events, so scan frame
                     # names cheaply and JSON-decode only the rare error frame
                     # instead of parsing every SSE payload a second time.
@@ -131,7 +133,7 @@ class RequestOutcomeMiddleware:
                 result = "success"
             logger.bind(
                 event="request.completed",
-                wire_api=generation_api(scope["path"]),
+                wire_api=generation_api(path),
                 provider_id=outcome.provider_id,
                 model=outcome.model,
                 status_code=status_code,

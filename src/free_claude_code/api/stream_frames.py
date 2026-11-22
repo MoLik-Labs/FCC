@@ -2,9 +2,10 @@
 
 import re
 from collections.abc import Mapping
-from typing import Any
 
 import simplejson
+
+from free_claude_code.core.json_types import DecimalJsonObject, DecimalJsonValue
 
 # SSE wire line endings are CR/LF/CRLF. The patterns are compiled once at module
 # load: passing pattern *strings* to ``re.split`` forces a cache lookup on every
@@ -14,7 +15,7 @@ _LINE_BREAKS_CAPTURING = re.compile(r"(\r\n|\r|\n)")
 _DATA_PREFIX = "data:"
 
 
-def frame_data(frame: str) -> dict[str, Any] | None:
+def frame_data(frame: str) -> DecimalJsonObject | None:
     """Read only SSE data, retaining decimal precision for envelope edits."""
     text = "\n".join(
         line[5:].lstrip(" ")
@@ -22,7 +23,7 @@ def frame_data(frame: str) -> dict[str, Any] | None:
         if line.startswith(_DATA_PREFIX)
     )
     try:
-        value: object = simplejson.loads(text, use_decimal=True)
+        value: DecimalJsonValue = simplejson.loads(text, use_decimal=True)
     except ValueError:
         return None
     return value if isinstance(value, dict) else None
@@ -65,10 +66,10 @@ class FramePayloadCache:
     __slots__ = ("_capacity", "_entries")
 
     def __init__(self, capacity: int = 64) -> None:
-        self._entries: dict[str, dict[str, Any] | None] = {}
+        self._entries: dict[str, DecimalJsonObject | None] = {}
         self._capacity = capacity
 
-    def get(self, frame: str) -> dict[str, Any] | None:
+    def get(self, frame: str) -> DecimalJsonObject | None:
         if frame in self._entries:
             return self._entries[frame]
         parsed = frame_data(frame)

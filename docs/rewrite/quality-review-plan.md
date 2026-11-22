@@ -6,15 +6,12 @@ executable specification and the Go work as a partial port.
 
 ## Skill inventory (2026-10-27)
 
-The following source repositories were cloned at these revisions, and their
-skill directories and source licenses were copied to `/home/user/skill-installed/`
-for manual use in this environment. Compressed copies are kept under the
-ignored local `agent_workspace/skills/` directory; extract each archive outside
-the repository to restore the files after an environment reset. Keeping loose
-third-party Python files under the repository interferes with its recursive CI
-suppression check. These are local working files, not vendored project
-dependencies; they are not committed or automatically installed for other
-contributors.
+The following source repositories were cloned at these revisions for manual
+use. They are not vendored or automatically installed for other contributors,
+and local copies, ignored archives and toolchains may disappear after an
+environment reset. Re-clone the repositories at the recorded revisions outside
+the FCC tree when needed. Keeping loose third-party Python files under the
+repository interferes with its recursive CI suppression check.
 
 | Library | Revision | Local manual-use directory | Contents |
 | --- | --- | --- | --- |
@@ -49,15 +46,14 @@ visual effects.
 
 ## Ordered work and evidence gates
 
-1. **Integrate current main.** Fetch and inspect changes, resolve conflicts
-   semantically, retain branch performance work and the intentional remote
-   Admin/Code behavior, then run tests against the combined tree. As of this
-   review, `origin/main` is `0d7e83e`, six commits past the prior integration
-   base. A trial merge produced conflicts in three runtime files and twelve
-   test files, including the remote-access tests and the Gemini SDK test bridge;
-   it was aborted rather than leaving a conflicted or unverified tree. Main
-   also moves CI from `ty` to strict Pyrefly, affecting hundreds of files.
-   Neither old green results nor a textual merge establish correctness.
+1. **Integrate current main.** The working branch incorporates `0d7e83e`,
+   six commits past the prior integration base, including main's strict
+   Pyrefly migration. Conflicts in three runtime files and twelve test files
+   were resolved to retain the streaming optimizations, remote Admin/Code
+   behavior and Gemini SDK bridge. See the current-main checkpoint for
+   verification and remaining type-check failures. Fetch and reassess if main
+   moves again; integration into this branch is not approval to merge it into
+   main.
 2. **Establish a reproducible baseline.** Rebuild the pinned toolchains and
    dependencies, run current CI formatting, lint, type and unit gates, Go
    tests and race checks, and remote/tunnel regression tests. Record environment

@@ -29,7 +29,9 @@ def test_incremental_sse_terminators_preserve_unicode_text(
 
 @pytest.mark.parametrize("newline", ["\r", "\n", "\r\n"])
 @pytest.mark.parametrize("width", range(1, 8))
-def test_raw_frames_preserve_comments_fields_delimiters_and_unicode(newline, width):
+def test_raw_frames_preserve_comments_fields_delimiters_and_unicode(
+    newline: str, width: int
+) -> None:
     payload = json.dumps({"text": "left\u2028middle\u2029right"}, ensure_ascii=False)
     raw = (
         f": keepalive{newline}{newline}"
@@ -44,7 +46,9 @@ def test_raw_frames_preserve_comments_fields_delimiters_and_unicode(newline, wid
     assert "".join(frames) == raw
 
 
-def test_fast_path_frames_match_regex_path_on_random_streams(monkeypatch):
+def test_fast_path_frames_match_regex_path_on_random_streams(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
     """The split-based fast path must be byte-identical to the regex decoder."""
 
     rng = random.Random(20260417)
@@ -92,7 +96,7 @@ def test_event_name_does_not_treat_unicode_separator_as_a_line_break():
         ": error text\n\n",
     ],
 )
-def test_failure_fast_scan_matches_full_outcome_observer(frame):
+def test_failure_fast_scan_matches_full_outcome_observer(frame: str) -> None:
     from free_claude_code.api.request_outcomes import _FAILURE_EVENTS, _observe_event
     from free_claude_code.core.anthropic.stream_contracts import (
         failure_reason_from_frame,
