@@ -7,7 +7,7 @@
   </picture>
 </h1>
 
-[![License: AGPL v3](https://img.shields.io/badge/License-AGPL_v3-2e7d32.svg?style=for-the-badge)](https://github.com/Alishahryar1/free-claude-code/blob/main/LICENSE)
+[![License: AGPL v3](https://img.shields.io/badge/License-AGPL_v3-2e7d32.svg?style=for-the-badge)](LICENSE)
 [![Python 3.14](https://img.shields.io/badge/python-3.14-3776ab.svg?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/downloads/)
 [![Package Manager: uv](assets/package-manager-uv.svg)](https://github.com/astral-sh/uv)
 [![Testing: Pytest](https://img.shields.io/badge/Testing-Pytest-ad1457.svg?style=for-the-badge)](https://github.com/pytest-dev/pytest)
@@ -15,7 +15,7 @@
 [![Formatter: Ruff](https://img.shields.io/badge/Formatter-ruff-bf4b00.svg?style=for-the-badge)](https://github.com/astral-sh/ruff)
 [![Logging: Loguru](https://img.shields.io/badge/logging-loguru-00695c.svg?style=for-the-badge)](https://github.com/Delgan/loguru)
 
-[Quick Start](#quick-start) · [Providers](#choose-a-provider) · [Integrations](#integrations) · [API](#use-the-api-directly) · [Phone](#use-from-your-phone) · [Manage](#manage-your-installation) · [Documentation site](docs/site/README.md)
+[Documentation](#documentation) · [Quick Start](#quick-start) · [Providers](#choose-a-provider) · [Integrations](#integrations) · [API](#use-the-api-directly) · [Phone](#use-from-your-phone) · [Manage](#manage-your-installation)
 
 </div>
 
@@ -23,20 +23,49 @@
   <em>Independent open-source project. Not affiliated with or endorsed by Anthropic. Claude and Claude Code are trademarks of Anthropic.</em>
 </p>
 
+Free Claude Code (FCC) is an open-source gateway that connects coding agents,
+editors and API clients to cloud or local model providers. Configure routing in
+the Admin UI, then use a supported launcher or one of the compatible APIs.
+
+This repository, [MoLik-Labs/FCC](https://github.com/MoLik-Labs/FCC), is a fork
+of [Alishahryar1/free-claude-code](https://github.com/Alishahryar1/free-claude-code).
+The Python application is the supported runtime. The Go work in `gocore/` is
+experimental and is not yet a replacement for the Python server.
+
+## Documentation
+
+- [English guide](docs/site/index.html) · [Hướng dẫn tiếng Việt](docs/site/vi.html)
+  — source pages for the bilingual installation, API and operations guide.
+- [Build and publish the documentation](docs/site/README.md) — local preview and
+  GitHub Pages setup. The public URL is available from the deployment workflow
+  after Pages has been enabled and a deployment succeeds.
+- [Development and contribution](CONTRIBUTING.md) · [Go rewrite status](gocore/README.md)
+  · [Rewrite plan and checkpoints](docs/rewrite/00-master-plan.md).
+
+GitHub displays the source HTML for the guide links. To view the rendered site
+locally from a checkout that contains the documentation:
+
+```sh
+python3 scripts/build_docs_site.py
+python3 -m http.server 8000 --directory site-build
+```
+
+Open `http://localhost:8000/` on the same machine. The builder requires a new
+or empty output directory; see the documentation build guide for repeat builds.
+
 ## Features
 
 - Route any supported harness to models from any supported provider.
 - 12 supported harnesses: [Claude Code](https://code.claude.com/docs/en/overview), [Codex](https://github.com/openai/codex), [Pi](https://github.com/earendil-works/pi), [OpenCode](https://github.com/anomalyco/opencode), [Cline](https://github.com/cline/cline), [Hermes](https://github.com/NousResearch/hermes-agent), [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness), [Grok Build](https://github.com/xai-org/grok-build), [Muse Code](https://research.meta.ai/blog/introducing-muse-code-and-muse-spark-1-2/), [Aider](https://aider.chat/), [Antigravity CLI](https://antigravity.google/docs/getting-started/), or [VS Code Chat](https://code.visualstudio.com/).
-  - Preserved native streaming, tool use, and interleaved thinking for maximum performance.
+  - Supports streaming, tool use, and interleaved thinking where supported by the client and provider.
   - For Claude Code, route [Fable](https://www.anthropic.com/claude/fable), [Opus](https://www.anthropic.com/claude/opus), [Sonnet](https://www.anthropic.com/claude/sonnet), and [Haiku](https://www.anthropic.com/claude/haiku) to supported models.
 - Use any model through any of four APIs: [Anthropic Messages](https://platform.claude.com/docs/en/api/messages) (`/v1/messages`), [OpenAI Chat Completions](https://platform.openai.com/docs/api-reference/chat/create) (`/v1/chat/completions`), [OpenAI Responses](https://platform.openai.com/docs/api-reference/responses/create) (`/v1/responses`), or [Gemini](https://ai.google.dev/api/generate-content) (`generateContent`). See [Use The API Directly](#use-the-api-directly).
-- 61 supported providers, including free, paid, subscription, and local providers.
-  - 1.3B+ free tokens per month.
-  - FCC follows provider TOS and removes integrations if they stop being allowed.
+- Supports free-tier, paid, subscription, and local providers. Model access,
+  quotas, pricing, and permitted use depend on each provider and can change.
 - Use through the terminal, desktop apps ([Codex App](https://learn.chatgpt.com/docs/app), [Claude Desktop](https://claude.ai/download), and [DeepSeek Desktop](https://github.com/deepseek-ai/deepseek-harness)), IDE extensions ([VS Code](https://code.visualstudio.com/) and [JetBrains](https://www.jetbrains.com/)), [your phone](#use-from-your-phone) ([Discord](https://discord.com/) and [Telegram](https://telegram.org/)), or your browser through native Code sessions.
   - Voice notes supported for Discord and Telegram using local [Whisper](https://github.com/openai/whisper) or [NVIDIA NIM](https://docs.nvidia.com/nim/speech/latest/asr/deploy-asr-models/whisper.html).
-- Up to 90% lower token usage using [RTK](https://github.com/rtk-ai/rtk) and [Headroom](https://github.com/headroomlabs-ai/headroom).
-- State-of-the-art reliability features so you can keep coding through provider outages:
+- Optional token optimization using [RTK](https://github.com/rtk-ai/rtk) and [Headroom](https://github.com/headroomlabs-ai/headroom); savings depend on the workload.
+- Reliability features for provider failures:
   - Automatic retries.
   - Configurable rate limits.
   - Configurable concurrency control.
@@ -66,6 +95,25 @@ Free-tier availability and limits are controlled by each provider and may change
 </div>
 
 ## Quick Start
+
+### Run this fork from source
+
+Install [uv](https://docs.astral.sh/uv/) and clone this repository:
+
+```bash
+git clone https://github.com/MoLik-Labs/FCC.git
+cd FCC
+uv sync --locked
+uv run fcc-server
+```
+
+The default clone uses the repository's default branch. Features described on a
+working branch are available only when using a revision that contains them.
+The project requires Python 3.14.10; uv can provision it. Use the Admin URL in
+the server log to configure a provider. For launcher commands in this checkout,
+use `uv run`, for example `uv run fcc-claude`.
+
+### Install the upstream release
 
 <a id="install"></a>
 
@@ -573,7 +621,9 @@ Stop all running FCC commands, then run:
 fcc-update
 ```
 
-`fcc-update` installs the latest FCC release unless you already have it.
+The packaged `fcc-update` invokes the upstream installer and updates to its
+latest FCC release unless already up to date; it does not update a checkout of
+this fork.
 
 If `fcc-update` is unavailable or fails, try running the [install command](#install) again.
 
@@ -631,7 +681,8 @@ For a problem after installation, run the command below and paste its output int
 fcc-doctor
 ```
 
-- [Report bugs or request features](https://github.com/Alishahryar1/free-claude-code/issues)
+- [This repository and its pull requests](https://github.com/MoLik-Labs/FCC) — issues are currently disabled on this fork.
+- [Upstream issues](https://github.com/Alishahryar1/free-claude-code/issues) — for the upstream project and its releases; follow its reporting rules.
 - [Contributing guide](CONTRIBUTING.md)
 
 ## Maintainers
