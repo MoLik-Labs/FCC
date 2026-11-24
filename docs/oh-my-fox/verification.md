@@ -145,3 +145,46 @@ with the Python package's Admin assets.
   Sources remain linked rather than vendored; fresh restoration needs GitHub
   access. Future agents must actually read the repository guidance for it to
   take effect.
+
+## Read-only MCP stdio checkpoint
+
+The experimental Rust binary includes a deliberately limited MCP server over
+stdio. Its protocol reference is the official [2025-06-18 specification](https://github.com/modelcontextprotocol/specification/tree/b0be8f0f2481be8d5ea5294cf3fa57cd03cedc48/docs/specification/2025-06-18).
+It advertises only the two existing read-only workspace tools; it is not an MCP
+client or an HTTP MCP server. Rust tests exercise initialization, negotiation,
+notification handling, malformed frames and params, bounded input, rate
+limiting, directory traversal and Git metadata denial. These tests are part of
+the Rust CI matrix, whose hosted results have not yet been observed.
+
+A local opt-in interoperability test used the official Python MCP SDK **1.30.0**
+to initialize, list tools, read a fixture and reject an escape. The SDK and its
+transitive dependencies were installed into a temporary environment outside the
+repository; this was not a locked or audited production dependency installation.
+To repeat on a Unix-like system after building Molik (this installs SDK 1.30.0
+and its currently resolved transitive dependencies into an isolated environment):
+
+```sh
+uv venv /tmp/molik-mcp-sdk
+uv pip install --python /tmp/molik-mcp-sdk/bin/python mcp==1.30.0
+MOLIK_BINARY="$PWD/ohmymolik/rust/target/debug/oh-my-molik" \
+MCP_SDK_PYTHON=/tmp/molik-mcp-sdk/bin/python \
+  uv run --locked pytest -n 0 tests/ohmymolik/test_mcp_sdk.py -q
+```
+
+The test skips when either environment variable is absent. This is one SDK and
+one local OS, not a full compatibility or security certification. Access is
+controlled only by launching the process and OS permissions; the workspace path
+checks are not a sandbox, secret filter or defense against hostile local races.
+See the MCP setup and security notes in `ohmymolik/README.md`.
+
+Local final gates: Rust fmt/Clippy and **30 tests** passed using the same
+unverified local compiler and temporary dependency replacement described above;
+**164 focused Python tests and 14 subtests** passed including the opt-in SDK and
+FCC mock roundtrips; Ruff, Pyrefly (`src tests e2e`) and the site build passed.
+Go 1.22.12 `vet`, `test` and race tests passed for `gocore`; this does not imply
+full Go/Python parity. Chromium/axe checks of the English, Vietnamese and Molik
+pages at 320, 390 and 1440 pixels found no overflow, browser errors or WCAG
+2/2.1 A/AA violations on those pages. This is not a cross-browser audit. All
+nine pinned source trees (the eight requested repositories plus Superpowers
+core) were restored/checked; third-party hooks were not enabled. No performance
+benchmark or live-provider/tunnel test was run for this checkpoint.

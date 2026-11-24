@@ -458,6 +458,52 @@
           </article>
         </div>
       </section>
+      <section id="mcp-stdio" class="mcp-guide" aria-labelledby="mcp-title">
+        <div class="mcp-copy">
+          <span class="eyebrow">INTEGRATION / EXPERIMENTAL</span>
+          <h2 id="mcp-title">A small, read-only MCP server.</h2>
+          <p>
+            Let a trusted MCP client inspect a workspace using Molik over stdio.
+            Build the Rust binary first, then replace both absolute paths in
+            your client’s configuration. Client configuration formats may
+            differ.
+          </p>
+          <p>
+            <strong>Trust matters.</strong> The client can read workspace files
+            and may send them elsewhere. This is not a sandbox or a secret
+            filter; there is no per-call approval or HTTP transport. Use a
+            trusted client and workspace, and never expose the process on an
+            unprotected network.
+          </p>
+          <p>
+            Supports MCP 2025-06-18 initialization, ping and two tools:
+            <code>list_files</code> and <code>read_file</code>. It does not
+            connect Molik to external MCP servers, run shell commands or edit
+            files.
+          </p>
+          <a
+            href="https://github.com/MoLik-Labs/FCC/blob/arena/5fe6a43f-fcc/ohmymolik/README.md#experimental-read-only-mcp-server"
+            >Setup, limits and verification →</a
+          >
+        </div>
+        <div class="mcp-example">
+          <span class="eyebrow">CLIENT CONFIGURATION / EXAMPLE</span>
+          <pre
+            tabindex="0"
+            aria-label="Example MCP client configuration"
+          ><code>{
+  "mcpServers": {
+    "oh-my-molik": {
+      "command": "/absolute/path/to/oh-my-molik",
+      "args": [
+        "mcp", "serve", "--workspace",
+        "/absolute/path/to/trusted/project"
+      ]
+    }
+  }
+}</code></pre>
+        </div>
+      </section>
       <section class="closing">
         <div>
           <span class="eyebrow">THE NAME / THE MARK</span>

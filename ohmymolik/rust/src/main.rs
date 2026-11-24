@@ -8,7 +8,7 @@ use std::io::{self, Read};
 use std::path::Path;
 
 fn help() {
-    println!("Oh My Molik — experimental read-only agent\n\nUsage:\n  oh-my-molik run --endpoint URL --model MODEL --workspace DIR [--max-turns N] [--prompt-stdin | PROMPT]\n  oh-my-molik theme list\n  oh-my-molik theme show NAME\n  oh-my-molik [--help | --version]\n\nOptional bearer token: OMM_API_KEY environment variable.\nUses system curl for bounded, non-streaming Chat Completions.\nWorkspace checks are best-effort and are not a sandbox.\nNo file editing or command execution is implemented.");
+    println!("Oh My Molik — experimental read-only agent\n\nUsage:\n  oh-my-molik run --endpoint URL --model MODEL --workspace DIR [--max-turns N] [--prompt-stdin | PROMPT]\n  oh-my-molik mcp serve --workspace DIR\n  oh-my-molik theme list\n  oh-my-molik theme show NAME\n  oh-my-molik [--help | --version]\n\nOptional bearer token: OMM_API_KEY environment variable.\nUses system curl for bounded, non-streaming Chat Completions.\nWorkspace checks are best-effort and are not a sandbox.\nNo file editing or command execution is implemented.");
 }
 
 fn clean_terminal(text: &str) -> String {
@@ -164,6 +164,15 @@ fn main() {
                 std::process::exit(2);
             };
             println!("{}\nbackground  {}\nsurface     {}\ntext        {}\nmuted       {}\naccent      {}\nsuccess     {}\nwarning     {}\nerror       {}", t.name, t.background, t.surface, t.text, t.muted, t.accent, t.success, t.warning, t.error);
+        }
+        ["mcp", "serve", "--workspace", root] => {
+            let result = Workspace::new(Path::new(root))
+                .map_err(str::to_owned)
+                .and_then(|workspace| oh_my_molik::mcp::serve_stdio(&workspace));
+            if let Err(error) = result {
+                eprintln!("oh-my-molik: {}", clean_terminal(&error));
+                std::process::exit(1);
+            }
         }
         ["run", ..] => {
             if let Err(error) = run(&args[1..]) {

@@ -94,8 +94,8 @@ Python runtime, remote access and streaming are unaffected by this decision.
 The Go parity work for FCC is separate from Oh My Molik.
 
 `ohmymolik/rust/` includes a state machine, stream framing, theme tokens and an
-experimental non-streaming Chat adapter using system curl. It can list and read
-files in a trusted workspace, but has no editing, shell, sandbox, TUI or user
+experimental non-streaming Chat adapter using system curl, and a limited
+read-only MCP stdio server. It can list and read files in a trusted workspace, but has no editing, shell, sandbox, TUI or user
 approval UI. The Go implementation at `ohmyfox/` remains available; complete
 parity, live providers and platform security remain unverified. Neither is a
 complete coding agent. Go 1.22 was the local bootstrap/test

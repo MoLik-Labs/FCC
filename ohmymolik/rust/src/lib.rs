@@ -1,9 +1,10 @@
 //! A transport-independent, bounded agent state machine.
 //!
-//! This crate does not perform I/O, enforce a sandbox, or authenticate the user
-//! responding to approval requests. Its caller is responsible for those tasks.
+//! The session core does not enforce a sandbox or authenticate approvers.
+//! The chat, workspace and MCP adapters perform I/O and are experimental.
 #![forbid(unsafe_code)]
 pub mod chat;
+pub mod mcp;
 pub mod sse;
 pub mod stream;
 pub mod theme;

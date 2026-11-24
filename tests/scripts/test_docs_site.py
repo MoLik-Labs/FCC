@@ -66,6 +66,20 @@ class DocumentationSiteTests(unittest.TestCase):
                         f"{match.group(1)} <code>{match.group(2)}</code>", gallery
                     )
 
+    def test_mcp_setup_is_linked_and_describes_its_boundary(self) -> None:
+        root = Path(__file__).resolve().parents[2] / "docs" / "site"
+        for name in ("index.html", "vi.html"):
+            with self.subTest(page=name):
+                self.assertIn(
+                    'href="molik.html#mcp-stdio"',
+                    (root / name).read_text(encoding="utf-8"),
+                )
+        guide = (root / "molik.html").read_text(encoding="utf-8")
+        self.assertIn('id="mcp-stdio"', guide)
+        self.assertIn("2025-06-18", guide)
+        self.assertIn("not a sandbox", guide)
+        self.assertIn('"mcp", "serve", "--workspace"', guide)
+
     def test_missing_target_fragment_duplicate_id_and_alt_are_rejected(self) -> None:
         examples = (
             '<a href="missing.html">missing</a>',

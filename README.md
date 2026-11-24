@@ -41,7 +41,7 @@ experimental and is not yet a replacement for the Python server.
   after Pages has been enabled and a deployment succeeds.
 - [Development and contribution](CONTRIBUTING.md) · [Go rewrite status](gocore/README.md)
   · [Rewrite plan and checkpoints](docs/rewrite/00-master-plan.md).
-- [Design skill workflow](docs/design/skill-workflow.md) — pinned sources and
+- [Skill workflow](docs/design/skill-workflow.md) — pinned sources and
   restoration instructions for future development sessions.
 
 GitHub displays the source HTML for the guide links. To view the rendered site
@@ -60,7 +60,8 @@ or empty output directory; see the documentation build guide for repeat builds.
 [Oh My Molik](ohmymolik/README.md) is a separate experimental agent project. Its
 Rust and historical Go prototypes can inspect files read-only via an explicit
 local or remote Chat Completions endpoint. The Rust CLI uses system curl and
-is non-streaming; neither prototype is a complete coding agent. See the [research and roadmap](docs/oh-my-fox/research.md)
+is non-streaming. It also has an experimental read-only MCP stdio server;
+neither prototype is a complete coding agent. See the [research and roadmap](docs/oh-my-fox/research.md)
 for sources, migration status and safety gates.
 
 ## Features

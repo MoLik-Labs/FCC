@@ -64,11 +64,13 @@ impl Workspace {
     /// Model-visible failures are intentionally generic; file names and content
     /// returned by successful calls will be sent to the selected model endpoint.
     pub fn call(&self, name: &str, arguments: &str) -> String {
-        self.call_inner(name, arguments)
+        self.try_call(name, arguments)
             .unwrap_or_else(|error| format!("error: {error}"))
     }
 
-    fn call_inner(&self, name: &str, arguments: &str) -> Result<String, &'static str> {
+    /// Structured result for protocol adapters; unlike `call`, file content
+    /// beginning with `error:` cannot be mistaken for an execution failure.
+    pub fn try_call(&self, name: &str, arguments: &str) -> Result<String, &'static str> {
         let args: Value = serde_json::from_str(arguments).map_err(|_| "invalid tool arguments")?;
         let object = args.as_object().ok_or("invalid tool arguments")?;
         if object.len() != 1 {
@@ -78,6 +80,10 @@ impl Workspace {
             .get("path")
             .and_then(Value::as_str)
             .ok_or("invalid tool arguments")?;
+        self.call_path(name, path)
+    }
+
+    pub(crate) fn call_path(&self, name: &str, path: &str) -> Result<String, &'static str> {
         let resolved = self.resolve(path)?;
         match name {
             "read_file" => {

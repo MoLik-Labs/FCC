@@ -25,3 +25,8 @@ restore impeccable https://github.com/pbakaus/impeccable.git b49177d32788f2dc585
 restore ui-ux-pro-max-skill https://github.com/nextlevelbuilder/ui-ux-pro-max-skill.git cc7b20d85d64d8fa022292cfad731995d3cd4eeb
 restore agent-skills https://github.com/vercel-labs/agent-skills.git 5a37a6329fbad3666c3207392a6a7c0110e92efb
 restore taste-skill https://github.com/leonxlnx/taste-skill.git 6c0b5c78f5d31776e2210305abaa210cdc0030bf
+restore superpowers-marketplace https://github.com/obra/superpowers-marketplace.git 808dc47aad045c1cc1181c96e5fbae101461f69f
+restore superpowers https://github.com/obra/superpowers.git 22f0b463e7a5e579904dd6211a520321035526f7
+restore low-level-dev-skills https://github.com/mohitmishra786/low-level-dev-skills.git 18f29518a47fda070e6ec1268cb577692fae9a10
+restore go-skills https://github.com/spf13/go-skills.git 383c2f8916313b7f1260a6d15d92a468e4ecc89e
+restore cc-skills-golang https://github.com/samber/cc-skills-golang.git d68d80aec298e1b74b37c2a472c002b5217248b3

@@ -64,3 +64,41 @@ Open the [theme collection](../docs/site/molik.html) through the built
 [research and roadmap](../docs/oh-my-fox/research.md) document provenance,
 safety boundaries and remaining work. No top-ranking or performance claim has
 been independently established.
+
+## Experimental read-only MCP server
+
+A trusted MCP client can launch the Molik binary over **stdio**. Build first
+with `cargo build --locked --release`, then configure the client with the
+absolute binary and workspace paths, for example:
+
+```json
+{
+  "mcpServers": {
+    "oh-my-molik": {
+      "command": "/absolute/path/to/oh-my-molik",
+      "args": ["mcp", "serve", "--workspace", "/absolute/path/to/trusted/project"]
+    }
+  }
+}
+```
+
+The client-specific location and format of this configuration can vary; these
+paths are examples and must be replaced. This server implements a limited
+`2025-06-18` MCP stdio lifecycle, `ping`, `tools/list` and `tools/call` for
+`list_files` and `read_file` only. It does **not** make Molik an MCP client and
+does not provide HTTP transport, resources, prompts, editing or shell tools.
+An unsupported requested version negotiates down to `2025-06-18`; a client that
+does not support it should disconnect.
+
+**Trust boundary:** starting it grants the client read access to files in the
+selected workspace, and the client may send results to its model or elsewhere.
+There is no separate authentication or per-call approval in stdio mode: rely on
+OS process permissions, use a trusted client and workspace, and do not expose
+stdio through an unprotected network service. The same best-effort filesystem
+checks and race/hardlink limitations described above apply; this is not a
+sandbox or secret filter. File content is untrusted input, not instructions.
+Individual input frames are capped at 256 KiB, files at 64 KiB, listings at 200
+entries and tool invocations at 120 per rolling minute per server process. The
+rate limit is local to that process and is not a distributed protection.
+See the [verification notes](../docs/oh-my-fox/verification.md) for the exact
+SDK and test coverage, which are not a broad MCP interoperability guarantee.

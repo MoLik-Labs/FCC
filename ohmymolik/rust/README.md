@@ -2,7 +2,8 @@
 
 This is an experimental read-only assistant, not a complete coding agent.
 The CLI supports non-streaming Chat Completions via system curl and bounded
-workspace inspection, as well as help, version and theme-token inspection. The
+workspace inspection, a limited read-only MCP stdio server, as well as help,
+version and theme-token inspection. The
 Go prototype remains available during migration. FCC remains Python;
 this project does not change its server, streaming, or remote/tunnel support.
 
@@ -25,6 +26,16 @@ need registry access, after which Cargo can work offline with cached crates.
 System curl 7.63+ is required at runtime. CI is configured for Linux, macOS and
 Windows; a workflow definition is not evidence that remote checks have passed.
 See the [CLI guide](../README.md) for setup and the security limitations.
+
+## Read-only MCP stdio
+
+`oh-my-molik mcp serve --workspace DIR` serves a limited MCP 2025-06-18
+implementation over newline-delimited stdio. Supported requests are initialize,
+ping, tools/list and tools/call with `read_file` and `list_files`. It does not
+connect Molik to third-party MCP servers or offer HTTP transport. It is opt-in,
+requires a trusted client/workspace and inherits the best-effort workspace
+limitations; it does not authenticate or obtain approval for individual calls.
+See the [MCP client configuration and security notes](../README.md#experimental-read-only-mcp-server).
 
 ## Themes and stream framing
 

@@ -282,6 +282,53 @@ main {
   border-top: 1px solid var(--line);
   padding: 70px 0;
 }
+.mcp-guide {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: clamp(24px, 5vw, 70px);
+  border-top: 1px solid var(--line);
+  padding: 70px 0;
+  scroll-margin-top: 24px;
+}
+.mcp-copy h2 {
+  font-size: clamp(32px, 4vw, 48px);
+  letter-spacing: -0.045em;
+  line-height: 1.08;
+  margin: 12px 0 24px;
+}
+.mcp-copy p {
+  color: var(--page-muted);
+  line-height: 1.7;
+  max-width: 60ch;
+}
+.mcp-copy strong {
+  color: var(--ink);
+}
+.mcp-copy a {
+  font-size: 14px;
+  font-weight: 700;
+}
+.mcp-example {
+  background: #102b21;
+  color: #e4f4e8;
+  padding: clamp(20px, 3vw, 32px);
+  border-radius: 8px;
+  min-width: 0;
+  align-self: start;
+}
+.mcp-example pre {
+  margin: 22px 0 0;
+  overflow-x: auto;
+  font:
+    13px/1.6 ui-monospace,
+    SFMono-Regular,
+    Consolas,
+    monospace;
+}
+.mcp-example pre:focus-visible {
+  outline: 2px solid #a9e6c0;
+  outline-offset: 4px;
+}
 .closing p {
   max-width: 420px;
   color: var(--page-muted);
@@ -319,7 +366,8 @@ footer {
   .closing {
     display: block;
   }
-  .themes {
+  .themes,
+  .mcp-guide {
     grid-template-columns: 1fr;
   }
   .closing a {
