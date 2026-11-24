@@ -1,45 +1,40 @@
 :root {
   color-scheme: dark;
   
-  /* Color Palette */
-  --bg: #090a0f;
-  --panel: #11131c;
-  --panel-strong: #171b26;
-  --card: #151822;
-  --card-hover: #1e2230;
-  --input: #0a0b10;
-  --input-focus: #0f1118;
-  --text: #f3f4f6;
-  --text-strong: #ffffff;
-  --muted: #9ca3af;
-  --line: rgba(255, 255, 255, 0.06);
-  --line-strong: rgba(255, 255, 255, 0.12);
-  
-  /* Brand and Accent Colors */
-  --accent: #10b981;
-  --accent-dark: #059669;
-  --accent-muted: rgba(16, 185, 129, 0.08);
-  --accent-border: rgba(16, 185, 129, 0.3);
-  
-  /* Status Colors */
-  --ok: #10b981;
-  --ok-bg: rgba(16, 185, 129, 0.08);
-  --ok-border: rgba(16, 185, 129, 0.25);
-  
-  --warn: #f59e0b;
-  --warn-bg: rgba(245, 158, 11, 0.08);
-  --warn-border: rgba(245, 158, 11, 0.25);
-  
-  --error: #ef4444;
-  --error-bg: rgba(239, 68, 68, 0.08);
-  --error-border: rgba(239, 68, 68, 0.25);
-  
-  --neutral: #6b7280;
-  --neutral-bg: rgba(107, 114, 128, 0.08);
-  --neutral-border: rgba(107, 114, 128, 0.25);
-  
-  --info: #3b82f6;
-  
+  /* Forest: calm, high-contrast defaults for the operating console. */
+  --bg: #0b211b;
+  --panel: #112b23;
+  --panel-strong: #203e32;
+  --card: #18362b;
+  --card-hover: #25483a;
+  --input: #0b211b;
+  --input-focus: #153128;
+  --text: #e4f4e8;
+  --text-strong: #f3fff6;
+  --muted: #b5cebd;
+  --line: rgba(219, 247, 226, 0.12);
+  --line-strong: rgba(219, 247, 226, 0.24);
+  --accent: #a9e6c0;
+  --accent-dark: #c2f2d2;
+  --on-accent: #10251b;
+  --accent-muted: rgba(169, 230, 192, 0.1);
+  --accent-border: rgba(169, 230, 192, 0.35);
+  --ok: #a7da9f;
+  --ok-bg: rgba(167, 218, 159, 0.1);
+  --ok-border: rgba(167, 218, 159, 0.35);
+  --warn: #f1d395;
+  --warn-bg: rgba(241, 211, 149, 0.1);
+  --warn-border: rgba(241, 211, 149, 0.35);
+  --error: #f4b1a8;
+  --error-bg: rgba(244, 177, 168, 0.1);
+  --error-border: rgba(244, 177, 168, 0.35);
+  --neutral: #b5cebd;
+  --neutral-bg: rgba(181, 206, 189, 0.08);
+  --neutral-border: rgba(181, 206, 189, 0.25);
+  --info: #a9d5ed;
+  --bar-bg: #112b23;
+  --danger: var(--error);
+
   /* Box Shadow & Glows */
   --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.2);
   --shadow: 0 12px 34px rgba(0, 0, 0, 0.5);
@@ -58,6 +53,48 @@
   /* Transitions */
   --transition-fast: 0.15s ease;
   --transition-normal: 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Catppuccin Mocha palette, © 2021 Catppuccin, MIT.
+   License: CATPPUCCIN-LICENSE.txt alongside these Admin assets. */
+:root[data-theme="catppuccin-mocha"] {
+  --bg: #1e1e2e; --panel: #242438; --panel-strong: #45475a;
+  --card: #313244; --card-hover: #45475a; --input: #181825; --input-focus: #242438;
+  --text: #cdd6f4; --text-strong: #eff1ff; --muted: #bac2de;
+  --line: rgba(205, 214, 244, 0.12); --line-strong: rgba(205, 214, 244, 0.25);
+  --accent: #cba6f7; --accent-dark: #dec3fc; --on-accent: #211633;
+  --accent-muted: rgba(203, 166, 247, 0.1); --accent-border: rgba(203, 166, 247, 0.4);
+  --ok: #a6e3a1; --warn: #f9e2af; --error: #f38ba8; --info: #89dceb;
+  --bar-bg: #242438;
+}
+:root[data-theme="ocean"] {
+  --bg: #102332; --panel: #172f3d; --panel-strong: #294958;
+  --card: #203c4b; --card-hover: #2c5160; --input: #0d1d29; --input-focus: #18323f;
+  --text: #e2f1f5; --text-strong: #f3fcff; --muted: #b5ccd3;
+  --accent: #8ed5e0; --accent-dark: #b8ebf1; --on-accent: #102c34;
+  --ok: #a9ddbe; --warn: #f3d596; --error: #f3b1ad; --info: #a9d5ed;
+  --bar-bg: #172f3d;
+}
+:root[data-theme="dusk"] {
+  --bg: #272333; --panel: #302b3d; --panel-strong: #494258;
+  --card: #393449; --card-hover: #4b445c; --input: #201d2b; --input-focus: #332d41;
+  --text: #f0eaf5; --text-strong: #fff9ff; --muted: #cfc2d7;
+  --accent: #d8b8e7; --accent-dark: #ead0f4; --on-accent: #2b1b32;
+  --ok: #b8ddb9; --warn: #efd199; --error: #f2b0b4; --info: #bcd7ef;
+  --bar-bg: #302b3d;
+}
+:root[data-theme="dawn"] {
+  color-scheme: light;
+  --bg: #f9f6f0; --panel: #fffdf9; --panel-strong: #e6dfd2;
+  --card: #f3eee5; --card-hover: #eae3d7; --input: #fffdf9; --input-focus: #fff;
+  --text: #252e29; --text-strong: #14251c; --muted: #4d5e53;
+  --line: rgba(37, 46, 41, 0.16); --line-strong: rgba(37, 46, 41, 0.30);
+  --accent: #176048; --accent-dark: #104b38; --on-accent: #fff;
+  --accent-muted: rgba(23, 96, 72, 0.09); --accent-border: rgba(23, 96, 72, 0.35);
+  --ok: #24633b; --warn: #805100; --error: #9c3d3d; --info: #215e7a;
+  --neutral: #4d5e53; --bar-bg: #fffdf9;
+  --shadow: 0 8px 30px rgba(37, 46, 41, 0.08);
+  --shadow-sm: 0 2px 8px rgba(37, 46, 41, 0.08);
 }
 
 * {
@@ -175,7 +212,7 @@ textarea {
   cursor: pointer;
   font-weight: 600;
   font-size: 14px;
-  transition: all var(--transition-fast);
+  transition: color var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast);
 }
 
 .nav-link:hover {
@@ -459,7 +496,7 @@ button.startup-busy::before,
   font-weight: 600;
   font-size: 13px;
   cursor: pointer;
-  transition: all var(--transition-fast);
+  transition: color var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast);
   text-decoration: none;
 }
 
@@ -496,7 +533,7 @@ button.startup-busy::before,
 .primary-button {
   border-color: var(--accent);
   background: var(--accent);
-  color: #06100b;
+  color: var(--on-accent);
 }
 
 .primary-button:hover:not(:disabled) {
@@ -600,7 +637,7 @@ button.startup-busy::before,
   color: var(--text-strong);
   padding: 10px 14px;
   font-size: 14px;
-  transition: all var(--transition-fast);
+  transition: color var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast);
 }
 
 /* Custom Dropdown Styling for Select Elements */
@@ -820,7 +857,7 @@ button.startup-busy::before,
   align-items: center;
   min-height: 80px;
   border-top: 1px solid var(--line);
-  background: rgba(9, 10, 15, 0.82);
+  background: var(--bar-bg);
   padding: 16px 40px;
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
@@ -915,7 +952,7 @@ button.startup-busy::before,
     gap: 12px;
     padding: 16px 20px;
     min-height: auto;
-    background: rgba(9, 10, 15, 0.95);
+    background: var(--bar-bg);
   }
 
   .action-meta {
@@ -1001,4 +1038,48 @@ button.startup-busy, .startup-spinner { display: inline-flex; align-items: cente
 .startup-spinner[hidden] { display: none; }
 @media (prefers-reduced-motion: reduce) {
   button.startup-busy::before, .startup-spinner::before { animation: none; }
+}
+
+/* Navigation and appearance remain functional in every view, including Code. */
+.skip-link {
+  position: fixed; z-index: 1000; top: 8px; left: 8px;
+  padding: 10px 14px; background: var(--panel); color: var(--text-strong);
+  border: 2px solid var(--accent); border-radius: 6px;
+  transform: translateY(-160%);
+}
+.skip-link:focus { transform: translateY(0); }
+.appearance-control { margin-top: auto; display: grid; gap: 8px; }
+.appearance-control label { font-size: 12px; font-weight: 700; color: var(--muted); }
+.appearance-control select { width: 100%; min-height: 40px; }
+.sidebar { overflow-y: auto; }
+.nav-link { min-height: 44px; }
+.provider-strip, .settings-section { box-shadow: 0 4px 22px rgba(0, 0, 0, 0.10); }
+@media (max-width: 900px) {
+  .appearance-control { margin-top: 0; grid-template-columns: auto minmax(0, 220px); align-items: center; }
+}
+@media (max-width: 600px) {
+  .brand { flex-direction: row; justify-content: flex-start; text-align: left; }
+  .brand-mark { width: 40px; height: 40px; }
+  .section-nav { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .topbar { text-align: left; }
+  .appearance-control { grid-template-columns: auto minmax(0, 1fr); }
+}
+.brand > div { min-width: 0; }
+.brand p { overflow-wrap: anywhere; line-height: 1.4; }
+.appearance-control select {
+  background: var(--input);
+  color: var(--text);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  padding: 8px;
+}
+:root[data-theme="dawn"] .provider-logo {
+  background: #29382e;
+  border-radius: 5px;
+  padding: 2px;
+  width: 24px;
+  height: 24px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .nav-link, .primary-button, .secondary-button, .test-button { transition: none; }
 }

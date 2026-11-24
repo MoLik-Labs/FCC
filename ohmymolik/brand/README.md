@@ -37,8 +37,9 @@ The Mocha color values are from the [Catppuccin palette](https://github.com/catp
 Other palettes are project design tokens. Contrast tests check every foreground
 against both base and surface at WCAG 2.x AA's 4.5:1 text ratio; they are not a
 full interface accessibility audit. The gallery is an illustrative static
-preview, and the Rust CLI can list tokens, but theme switching and a TUI are not
-yet implemented. Avoid claiming these mockups show a working product.
+preview, and the Rust CLI can list tokens, but agent theme switching and a TUI
+are not yet implemented. Separately, FCC Admin offers browser-local appearance
+selection inspired by these palettes. Avoid claiming these mockups show a working product.
 
 The repository's [AGPL-3.0-only license](../../LICENSE) applies to project code;
 the Catppuccin notice is preserved separately.

@@ -41,7 +41,11 @@ incomplete events on EOF. It deliberately ignores `id` and `retry`; it is not
 an HTTP client, JSON parser, reconnect implementation, provider adapter, or
 proof of end-to-end streaming. If any frame in a `push` call is invalid, that
 call returns an error and its events are not returned; discard the decoder.
-Callers must bound each input chunk and enforce overall response/time limits.
+`push_into` instead preserves already-completed events in the caller's vector
+when a later line fails; the caller must decide whether that prefix is safe to
+publish and must still discard the decoder. Neither method authorizes a partial
+tool call. Callers must bound each input chunk and enforce overall response/time
+limits.
 
 `stream::Assembler` accepts already-decoded deltas for exactly one provider
 choice. It bounds bytes and call indexes, assembles interleaved fragments and

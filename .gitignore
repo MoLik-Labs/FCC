@@ -21,3 +21,5 @@ llama_cache
 /site-build/
 
 /ohmymolik/rust/target/
+
+/.design-skill-sources/

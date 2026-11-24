@@ -47,12 +47,23 @@ impl Decoder {
     }
 
     /// Feed raw HTTP body bytes. Delivers events in order after a blank line.
+    /// If the input contains a later framing error, this convenience method
+    /// returns only the error and discards events produced by this call. Use
+    /// `push_into` when the caller needs the already-complete prefix instead.
     /// Bytes must be bounded by the caller at the network layer as well.
     pub fn push(&mut self, bytes: &[u8]) -> Result<Vec<Event>, Error> {
+        let mut out = Vec::new();
+        self.push_into(bytes, &mut out)?;
+        Ok(out)
+    }
+
+    /// Append complete events to `out`, preserving the prefix on a later error.
+    /// The decoder is poisoned on error; discard it. Callers must decide
+    /// whether publishing the completed prefix is safe for their protocol.
+    pub fn push_into(&mut self, bytes: &[u8], out: &mut Vec<Event>) -> Result<(), Error> {
         if self.closed {
             return Err(Error::Closed);
         }
-        let mut out = Vec::new();
         for &byte in bytes {
             if self.skip_lf {
                 self.skip_lf = false;
@@ -61,7 +72,7 @@ impl Decoder {
                 }
             }
             if byte == b'\r' || byte == b'\n' {
-                if let Err(error) = self.end_line(&mut out) {
+                if let Err(error) = self.end_line(out) {
                     self.closed = true;
                     return Err(error);
                 }
@@ -74,7 +85,7 @@ impl Decoder {
                 self.line.push(byte);
             }
         }
-        Ok(out)
+        Ok(())
     }
 
     /// Validate a trailing partial line and discard an uncommitted event.

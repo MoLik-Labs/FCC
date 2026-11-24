@@ -108,3 +108,40 @@ repository and Pyrefly for `src tests e2e` passed. A local HTTPS fixture also
 succeeded when curl was given its test CA and failed for the same untrusted
 certificate without it. This checks TLS validation locally, not remote provider
 or tunnel operation. The same provenance and hosted-CI limitations apply.
+
+## Admin appearance and SSE prefix checkpoint
+
+FCC Admin now provides browser-local Forest, Catppuccin Mocha, Ocean, Dusk and
+Dawn themes; this is separate from the Rust agent, which still has no themed
+TUI. Existing configuration and Code-session behavior remains the supported
+Python implementation. A storage failure or an unrecognized theme falls back
+to Forest without blocking navigation. The Catppuccin MIT notice is included
+with the Python package's Admin assets.
+
+- Full Python `tests`: **11,726 passed, 19 skipped, 12 subtests passed** with
+  two workers and the opt-in Rust/FCC mock roundtrip enabled.
+- Chromium `e2e`: **322 passed**. Four subsequent keyboard/Code appearance tests
+  were added and the appearance suite was run separately: **14 passed**. This
+  is Chromium only, on Linux, using the local browser fixture and no real
+  provider accounts.
+- An axe-core scan of Providers, Model Config, Messaging and Integrations for
+  each of the five themes at 1440px reported no WCAG 2/2.1 A/AA violations;
+  a separate 390px scan of the NVIDIA provider dialog in all themes and the
+  Code library in Dawn also reported none. No page errors were observed in the
+  first scan. These are selected automated checks, not a complete accessibility
+  audit, and do not validate all forms, states or browsers.
+- The site build, Prettier on the changed site pages, repository Ruff checks,
+  and Pyrefly for `src tests e2e` passed. A wheel was built locally and its Admin
+  CSS, JS and Catppuccin license were present; the shallow checkout produced a
+  build-version warning.
+- The Rust SSE decoder gained `push_into` so callers can retain complete events
+  preceding an error in the same input chunk. It still poisons the decoder on
+  error, and the existing `push` API intentionally discards that call's prefix.
+  This is not an end-to-end streaming implementation or a performance claim.
+  Rust fmt, Clippy and **23 tests** passed with the local source replacement and
+  the previously noted unverified toolchain provenance.
+- All four design skill sources were restored at recorded pins into a temporary
+  directory, then verified on a second run. A dirty checkout was rejected.
+  Sources remain linked rather than vendored; fresh restoration needs GitHub
+  access. Future agents must actually read the repository guidance for it to
+  take effect.

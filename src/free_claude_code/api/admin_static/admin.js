@@ -70,6 +70,34 @@ function viewFromLocation() {
 
 const byId = (id) => document.getElementById(id);
 
+// Appearance is local to this browser, never sent to the server. Storage can be
+// unavailable in private or restricted browsing, so the control still works.
+function initializeAppearance() {
+  const select = byId("appearanceTheme");
+  const allowed = new Set(Array.from(select.options, (option) => option.value));
+  let saved = null;
+  try {
+    saved = localStorage.getItem("fcc-appearance-theme");
+  } catch {
+    // Use the default when browser storage is unavailable.
+  }
+  const apply = (theme) => {
+    const selected = allowed.has(theme) ? theme : "forest";
+    document.documentElement.dataset.theme = selected;
+    select.value = selected;
+  };
+  apply(saved);
+  select.addEventListener("change", () => {
+    apply(select.value);
+    try {
+      localStorage.setItem("fcc-appearance-theme", select.value);
+    } catch {
+      // Theme remains usable for this page even when it cannot be saved.
+    }
+  });
+}
+initializeAppearance();
+
 function sourceLabel(source) {
   const labels = {
     default: "default",

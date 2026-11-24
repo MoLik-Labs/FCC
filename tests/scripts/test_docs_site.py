@@ -53,14 +53,18 @@ class DocumentationSiteTests(unittest.TestCase):
         root = Path(__file__).resolve().parents[2]
         rust = (root / "ohmymolik/rust/src/theme.rs").read_text(encoding="utf-8")
         gallery = (root / "docs/site/molik.html").read_text(encoding="utf-8")
-        blocks = list(re.finditer(r'Theme \{\s*name: "([a-z-]+)",(.*?)\n    \}', rust, re.S))
+        blocks = list(
+            re.finditer(r'Theme \{\s*name: "([a-z-]+)",(.*?)\n    \}', rust, re.S)
+        )
         self.assertEqual(len(blocks), 5)
         for block in blocks:
             name = block.group(1)
             with self.subTest(theme=name):
                 self.assertIn(f'id="{name}"', gallery)
                 for match in re.finditer(r'([a-z]+): "(#[A-F0-9]{6})"', block.group(2)):
-                    self.assertIn(f"{match.group(1)} <code>{match.group(2)}</code>", gallery)
+                    self.assertIn(
+                        f"{match.group(1)} <code>{match.group(2)}</code>", gallery
+                    )
 
     def test_missing_target_fragment_duplicate_id_and_alt_are_rejected(self) -> None:
         examples = (

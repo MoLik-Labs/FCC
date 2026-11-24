@@ -270,7 +270,7 @@ def test_admin_page_uses_installed_version(
 
     assert response.status_code == 200
     assert "<p>Server Control · v9.8.7</p>" in response.text
-    assert 'href="https://github.com/Alishahryar1/free-claude-code"' in response.text
+    assert 'href="https://github.com/MoLik-Labs/FCC"' in response.text
     assert 'target="_blank"' in response.text
     assert 'rel="noopener noreferrer"' in response.text
     assert 'aria-label="Open Free Claude Code on GitHub"' in response.text

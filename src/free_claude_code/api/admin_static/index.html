@@ -10,17 +10,18 @@
     <link rel="stylesheet" href="/admin/assets/__FCC_VERSION__/session_layout.css" />
   </head>
   <body>
+    <a class="skip-link" href="#main-content">Skip to main content</a>
     <div class="app-shell">
       <aside class="sidebar">
         <div class="brand">
           <a
             class="brand-mark"
-            href="https://github.com/Alishahryar1/free-claude-code"
+            href="https://github.com/MoLik-Labs/FCC"
             target="_blank"
             rel="noopener noreferrer"
             aria-label="Open Free Claude Code on GitHub"
           >
-            <img src="/admin/assets/__FCC_VERSION__/app-icon.svg" alt="" />
+            <img src="/admin/assets/__FCC_VERSION__/app-icon.svg" alt="" width="40" height="40" />
           </a>
           <div>
             <h1>Free Claude Code</h1>
@@ -28,9 +29,19 @@
           </div>
         </div>
         <nav id="sectionNav" class="section-nav" aria-label="Admin views"></nav>
+        <div class="appearance-control">
+          <label for="appearanceTheme">Appearance</label>
+          <select id="appearanceTheme" aria-label="Appearance theme">
+            <option value="forest">Forest</option>
+            <option value="catppuccin-mocha">Catppuccin Mocha</option>
+            <option value="ocean">Ocean</option>
+            <option value="dusk">Dusk</option>
+            <option value="dawn">Dawn</option>
+          </select>
+        </div>
       </aside>
 
-      <main class="main">
+      <main id="main-content" class="main" tabindex="-1">
         <header class="topbar">
           <div class="page-heading">
             <h2 id="pageTitle">Providers</h2>

@@ -66,3 +66,26 @@ fn malformed_and_oversized_streams_are_poisoned() {
     d.push(b"data: \xf0\x9f").unwrap();
     assert_eq!(d.finish(), Err(Error::InvalidUtf8));
 }
+
+#[test]
+fn preserves_completed_prefix_when_a_later_line_is_invalid() {
+    use oh_my_molik::sse::{Decoder, Error, Event};
+    let mut decoder = Decoder::new(100, 100).unwrap();
+    let mut events = Vec::new();
+    assert_eq!(
+        decoder.push_into(b"data: first\n\ndata: \xff\n", &mut events),
+        Err(Error::InvalidUtf8)
+    );
+    assert_eq!(
+        events,
+        vec![Event {
+            event: "message".into(),
+            data: "first".into()
+        }]
+    );
+    assert_eq!(
+        decoder.push_into(b"data: later\n\n", &mut events),
+        Err(Error::Closed)
+    );
+    assert_eq!(events.len(), 1);
+}

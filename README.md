@@ -41,6 +41,8 @@ experimental and is not yet a replacement for the Python server.
   after Pages has been enabled and a deployment succeeds.
 - [Development and contribution](CONTRIBUTING.md) · [Go rewrite status](gocore/README.md)
   · [Rewrite plan and checkpoints](docs/rewrite/00-master-plan.md).
+- [Design skill workflow](docs/design/skill-workflow.md) — pinned sources and
+  restoration instructions for future development sessions.
 
 GitHub displays the source HTML for the guide links. To view the rendered site
 locally from a checkout that contains the documentation:
@@ -143,7 +145,13 @@ second terminal, change into the same checkout before running a launcher with
 5. Click **Apply** to save your model selection.
 
 To protect the local proxy with a bearer token, enable **Proxy Authentication**
-in Admin.
+in Admin. This token does not protect Admin or Code sessions; see the [remote
+access guidance](docs/oh-my-fox/remote-access.md) before exposing them.
+
+Use **Appearance** in the sidebar to choose Forest, Catppuccin Mocha, Ocean,
+Dusk or Dawn. The choice is saved in this browser when storage is available;
+it does not change server configuration or the separate Molik CLI. The image
+below shows an earlier version of Admin.
 
 <div align="center">
   <img src="assets/admin-page.png" alt="Free Claude Code Admin UI" width="700">
