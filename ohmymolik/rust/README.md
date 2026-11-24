@@ -1,8 +1,9 @@
 # Oh My Molik: Rust core
 
-This is an experimental, dependency-free foundation, not a coding agent yet.
-The CLI supports help, version and inspection of theme tokens. The model-connected Go prototype is
-retained separately until Rust is verified to replace it. FCC remains Python;
+This is an experimental read-only assistant, not a complete coding agent.
+The CLI supports non-streaming Chat Completions via system curl and bounded
+workspace inspection, as well as help, version and theme-token inspection. The
+Go prototype remains available during migration. FCC remains Python;
 this project does not change its server, streaming, or remote/tunnel support.
 
 ## Build and verify
@@ -11,16 +12,19 @@ Rust 1.88 or newer, including rustfmt and clippy:
 
 ```sh
 cargo fmt --all -- --check
-cargo clippy --locked --offline --all-targets -- -D warnings
-cargo test --locked --offline
-cargo run --locked --offline -- --help
-cargo run --locked --offline -- theme list
-cargo run --locked --offline -- theme show forest
+cargo clippy --locked --all-targets -- -D warnings
+cargo test --locked
+cargo run --locked -- --help
+cargo run --locked -- theme list
+cargo run --locked -- theme show forest
 ```
 
-The lockfile is committed. There are no third-party crates today. CI checks
-Linux, macOS and Windows using the official Rust toolchain; a workflow definition
-is not evidence that remote checks have run or passed.
+The committed lockfile pins `serde_json` and transitive dependencies from
+crates.io (MIT / Apache-2.0 and other listed upstream licenses). Fresh builds
+need registry access, after which Cargo can work offline with cached crates.
+System curl 7.63+ is required at runtime. CI is configured for Linux, macOS and
+Windows; a workflow definition is not evidence that remote checks have passed.
+See the [CLI guide](../README.md) for setup and the security limitations.
 
 ## Themes and stream framing
 
@@ -64,8 +68,10 @@ rejected on the last turn so that it cannot execute without a final model turn.
 Errors leave the current operation uncommitted; if a denial/result cannot fit
 in the budget, the caller must abort the session, not execute it anyway.
 
-The caller owns model transport, parsing, tool schemas, policy classification,
-identity of the approver, timeouts, cancellation and execution. There is no
+The library caller remains responsible for its transport, parsing, tool schemas,
+policy classification, approver identity, timeouts and cancellation. The
+experimental CLI supplies a non-streaming adapter using a curl subprocess; it
+is not a general transport or a user approval implementation. There is no
 sandbox or secure filesystem here. In particular, a falsely labelled read-only
 tool can write or leak secrets, and a malicious caller can bypass this library.
 A claim is an in-memory state transition, not a distributed exactly-once
@@ -75,10 +81,10 @@ Never use this library alone as permission to run shell commands or write files.
 
 ## Migration gates
 
-1. Add a bounded model adapter with safe credential handling, local/remote
-   HTTP(S), streaming and cancellation; test it against real protocol fixtures.
-2. Port read-only workspace tools with reviewed OS-level path safety, then test
-   parity against the existing Go prototype and real FCC endpoints.
+1. Replace the curl subprocess with a reviewed native HTTPS transport, add
+   streaming, cancellation and protocol replay tests across providers.
+2. Replace best-effort workspace checks with reviewed OS-level path safety;
+   test parity against the Go prototype and real FCC/provider/tunnel deployments.
 3. Design a real user approval surface, capability-scoped write/process tools,
    OS isolation, process-tree cleanup, adversarial testing and secrets policy.
 4. Build persistence, interactive CLI, plugins/MCP and provider integrations in
@@ -86,6 +92,6 @@ Never use this library alone as permission to run shell commands or write files.
 5. Benchmark startup, latency, memory and reproducible coding tasks on equivalent
    models and permissions. Measure before asserting performance or quality.
 
-No third-party source was copied into this core; see the
+No third-party source is vendored into this core; see the
 [research inventory](../../docs/oh-my-fox/research.md) for inspected projects and
 license notes. The root repository license applies.

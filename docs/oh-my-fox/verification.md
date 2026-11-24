@@ -68,3 +68,43 @@ device testing and does not mean GitHub Pages is publicly deployed.
 - The selected reference image is user-provided. The vector mark is a manual
   interpretation; no legal trademark clearance is claimed. Themes are token
   sets with illustrative previews, not a functioning theme-switching TUI.
+
+## Rust read-only Chat adapter checkpoint
+
+The Rust executable now uses the system curl process for explicitly selected
+HTTP(S) Chat endpoints and supports two read-only workspace tools. Local Rust
+unit/integration tests exercise protocol validation, stdin prompting, a mocked
+HTTP tool-call loop, size/path checks, ANSI-control filtering and rejection of
+redirects. A separate test starts the actual FCC ASGI application on a local
+TCP socket with proxy authentication and a **mock upstream provider**: it
+observed a `read_file` call, delivered its result through FCC and received the
+final reply. This is not a live model, HTTPS/tunnel, streaming, sandbox or
+cross-platform test.
+
+Reproduce the FCC test after building the Rust binary and syncing FCC's Python
+environment:
+
+```sh
+MOLIK_BINARY="$PWD/ohmymolik/rust/target/debug/oh-my-molik" \
+  uv run --locked pytest -n 0 tests/ohmymolik/test_fcc_integration.py -q
+```
+
+With `MOLIK_BINARY` unset, the test skips. A Linux GitHub Actions job is
+configured to build the binary and run it; hosted execution has not yet been
+observed. The Rust CLI remains non-streaming; FCC's own streaming is unchanged.
+
+The sandbox cannot access crates.io. To run local tests, upstream Git tags were
+copied into a temporary source replacement outside the repository; two serde
+manifests were adapted for standalone directory use. The lockfile checksums were
+read from the public crates.io index on GitHub, but the local test sources were
+not verified byte-for-byte against crates.io archives. The compiler provenance
+limitation above also still applies. CI is configured to fetch the locked crates
+normally, but cannot be considered verified until it actually runs.
+
+Local follow-up: **22 Rust tests** passed with fmt and Clippy, including two
+TCP mock-endpoint CLI tests; **55 Python tests and 12 subtests** passed across
+the opt-in FCC roundtrip, documentation and Chat protocol matrix. Ruff for the
+repository and Pyrefly for `src tests e2e` passed. A local HTTPS fixture also
+succeeded when curl was given its test CA and failed for the same untrusted
+certificate without it. This checks TLS validation locally, not remote provider
+or tunnel operation. The same provenance and hosted-CI limitations apply.

@@ -56,10 +56,9 @@ or empty output directory; see the documentation build guide for repeat builds.
 ## Oh My Molik (experimental)
 
 [Oh My Molik](ohmymolik/README.md) is a separate experimental agent project. Its
-Rust core is under development; the existing Go prototype can inspect files
-read-only via an explicit local or remote Chat Completions endpoint. The Rust
-core does not yet connect to models or execute tools. Neither implementation is
-a complete coding agent. See the [research and roadmap](docs/oh-my-fox/research.md)
+Rust and historical Go prototypes can inspect files read-only via an explicit
+local or remote Chat Completions endpoint. The Rust CLI uses system curl and
+is non-streaming; neither prototype is a complete coding agent. See the [research and roadmap](docs/oh-my-fox/research.md)
 for sources, migration status and safety gates.
 
 ## Features

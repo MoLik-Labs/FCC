@@ -93,13 +93,12 @@ or security; no comparative Oh My Molik benchmark has been run. FCC's existing
 Python runtime, remote access and streaming are unaffected by this decision.
 The Go parity work for FCC is separate from Oh My Molik.
 
-`ohmymolik/rust/` now contains a dependency-free state machine, stream framing
-and delta assembly, theme tokens and a minimal help/version/theme CLI. It
-validates bounded batches and tracks per-call approval and
-execution claims, but does not connect to a model, perform I/O, sandbox, or
-implement a user approval UI. The Go implementation at `ohmyfox/` remains the
-only runnable read-only model-connected prototype until Rust reaches tested
-parity; it is not a complete coding agent. Go 1.22 was the local bootstrap/test
+`ohmymolik/rust/` includes a state machine, stream framing, theme tokens and an
+experimental non-streaming Chat adapter using system curl. It can list and read
+files in a trusted workspace, but has no editing, shell, sandbox, TUI or user
+approval UI. The Go implementation at `ohmyfox/` remains available; complete
+parity, live providers and platform security remain unverified. Neither is a
+complete coding agent. Go 1.22 was the local bootstrap/test
 compatibility target, not a release recommendation.
 
 ## Current prototype and gates
