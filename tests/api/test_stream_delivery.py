@@ -504,3 +504,131 @@ async def test_public_readonly_frame_uses_one_cached_parse(
         assert count == 1
     finally:
         await stream.aclose()
+
+
+@pytest.mark.asyncio
+async def test_packet_finalization_reuses_pristine_parse(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    from free_claude_code.api import stream_delivery, stream_frames
+    from free_claude_code.api.stream_delivery import PublicResponseStream
+    from free_claude_code.core.stream_delivery import StreamDeliveryState
+
+    async def source() -> AsyncIterator[StreamOutput]:
+        if False:
+            yield StreamOutput(())
+
+    count = 0
+    original = stream_frames.frame_data
+
+    def counted(frame: str) -> DecimalJsonObject | None:
+        nonlocal count
+        count += 1
+        return original(frame)
+
+    monkeypatch.setattr(stream_frames, "frame_data", counted)
+    monkeypatch.setattr(stream_delivery, "frame_data", counted, raising=False)
+    stream = PublicResponseStream(
+        source(),
+        StreamDeliveryState(),
+        wire_api="messages",
+        first_chunk=StreamOutput(()),
+        terminal_frame=None,
+        terminal_failure_observer=None,
+    )
+    raw = 'event: content_block_start\ndata: {"type":"content_block_start","index":0,"content_block":{"type":"text","text":""}}\n\n'
+    try:
+        assert stream._publish_packet(StreamOutput((raw,)), synthetic=False) == raw
+        assert count == 1
+    finally:
+        await stream.aclose()
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "wire,payload",
+    [
+        ("messages", {"content_block": {"type": "thinking", "signature": "draft"}}),
+        ("responses", {"item": {"type": "reasoning", "encrypted_content": "draft"}}),
+        (
+            "chat",
+            {
+                "choices": [
+                    {
+                        "delta": {
+                            "reasoning_details": [
+                                {"type": "reasoning.encrypted", "data": "draft"}
+                            ]
+                        }
+                    }
+                ]
+            },
+        ),
+        (
+            "gemini",
+            {"candidates": [{"content": {"parts": [{"thoughtSignature": "draft"}]}}]},
+        ),
+    ],
+)
+async def test_replay_finalization_never_mutates_cached_frame(
+    wire: Literal["messages", "responses", "chat", "gemini"], payload: JsonObject
+) -> None:
+    from free_claude_code.api.stream_delivery import PublicResponseStream
+    from free_claude_code.core.stream_delivery import StreamDeliveryState
+
+    async def source() -> AsyncIterator[StreamOutput]:
+        if False:
+            yield StreamOutput(())
+
+    stream = PublicResponseStream(
+        source(),
+        StreamDeliveryState(),
+        wire_api=wire,
+        first_chunk=StreamOutput(()),
+        terminal_frame=None,
+        terminal_failure_observer=None,
+    )
+    stream._replay_carriers["draft"] = "sealed"
+    raw = "data: " + json.dumps(payload) + "\n\n"
+    try:
+        finalized = stream._finalize_frame(raw)
+        assert "sealed" in finalized
+        assert stream._payloads.get(raw) == payload
+    finally:
+        await stream.aclose()
+
+
+@pytest.mark.asyncio
+async def test_failed_packet_rolls_back_replay_and_public_delivery() -> None:
+    from free_claude_code.api.stream_delivery import PublicResponseStream
+    from free_claude_code.core.stream_delivery import StreamDeliveryState
+
+    async def source() -> AsyncIterator[StreamOutput]:
+        if False:
+            yield StreamOutput(())
+
+    state = StreamDeliveryState()
+    stream = PublicResponseStream(
+        source(),
+        state,
+        wire_api="messages",
+        first_chunk=StreamOutput(()),
+        terminal_frame=None,
+        terminal_failure_observer=None,
+    )
+    stream._replay_carriers["draft"] = "sealed"
+    replay = 'data: {"content_block":{"type":"thinking","signature":"draft"}}\n\n'
+    # Later invalid data raises after the first frame has been processed.
+    invalid = 'data: {"choices":[{"delta":{"reasoning_details":true}}]}\n\n'
+    try:
+        before = stream._delivered.snapshot()
+        with pytest.raises(TypeError):
+            stream._publish_packet(StreamOutput((replay, invalid)), synthetic=False)
+        assert stream._delivered.snapshot() == before
+        assert not state.content_released
+        assert stream._payloads.get(replay) == json.loads(replay[6:])
+        assert stream._replay_carriers == {"draft": "sealed"}
+        result = stream._publish_packet(StreamOutput((replay,)), synthetic=False)
+        assert result is not None and "sealed" in result
+    finally:
+        await stream.aclose()

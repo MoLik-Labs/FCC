@@ -106,3 +106,20 @@ proof that the earlier 56% improvement survives every new path.
 At review time the remote had only `main` and the active working branch. No
 obsolete remote branch was identified for deletion. Preserve the working
 branch until integration is verified.
+
+## Public-delivery parse reuse checkpoint
+
+The public stream finalizer now reuses its request-local bounded frame parse
+cache. It copies a cached payload before replay sealing, continuation, or
+failure-envelope mutation; packet rollback remains in place. The replay
+preflight traverses the same protocol fields as sealing, including native
+Gemini signatures and malformed structures, rather than treating arbitrary
+answer text as metadata. The tests cover all four carrier shapes, unchanged
+cached payloads, a failing multi-frame packet and subsequent retry.
+
+For the 2,004-frame Messages component benchmark above, three serial runs on
+this sandbox before the change had medians of 308.26, 326.20 and 285.41 ms;
+three after had medians of 262.25, 270.64 and 257.31 ms. Each run produced
+SHA-256 `5cde2bedb002bf497ba4f28c158340f2e596613d1c9fb5307f9ecf205d1ab6b8`.
+These results are noisy, workload-specific component timings, not provider or
+end-to-end measurements; transaction snapshots still dominate this workload.

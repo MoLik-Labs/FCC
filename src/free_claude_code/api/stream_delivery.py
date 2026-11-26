@@ -24,7 +24,10 @@ from free_claude_code.core.json_types import (
     json_objects,
     optional_string,
 )
-from free_claude_code.core.replay_finalization import finalize_replay
+from free_claude_code.core.replay_finalization import (
+    finalize_replay,
+    needs_replay_sealing,
+)
 from free_claude_code.core.stream_delivery import (
     StreamDeliveryState,
     bind_stream_delivery,
@@ -32,7 +35,7 @@ from free_claude_code.core.stream_delivery import (
 from free_claude_code.core.stream_output import StreamOutput, call_references
 
 from .classifier_projection import ClassifierProjection
-from .stream_frames import FramePayloadCache, frame_data, replace_frame_data
+from .stream_frames import FramePayloadCache, replace_frame_data
 
 
 class DeliveryObservedStream(AsyncIterator[StreamOutput]):
@@ -177,10 +180,21 @@ class PublicResponseStream(AsyncIterator[str]):
             raise
 
     def _finalize_frame(self, frame: str) -> str:
-        payload = frame_data(frame)
+        payload = self._payloads.get(frame)
         if payload is None:
             return frame
-        if finalize_replay(payload, self._delivered.snapshot, self._replay_carriers):
+        replay = needs_replay_sealing(payload, self._replay_carriers)
+        # Cached parses are shared across stages. Clone only when replay or a
+        # continuation/failure envelope can edit the payload.
+        if (
+            replay
+            or self._continuation.active
+            or payload.get("type") == "response.failed"
+        ):
+            payload = deepcopy(payload)
+        if replay and finalize_replay(
+            payload, self._delivered.snapshot, self._replay_carriers
+        ):
             if self._continuation.active and not self._continuation.made_progress:
                 raise ExecutionFailure(
                     kind=FailureKind.UPSTREAM,

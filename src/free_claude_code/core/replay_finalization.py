@@ -47,6 +47,22 @@ def _carrier_fields(
             yield part, "thoughtSignature"
 
 
+def needs_replay_sealing(payload: DecimalJsonObject, sealed: dict[str, str]) -> bool:
+    """Detect whether sealing might mutate a payload, without changing it.
+
+    Native Gemini signatures must always be examined, even when they do not
+    carry an FCC prefix. Traverse the same fields as finalization so malformed
+    protocol structures still raise rather than bypass validation.
+    """
+    for container, key in _carrier_fields(payload):
+        value = container.get(key)
+        if isinstance(value, str) and (
+            value in sealed or key == "thoughtSignature" or is_replay(value)
+        ):
+            return True
+    return False
+
+
 def finalize_replay(
     payload: DecimalJsonObject,
     prefix: Callable[[], DeliveredPrefix],
