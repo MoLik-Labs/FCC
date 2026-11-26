@@ -7,7 +7,7 @@
       name="description"
       content="Hướng dẫn cài đặt, cấu hình và sử dụng Free Claude Code."
     />
-    <meta name="color-scheme" content="light" />
+    <meta name="color-scheme" content="light dark" />
     <title>Tài liệu FCC — mô hình của bạn, cách làm việc của bạn</title>
     <link rel="stylesheet" href="style.css" />
     <script src="site.js" defer></script>
@@ -71,6 +71,7 @@
           ><a href="#clients">Agent &amp; tích hợp</a><a href="#api">API</a
           ><a href="#messaging">Discord &amp; Telegram</a>
           <p class="nav-heading">VẬN HÀNH</p>
+          <a href="#workloads">Cấu hình tải</a>
           <a href="#security">Bảo mật &amp; truy cập từ xa</a
           ><a href="#maintenance">Bảo trì</a
           ><a href="#troubleshooting">Khắc phục sự cố</a>
@@ -79,6 +80,14 @@
           ><a href="#pages">Xuất bản tài liệu</a
           ><a href="#resources">Tài nguyên</a>
         </nav>
+        <div class="reading-control" hidden>
+          <label for="reading-theme">Giao diện đọc</label>
+          <select id="reading-theme">
+            <option value="light">Sáng</option>
+            <option value="forest">Forest</option>
+            <option value="catppuccin-mocha">Catppuccin Mocha</option>
+          </select>
+        </div>
         <div class="sidebar-note">
           <span class="status-dot"></span
           ><span
@@ -264,21 +273,10 @@ uv run fcc-codex</code></pre>
             </div>
             <p>
               Chọn <strong>Appearance</strong> ở thanh bên Admin để dùng Forest,
-              Catppuccin Mocha, Ocean, Dusk hoặc Dawn. Lựa chọn được lưu trong
-              trình duyệt khi có thể, không thay đổi cấu hình server hay CLI
-              Molik riêng.
+              Catppuccin Mocha, Nord, Dracula, Ocean, Dusk hoặc Dawn. Lựa chọn
+              được lưu trong trình duyệt khi có thể, không thay đổi cấu hình
+              server hay CLI Molik riêng.
             </p>
-            <figure class="screen">
-              <img
-                src="assets/admin-page.png"
-                alt="Giao diện FCC Admin để cấu hình nhà cung cấp và mô hình"
-                loading="lazy"
-              />
-              <figcaption>
-                <span>HÌNH 01</span> Giao diện Admin phiên bản trước: cấu hình
-                nhà cung cấp và định tuyến.
-              </figcaption>
-            </figure>
           </section>
           <section class="doc-section" id="first-request">
             <div class="section-header">
@@ -465,16 +463,6 @@ uv run fcc-codex</code></pre>
                 >hướng dẫn từng tích hợp</a
               >.
             </p>
-            <figure class="screen">
-              <img
-                src="assets/browser-code-session.png"
-                alt="Phiên FCC Code trong trình duyệt với bộ chọn mô hình"
-                loading="lazy"
-              />
-              <figcaption>
-                <span>HÌNH 02</span> Phiên Code trong trình duyệt.
-              </figcaption>
-            </figure>
           </section>
           <section class="doc-section" id="api">
             <div class="section-header">
@@ -576,6 +564,57 @@ uv run fcc-codex</code></pre>
                 href="https://github.com/MoLik-Labs/FCC/blob/main/README.md#use-from-your-phone"
                 >thiết lập đầy đủ</a
               >.
+            </p>
+          </section>
+          <section class="doc-section" id="workloads">
+            <div class="section-header">
+              <span class="section-number">VẬN HÀNH / TẢI</span>
+              <h2>Chọn mức tải phù hợp.</h2>
+              <p>Bắt đầu thận trọng, theo dõi rồi điều chỉnh.</p>
+            </div>
+            <p>
+              Trong <strong>Admin → Providers → Runtime configuration</strong>,
+              các nút gợi ý đặt tạm <code>PROVIDER_MAX_CONCURRENCY</code>: Light
+              1, Balanced 2 (mặc định), High 4. Kiểm tra giá trị rồi bấm
+              <strong>Apply</strong> để lưu. Nếu biến môi trường tiến trình khóa
+              trường này, nút gợi ý sẽ bị vô hiệu hóa.
+            </p>
+            <div class="feature-grid">
+              <article>
+                <h3>Light · 1</h3>
+                <p>
+                  Điểm bắt đầu cho máy yếu, nhất là khi chạy mô hình cục bộ.
+                  Giảm kích thước mô hình hoặc context; tránh cài voice cục bộ
+                  nếu thiếu tài nguyên.
+                </p>
+              </article>
+              <article>
+                <h3>Balanced · 2</h3>
+                <p>
+                  Mức mặc định cho một người dùng. Theo dõi bộ nhớ, độ trễ và
+                  lỗi.
+                </p>
+              </article>
+              <article>
+                <h3>High · 4</h3>
+                <p>
+                  Chỉ thử khi hạn mức nhà cung cấp và máy chạy mô hình còn dư
+                  tải. Giảm xuống nếu bộ nhớ hoặc độ trễ tăng.
+                </p>
+              </article>
+              <article>
+                <h3>Đo và điều chỉnh</h3>
+                <p>
+                  Giới hạn áp dụng cho từng nhà cung cấp, không giới hạn toàn bộ
+                  tài nguyên máy. Rate Limit và Rate Window vẫn độc lập. Mô hình
+                  cloud chạy trên máy nhà cung cấp.
+                </p>
+              </article>
+            </div>
+            <p>
+              Đây là gợi ý, không tự nhận diện phần cứng hay đảm bảo tốc độ.
+              Chạy cục bộ phụ thuộc mô hình, context, quantization và server
+              inference; mức đồng thời không đổi các cấu hình đó.
             </p>
           </section>
           <section class="doc-section" id="security">
@@ -805,7 +844,7 @@ uv run fcc-server</code></pre>
 python3 -m http.server 8000 --directory site-build</code></pre>
             <p>
               Mở <code>http://localhost:8000</code> trên máy đang chạy server.
-              Builder kiểm tra link cục bộ và chép trang cùng screenshot vào
+              Builder kiểm tra link cục bộ và chép trang cùng tài nguyên vào
               <code>site-build/</code>. Pull request được kiểm tra build; push
               lên <code>main</code> sẽ xuất bản qua GitHub Actions sau khi quản
               trị viên chọn

@@ -7,7 +7,7 @@
       name="description"
       content="A practical guide to installing, configuring, and operating Free Claude Code."
     />
-    <meta name="color-scheme" content="light" />
+    <meta name="color-scheme" content="light dark" />
     <title>FCC documentation — your models, your workflow</title>
     <link rel="stylesheet" href="style.css" />
     <script src="site.js" defer></script>
@@ -75,6 +75,7 @@
           ><a href="#api">API reference</a
           ><a href="#messaging">Discord &amp; Telegram</a>
           <p class="nav-heading">OPERATE</p>
+          <a href="#workloads">Workload settings</a>
           <a href="#security">Security &amp; remote access</a
           ><a href="#maintenance">Maintenance</a
           ><a href="#troubleshooting">Troubleshooting</a>
@@ -83,6 +84,14 @@
           ><a href="#pages">Publish this site</a
           ><a href="#resources">Resources</a>
         </nav>
+        <div class="reading-control" hidden>
+          <label for="reading-theme">Reading theme</label>
+          <select id="reading-theme">
+            <option value="light">Light</option>
+            <option value="forest">Forest</option>
+            <option value="catppuccin-mocha">Catppuccin Mocha</option>
+          </select>
+        </div>
         <div class="sidebar-note">
           <span class="status-dot"></span
           ><span
@@ -270,21 +279,10 @@ uv run fcc-codex</code></pre>
             </div>
             <p>
               Choose <strong>Appearance</strong> in the Admin sidebar for
-              Forest, Catppuccin Mocha, Ocean, Dusk or Dawn. The selection is
-              stored in this browser when storage is available, not on the
-              server or in the separate Molik CLI.
+              Forest, Catppuccin Mocha, Nord, Dracula, Ocean, Dusk or Dawn. The
+              selection is stored in this browser when storage is available, not
+              on the server or in the separate Molik CLI.
             </p>
-            <figure class="screen">
-              <img
-                src="assets/admin-page.png"
-                alt="FCC Admin interface showing provider and model configuration"
-                loading="lazy"
-              />
-              <figcaption>
-                <span>FIG. 01</span> Earlier Admin interface: configure
-                providers and model routing.
-              </figcaption>
-            </figure>
           </section>
           <section class="doc-section" id="first-request">
             <div class="section-header">
@@ -479,16 +477,6 @@ uv run fcc-codex</code></pre>
                 >integration-specific instructions</a
               >.
             </p>
-            <figure class="screen">
-              <img
-                src="assets/browser-code-session.png"
-                alt="FCC browser Code session with a model selector and repository conversation"
-                loading="lazy"
-              />
-              <figcaption>
-                <span>FIG. 02</span> An FCC Code session in the browser.
-              </figcaption>
-            </figure>
           </section>
           <section class="doc-section" id="api">
             <div class="section-header">
@@ -595,6 +583,57 @@ uv run fcc-codex</code></pre>
                 href="https://github.com/MoLik-Labs/FCC/blob/main/README.md#use-from-your-phone"
                 >full setup</a
               >.
+            </p>
+          </section>
+          <section class="doc-section" id="workloads">
+            <div class="section-header">
+              <span class="section-number">OPERATE / CAPACITY</span>
+              <h2>Match the workload.</h2>
+              <p>Start conservatively, observe the result, and adjust.</p>
+            </div>
+            <p>
+              In <strong>Admin → Providers → Runtime configuration</strong>,
+              workload buttons stage <code>PROVIDER_MAX_CONCURRENCY</code>:
+              Light 1, Balanced 2 (default), High 4. Review the value and click
+              <strong>Apply</strong>. A process environment override locks the
+              field and disables the suggestions.
+            </p>
+            <div class="feature-grid">
+              <article>
+                <h3>Light · 1</h3>
+                <p>
+                  Start here on constrained machines, particularly with a local
+                  model. Reduce model size or context and avoid optional local
+                  voice when resources are tight.
+                </p>
+              </article>
+              <article>
+                <h3>Balanced · 2</h3>
+                <p>
+                  The default starting point for a typical single-user setup.
+                  Watch memory, response latency and errors.
+                </p>
+              </article>
+              <article>
+                <h3>High · 4</h3>
+                <p>
+                  Try only when the provider quota and local inference server
+                  have headroom. Reduce it if memory or latency increases.
+                </p>
+              </article>
+              <article>
+                <h3>Measure &amp; adjust</h3>
+                <p>
+                  The limit is per provider, not a machine-wide resource cap.
+                  Rate Limit and Rate Window remain independent. Cloud inference
+                  runs on the provider, not your computer.
+                </p>
+              </article>
+            </div>
+            <p>
+              These are suggestions, not hardware detection or speed guarantees.
+              Local inference depends on model, context, quantization and the
+              inference server; concurrency does not change those settings.
             </p>
           </section>
           <section class="doc-section" id="security">
@@ -839,9 +878,9 @@ python3 -m http.server 8000 --directory site-build</code></pre>
             <p>
               Open <code>http://localhost:8000</code> on the machine running the
               preview. The builder checks local links and copies the site and
-              screenshots into <code>site-build/</code>. Pull requests validate
-              the build; pushes to <code>main</code> publish using GitHub
-              Actions after a repository administrator selects
+              assets into <code>site-build/</code>. Pull requests validate the
+              build; pushes to <code>main</code> publish using GitHub Actions
+              after a repository administrator selects
               <strong
                 >Settings → Pages → Build and deployment → GitHub
                 Actions</strong

@@ -54,6 +54,8 @@ python3 -m http.server 8000 --directory site-build
 
 Open `http://localhost:8000/` on the same machine. The builder requires a new
 or empty output directory; see the documentation build guide for repeat builds.
+The guides include Light, Forest and Catppuccin Mocha reading themes; the choice
+is stored in the browser and is independent of the Admin appearance.
 
 ## Oh My Molik (experimental)
 
@@ -97,16 +99,6 @@ Free-tier availability and limits are controlled by each provider and may change
 > The Go port in [`gocore/`](gocore/README.md) is experimental and incomplete;
 > the Python application remains the supported runtime.
 
-<div align="center">
-  <img src="assets/pic.png" alt="Claude Code running with Free Claude Code" width="700">
-  <p><em>Claude Code running with FCC.</em></p>
-</div>
-
-<div align="center">
-  <img src="assets/browser-code-session.png" alt="Native Codex browser session in FCC, showing model controls and a repository exploration" width="700">
-  <p><em>A native Codex session in FCC's browser UI.</em></p>
-</div>
-
 ## Quick Start
 
 <a id="install"></a>
@@ -149,14 +141,9 @@ To protect the local proxy with a bearer token, enable **Proxy Authentication**
 in Admin. This token does not protect Admin or Code sessions; see the [remote
 access guidance](docs/oh-my-fox/remote-access.md) before exposing them.
 
-Use **Appearance** in the sidebar to choose Forest, Catppuccin Mocha, Ocean,
+Use **Appearance** in the sidebar to choose Forest, Catppuccin Mocha, Nord, Dracula, Ocean,
 Dusk or Dawn. The choice is saved in this browser when storage is available;
-it does not change server configuration or the separate Molik CLI. The image
-below shows an earlier version of Admin.
-
-<div align="center">
-  <img src="assets/admin-page.png" alt="Free Claude Code Admin UI" width="700">
-</div>
+it does not change server configuration or the separate Molik CLI.
 
 ### 4. Run Your Coding Agent
 
@@ -232,10 +219,28 @@ Other clients and SDKs can call FCC directly. See [Use The API Directly](#use-th
 
 <a id="model-picker"></a>
 
-<div align="center">
-  <img src="assets/cc-model-picker.png" alt="Claude Code model picker showing FCC models" width="700">
-  <p><em>Select an FCC model from Claude Code's native <code>/model</code> picker.</em></p>
-</div>
+## Workload and hardware guidance
+
+In **Admin → Providers → Runtime configuration**, the workload buttons stage
+only **Provider Max Concurrency**: Light = 1, Balanced = 2 (the default), High
+= 4. Review the field and click **Apply** to save. You can enter a different
+positive value manually. If a process environment variable locks the field,
+change that variable instead; the buttons are disabled.
+
+The limit is per provider, not a global CPU/RAM limit. Provider Rate Limit and
+Rate Window remain separate and can still delay attempts. These are starting
+points, not automatic hardware detection or speed guarantees:
+
+- **Low-resource machine / local model:** start at 1; use a smaller model and
+  context, and avoid optional local Whisper if memory or disk is tight.
+- **Typical single-user setup:** start at 2; observe memory, latency and errors.
+- **More capacity or multiple users:** try 4 only when the provider quota and
+  local inference server can sustain it; higher concurrency can increase memory
+  use and latency. Lower it if requests fail or the machine becomes unresponsive.
+
+Cloud inference runs on the provider's hardware; local inference requirements
+are determined primarily by the model, context, quantization and inference
+server. These controls do not change model settings or limit the entire machine.
 
 ## Choose A Provider
 
@@ -556,41 +561,25 @@ in **Admin UI → Messaging**, then click **Apply**.
 | Reply with `/clear` | Delete the selected message and the chain of replies to it. Keep other conversations. |
 
 <details>
-<summary><strong>Voice notes (upstream installer options)</strong></summary>
+<summary><strong>Voice notes</strong></summary>
 
-NVIDIA NIM transcription support is included in every installation. In **Admin UI → Messaging → Voice**, enable voice notes, select `nvidia_nim`, and choose a supported model. Configure your **NVIDIA NIM API key** on the Providers page.
+For NVIDIA NIM transcription, configure its API key under **Providers**, then
+in **Messaging → Voice** enable voice notes and choose `nvidia_nim`.
 
-For an upstream installation, local Whisper can be installed with the upstream installer options below. These scripts do not install this fork:
-
-macOS/Linux:
-
-Local Whisper on CPU or CUDA:
+Local Whisper is optional and needs substantially more disk space and memory.
+From this source checkout, install the `voice_local` extra:
 
 ```bash
-curl -fsSL "https://raw.githubusercontent.com/Alishahryar1/free-claude-code/main/scripts/install.sh" | sh -s -- --voice-local
+uv sync --locked --extra voice_local
 ```
 
-Local Whisper with CUDA 13.0:
-
-```bash
-curl -fsSL "https://raw.githubusercontent.com/Alishahryar1/free-claude-code/main/scripts/install.sh" | sh -s -- --voice-local --torch-backend cu130
-```
-
-Windows PowerShell:
-
-Local Whisper on CPU or CUDA:
-
-```powershell
-& ([scriptblock]::Create((irm "https://raw.githubusercontent.com/Alishahryar1/free-claude-code/main/scripts/install.ps1"))) -VoiceLocal
-```
-
-Local Whisper with CUDA 13.0:
-
-```powershell
-& ([scriptblock]::Create((irm "https://raw.githubusercontent.com/Alishahryar1/free-claude-code/main/scripts/install.ps1"))) -VoiceLocal -TorchBackend cu130
-```
-
-After installing local support, restart `fcc-server`. In **Admin UI → Messaging → Voice**, enable voice notes, select `cpu` or `cuda`, and choose the Whisper model. Local gated models need `HUGGINGFACE_API_KEY`.
+The configured PyTorch index targets CUDA 13.0; availability and CPU/GPU
+compatibility depend on platform, driver and package wheels. Verify those
+requirements before installing. Start with `uv run --extra voice_local fcc-server`,
+enable voice in **Messaging → Voice**, select `cpu` or `cuda` and
+choose a Whisper model. Gated models need `HUGGINGFACE_API_KEY`. Repeat the
+extra on `uv sync` when updating; a plain sync can remove optional packages.
+This extra has not been validated on every platform.
 
 </details>
 
@@ -605,53 +594,11 @@ uv sync --locked
 
 Review local changes before updating. Do **not** use the packaged `fcc-update` for this fork: it runs the upstream installer and can install or update the upstream release instead.
 
-To remove a source checkout, stop FCC and connected clients, back up any data you need, then remove the checkout directory manually. Its `.venv` is inside that directory. FCC data such as `~/.fcc/` is separate; removing the checkout does not remove it. The platform installers and uninstallers below are **upstream-only** and can alter an upstream installation and its data; they are not needed to install or remove this checkout.
-
-### Upstream-only options
-
-The following Muse Code, voice and uninstall scripts are provided by the upstream project, not this fork. Review them before use. The source setup above does not automatically install local Whisper, RTK, Headroom or coding agents.
-
-### Muse Code on native Windows
-
-To install or update only Muse Code:
-
-```powershell
-& ([scriptblock]::Create((irm "https://raw.githubusercontent.com/Alishahryar1/free-claude-code/main/scripts/install-muse.ps1")))
-```
-
-To remove the Muse Code copy installed by FCC, keeping its data:
-
-```powershell
-& ([scriptblock]::Create((irm "https://raw.githubusercontent.com/Alishahryar1/free-claude-code/main/scripts/uninstall-muse.ps1")))
-```
-
-Uninstalling FCC leaves Muse Code installed.
-
-### Uninstall
-
-Stop every running FCC command and quit connected desktop/editor apps before uninstalling.
-
-**Removes**
-
-- Free Claude Code, including its desktop launcher and commands
-- `~/.fcc/`
-
-**Keeps**
-
-- uv and Python
-- Your coding agents, RTK, and Headroom
-
-macOS/Linux:
-
-```bash
-curl -fsSL "https://raw.githubusercontent.com/Alishahryar1/free-claude-code/main/scripts/uninstall.sh" | sh
-```
-
-Windows PowerShell:
-
-```powershell
-& ([scriptblock]::Create((irm "https://raw.githubusercontent.com/Alishahryar1/free-claude-code/main/scripts/uninstall.ps1")))
-```
+To remove the source checkout, stop FCC and connected clients, back up any
+needed data, then remove the checkout directory manually. Its `.venv` is inside
+the checkout. FCC data such as `~/.fcc/` is separate and is not removed; delete
+it only if you intentionally want to remove configuration, credentials and data.
+The source install does not install or remove coding agents, RTK or Headroom.
 
 ## Project Links
 

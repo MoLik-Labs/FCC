@@ -914,6 +914,10 @@ function renderSections(sections, fields) {
         sectionFields.forEach((field) => grid.appendChild(renderField(field)));
       }
       sectionEl.appendChild(grid);
+      if (section.id === "runtime") {
+        const concurrency = grid.querySelector("#field-PROVIDER_MAX_CONCURRENCY");
+        if (concurrency) sectionEl.appendChild(workloadSuggestions(concurrency));
+      }
 
       if (sectionFields.some((field) => field.advanced)) {
         const toggle = document.createElement("button");
@@ -930,6 +934,33 @@ function renderSections(sections, fields) {
       container.appendChild(sectionEl);
     });
   });
+}
+
+// Suggestions only stage the existing concurrency field; Apply remains the sole
+// configuration write. They do not detect hardware or change provider rate limits.
+function workloadSuggestions(concurrency) {
+  const group = document.createElement("div");
+  group.className = "workload-suggestions";
+  const heading = document.createElement("h4");
+  heading.textContent = "Workload starting points";
+  const description = document.createElement("p");
+  description.textContent = "Set maximum active attempts per provider: light 1, balanced 2 (default), high 4. Review and Apply to save. Rate limits still apply; adjust for your provider, local model and available resources.";
+  const buttons = document.createElement("div");
+  buttons.className = "workload-buttons";
+  for (const [name, value] of [["Light", "1"], ["Balanced", "2"], ["High", "4"]]) {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "secondary-button";
+    button.textContent = `${name} workload`;
+    button.disabled = concurrency.disabled;
+    button.addEventListener("click", () => {
+      concurrency.value = value;
+      concurrency.dispatchEvent(new Event("input", { bubbles: true }));
+    });
+    buttons.appendChild(button);
+  }
+  group.append(heading, description, buttons);
+  return group;
 }
 
 function renderModelRoutes(grid, fields) {

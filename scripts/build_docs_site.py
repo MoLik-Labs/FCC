@@ -16,7 +16,6 @@ else:
 
 ROOT = Path(__file__).resolve().parent.parent
 SITE = ROOT / "docs" / "site"
-SCREENSHOTS = ("admin-page.png", "browser-code-session.png")
 
 
 class PageParser(HTMLParser):
@@ -82,8 +81,6 @@ def build(output: Path) -> None:
     shutil.copytree(SITE, output, dirs_exist_ok=True)
     images = output / "assets"
     images.mkdir(exist_ok=True)
-    for name in SCREENSHOTS:
-        shutil.copy2(ROOT / "assets" / name, images / name)
     shutil.copy2(
         ROOT / "ohmymolik" / "brand" / "molik-mark.svg", images / "molik-mark.svg"
     )

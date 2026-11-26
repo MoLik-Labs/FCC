@@ -4,7 +4,12 @@ This directory contains the static source for the FCC guide. The site covers
 installation, providers, clients, APIs, messaging, security, maintenance and
 contribution in English and Vietnamese. It links to the project README for the
 full provider catalog and platform-specific details; update both translations
-and the README when behavior changes.
+and the README when behavior changes. The site intentionally uses dependency-free
+static HTML, CSS and JavaScript: no external fonts, framework runtime or package
+install is needed to build. The bilingual guides offer Light, Forest and
+Catppuccin Mocha reading themes, stored locally in the browser; with JavaScript
+disabled they remain readable in Light. This is separate from the Admin theme.
+The Catppuccin palette is MIT licensed; see the [license](../../src/free_claude_code/api/admin_static/CATPPUCCIN-LICENSE.txt).
 
 ## Build and preview
 
@@ -20,10 +25,18 @@ Open <http://localhost:8000/> on the machine running the server. To avoid
 accidentally overwriting files, the builder requires a new or empty output
 directory. Remove the generated, ignored `site-build/` directory before a
 subsequent build, or use `--output` with another empty directory. It copies the
-site source and selected existing screenshots, creates `.nojekyll`, and checks
+site source and the Molik vector mark, creates `.nojekyll`, and checks
 local links, fragments, duplicate IDs and image alt attributes. It does not
 verify external links, rendered appearance or product behavior. No additional
-packages are needed.
+packages are needed. To exercise the reading theme, language navigation,
+restricted storage and the no-JavaScript layout with a locally installed
+Playwright Chromium browser, run `uv run pytest -n 0 e2e/test_docs_appearance.py`.
+These browser tests do not replace manual accessibility or cross-browser review.
+
+Admin's Nord and Dracula themes are palette adaptations; Nord foregrounds are
+adjusted for contrast. The Admin and documentation theme choices are independent.
+See [Nord](https://www.nordtheme.com/) and [Dracula](https://draculatheme.com/)
+for their original palettes.
 
 ## Deploy
 

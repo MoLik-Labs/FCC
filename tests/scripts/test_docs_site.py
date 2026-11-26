@@ -8,7 +8,7 @@ from scripts.build_docs_site import build, validate_site
 
 
 class DocumentationSiteTests(unittest.TestCase):
-    def test_build_contains_site_and_screenshots(self) -> None:
+    def test_build_contains_site_without_stale_screenshots(self) -> None:
         with tempfile.TemporaryDirectory() as temp:
             output = Path(temp) / "site"
             build(output)
@@ -16,8 +16,8 @@ class DocumentationSiteTests(unittest.TestCase):
             self.assertTrue((output / "vi.html").is_file())
             self.assertTrue((output / "molik.html").is_file())
             self.assertTrue((output / ".nojekyll").is_file())
-            self.assertTrue((output / "assets" / "admin-page.png").is_file())
-            self.assertTrue((output / "assets" / "browser-code-session.png").is_file())
+            self.assertFalse((output / "assets" / "admin-page.png").exists())
+            self.assertFalse((output / "assets" / "browser-code-session.png").exists())
             self.assertTrue((output / "assets" / "molik-mark.svg").is_file())
             validate_site(output)
 
@@ -46,6 +46,28 @@ class DocumentationSiteTests(unittest.TestCase):
                 )[0]
                 self.assertIn("fcc-update", maintenance)
                 self.assertIn("upstream", maintenance)
+
+    def test_workload_guidance_and_fork_only_commands(self) -> None:
+        root = Path(__file__).resolve().parents[2]
+        readme = (root / "README.md").read_text(encoding="utf-8")
+        self.assertNotIn("raw.githubusercontent.com/Alishahryar1", readme)
+        for name in ("index.html", "vi.html"):
+            with self.subTest(page=name):
+                page = (root / "docs" / "site" / name).read_text(encoding="utf-8")
+                self.assertIn('id="workloads"', page)
+                self.assertIn("PROVIDER_MAX_CONCURRENCY", page)
+                self.assertIn("Catppuccin Mocha", page)
+                self.assertIn("Nord", page)
+                self.assertIn("Dracula", page)
+
+    def test_bilingual_guides_offer_reading_themes(self) -> None:
+        root = Path(__file__).resolve().parents[2] / "docs" / "site"
+        for name in ("index.html", "vi.html"):
+            with self.subTest(page=name):
+                page = (root / name).read_text(encoding="utf-8")
+                self.assertIn('id="reading-theme"', page)
+                for value in ("light", "forest", "catppuccin-mocha"):
+                    self.assertIn(f'value="{value}"', page)
 
     def test_molik_gallery_tracks_the_rust_theme_tokens(self) -> None:
         import re

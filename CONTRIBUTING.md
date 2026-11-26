@@ -21,12 +21,17 @@ PRs without changes to those paths must not use a release prefix. Do not edit ve
 Install [uv](https://docs.astral.sh/uv/), then run directly from the checkout. uv automatically installs the Python version required by the project.
 
 ```bash
-git clone https://github.com/MoLik-Labs/FCC.git
+git clone --branch arena/5fe6a43f-fcc https://github.com/MoLik-Labs/FCC.git
 cd FCC
+uv sync --locked
 uv run fcc-server
 ```
 
-Use `uv run` for Python commands. Do not run the project with a global Python interpreter.
+This checks out the fork's current development branch; choose an available
+branch after integration. Use `uv run` for project Python commands. The existing
+release-title and publication rules above are inherited from upstream and do not
+by themselves establish that this fork publishes releases or accepts the same
+contribution workflow.
 
 ## Quality Checks
 
@@ -51,7 +56,10 @@ uv run pyrefly check
 uv run pytest -v --tb=short
 ```
 
-Pyrefly warnings fail the check. GitHub CI runs Ruff in check-only mode and also bans `# type: ignore`, `# ty: ignore`, `# pyrefly: ignore`, and legacy annotation workarounds. Fix underlying typing and import-boundary problems instead of suppressing them.
+The repository-wide Pyrefly check currently reports historical diagnostics in
+benchmark/generator scripts; `uv run pyrefly check src tests e2e` is the scoped
+check used for the application and tests. Do not assume hosted checks have run
+or that all platforms have been verified. GitHub CI runs Ruff in check-only mode and also bans `# type: ignore`, `# ty: ignore`, `# pyrefly: ignore`, and legacy annotation workarounds. Fix underlying typing and import-boundary problems instead of suppressing them.
 
 ## Project Standards
 

@@ -389,3 +389,49 @@ def test_restart_to_another_local_origin_keeps_the_warning(
     assert "new-key" not in page.url
     page.reload()
     expect(page.locator("#messageArea")).to_have_text("")
+
+
+def test_workload_presets_stage_only_concurrency_until_apply(
+    page: Page, admin_base_url: str
+) -> None:
+    mutations = []
+    page.on(
+        "request",
+        lambda request: (
+            mutations.append(request.post_data_json)
+            if request.method == "POST"
+            and request.url.endswith("/admin/api/config/apply")
+            else None
+        ),
+    )
+    page.goto(f"{admin_base_url}/admin")
+    section = page.locator("#section-runtime")
+    concurrency = section.locator("#field-PROVIDER_MAX_CONCURRENCY")
+    rate = section.locator("#field-PROVIDER_RATE_LIMIT")
+    previous_rate = rate.input_value()
+    section.get_by_role("button", name="Light workload").click()
+    expect(concurrency).to_have_value("1")
+    expect(rate).to_have_value(previous_rate)
+    expect(page.locator("#dirtyState")).to_have_text("1 unsaved change")
+    assert mutations == []
+    section.get_by_role("button", name="High workload").click()
+    expect(concurrency).to_have_value("4")
+    page.get_by_role("button", name="Apply", exact=True).click()
+    expect(page.locator("#dirtyState")).to_have_text("No changes")
+    assert mutations == [{"values": {"PROVIDER_MAX_CONCURRENCY": "4"}}]
+    page.reload()
+    expect(page.locator("#field-PROVIDER_MAX_CONCURRENCY")).to_have_value("4")
+
+
+@pytest.mark.parametrize(
+    "admin_base_url", [{"PROVIDER_MAX_CONCURRENCY": "3"}], indirect=True
+)
+def test_workload_suggestions_respect_locked_environment(
+    page: Page, admin_base_url: str
+) -> None:
+    page.goto(f"{admin_base_url}/admin")
+    section = page.locator("#section-runtime")
+    expect(section.locator("#field-PROVIDER_MAX_CONCURRENCY")).to_be_disabled()
+    for name in ("Light workload", "Balanced workload", "High workload"):
+        expect(section.get_by_role("button", name=name)).to_be_disabled()
+    expect(page.get_by_role("button", name="Apply", exact=True)).to_be_disabled()

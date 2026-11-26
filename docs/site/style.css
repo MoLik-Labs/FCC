@@ -952,3 +952,221 @@ pre:focus-visible,
     flex-basis: 48px;
   }
 }
+
+/* Optional reading themes are independent of Admin and work without external assets. */
+.reading-control {
+  margin-top: 28px;
+}
+.reading-control label {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  margin-bottom: 5px;
+}
+.reading-control select {
+  width: 100%;
+  padding: 8px;
+  font: inherit;
+  color: var(--ink);
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 5px;
+}
+.reading-control select:focus-visible {
+  outline: 3px solid #8bc63e;
+  outline-offset: 3px;
+}
+:root[data-reading-theme="forest"] {
+  color-scheme: dark;
+  --ink: #e4f4e8;
+  --muted: #b5cebd;
+  --paper: #0b211b;
+  --line: #365347;
+  --reading-panel: #112b23;
+  --reading-card: #18362b;
+  --reading-link: #a9e6c0;
+  --reading-secondary: #c6dccc;
+  --reading-code: #203e32;
+  --reading-note: #18392b;
+  --reading-warning: #483620;
+  --reading-warning-text: #f9e2b2;
+}
+:root[data-reading-theme="catppuccin-mocha"] {
+  color-scheme: dark;
+  --ink: #cdd6f4;
+  --muted: #bac2de;
+  --paper: #1e1e2e;
+  --line: #45475a;
+  --reading-panel: #181825;
+  --reading-card: #313244;
+  --reading-link: #cba6f7;
+  --reading-secondary: #bac2de;
+  --reading-code: #45475a;
+  --reading-note: #313244;
+  --reading-warning: #463b3a;
+  --reading-warning-text: #f9e2af;
+}
+:root[data-reading-theme="forest"] a,
+:root[data-reading-theme="catppuccin-mocha"] a {
+  color: var(--reading-link);
+}
+:root[data-reading-theme="forest"] .topbar,
+:root[data-reading-theme="forest"] .sidebar,
+:root[data-reading-theme="catppuccin-mocha"] .topbar,
+:root[data-reading-theme="catppuccin-mocha"] .sidebar {
+  background: var(--reading-panel);
+}
+:root[data-reading-theme="forest"] .card,
+:root[data-reading-theme="forest"] .feature-grid article,
+:root[data-reading-theme="forest"] .table-wrap,
+:root[data-reading-theme="forest"] .resource-links a,
+:root[data-reading-theme="forest"] .menu-toggle,
+:root[data-reading-theme="forest"] .step-number,
+:root[data-reading-theme="forest"] .molik-card,
+:root[data-reading-theme="catppuccin-mocha"] .card,
+:root[data-reading-theme="catppuccin-mocha"] .feature-grid article,
+:root[data-reading-theme="catppuccin-mocha"] .table-wrap,
+:root[data-reading-theme="catppuccin-mocha"] .resource-links a,
+:root[data-reading-theme="catppuccin-mocha"] .menu-toggle,
+:root[data-reading-theme="catppuccin-mocha"] .step-number,
+:root[data-reading-theme="catppuccin-mocha"] .molik-card {
+  background: var(--reading-card);
+  color: var(--ink);
+  border-color: var(--line);
+}
+:root[data-reading-theme="forest"] :is(code, th, .version),
+:root[data-reading-theme="catppuccin-mocha"] :is(code, th, .version) {
+  background: var(--reading-code);
+  color: var(--ink);
+}
+:root[data-reading-theme="forest"]
+  :is(
+    .top-actions > a,
+    .brand,
+    .brand-label,
+    .sidebar-label,
+    .nav-heading,
+    .sidebar nav > a,
+    .sidebar-note,
+    .sidebar-note a,
+    .section-kicker,
+    .section-number,
+    .card > span,
+    .card b,
+    .doc-section > p,
+    .doc-section li,
+    .step p,
+    .code-label,
+    .feature-grid article > span,
+    .resource-links small,
+    .molik-card-label,
+    .version span
+  ),
+:root[data-reading-theme="catppuccin-mocha"]
+  :is(
+    .top-actions > a,
+    .brand,
+    .brand-label,
+    .sidebar-label,
+    .nav-heading,
+    .sidebar nav > a,
+    .sidebar-note,
+    .sidebar-note a,
+    .section-kicker,
+    .section-number,
+    .card > span,
+    .card b,
+    .doc-section > p,
+    .doc-section li,
+    .step p,
+    .code-label,
+    .feature-grid article > span,
+    .resource-links small,
+    .molik-card-label,
+    .version span
+  ) {
+  color: var(--reading-secondary) !important;
+}
+:root[data-reading-theme="forest"] .sidebar nav > a:hover,
+:root[data-reading-theme="forest"] .sidebar nav > a:focus-visible,
+:root[data-reading-theme="catppuccin-mocha"] .sidebar nav > a:hover,
+:root[data-reading-theme="catppuccin-mocha"] .sidebar nav > a:focus-visible {
+  background: var(--reading-card);
+}
+:root[data-reading-theme="forest"] .notice,
+:root[data-reading-theme="catppuccin-mocha"] .notice {
+  background: var(--reading-note);
+  color: var(--ink);
+}
+:root[data-reading-theme="forest"] .notice strong,
+:root[data-reading-theme="catppuccin-mocha"] .notice strong {
+  color: var(--ink);
+}
+:root[data-reading-theme="forest"] .notice.warning,
+:root[data-reading-theme="catppuccin-mocha"] .notice.warning {
+  background: var(--reading-warning);
+  color: var(--reading-warning-text);
+}
+:root[data-reading-theme="forest"] .notice.warning strong,
+:root[data-reading-theme="catppuccin-mocha"] .notice.warning strong {
+  color: var(--reading-warning-text);
+}
+:root[data-reading-theme="forest"] pre code,
+:root[data-reading-theme="catppuccin-mocha"] pre code {
+  background: none;
+  color: inherit;
+}
+:root[data-reading-theme="forest"] .hero .button-primary,
+:root[data-reading-theme="catppuccin-mocha"] .hero .button-primary {
+  color: #15341f;
+}
+:root[data-reading-theme="forest"] .hero .button-ghost,
+:root[data-reading-theme="catppuccin-mocha"] .hero .button-ghost {
+  color: #e1eddf;
+}
+:root[data-reading-theme="forest"] .skip-link,
+:root[data-reading-theme="catppuccin-mocha"] .skip-link {
+  background: var(--reading-panel);
+}
+
+/* The Mocha reading theme uses Catppuccin's base, mantle and mauve accent. */
+:root[data-reading-theme="catppuccin-mocha"] {
+  --green: #cba6f7;
+}
+:root[data-reading-theme="catppuccin-mocha"] :is(.hero, footer) {
+  background: #181825;
+}
+:root[data-reading-theme="catppuccin-mocha"] .hero-grid {
+  background-image:
+    linear-gradient(#45475a 1px, transparent 1px),
+    linear-gradient(90deg, #45475a 1px, transparent 1px);
+}
+:root[data-reading-theme="catppuccin-mocha"] :is(.flow, .flow-node) {
+  background: #313244;
+  border-color: #585b70;
+}
+:root[data-reading-theme="catppuccin-mocha"] .flow-node-active {
+  background: #45475a;
+  border-color: #cba6f7;
+}
+:root[data-reading-theme="catppuccin-mocha"]
+  :is(
+    .hero-content > p,
+    .eyebrow,
+    .flow-kicker,
+    .flow p,
+    .flow-node small,
+    .flow-node > span,
+    .flow-node i,
+    .hero-footer,
+    footer,
+    footer strong span
+  ) {
+  color: #bac2de;
+}
+:root[data-reading-theme="catppuccin-mocha"] .eyebrow-index {
+  color: #a6adc8;
+}
+:root[data-reading-theme="catppuccin-mocha"] .hero .button-primary {
+  color: #1e1e2e;
+}

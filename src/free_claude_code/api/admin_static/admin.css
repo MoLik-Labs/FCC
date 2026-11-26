@@ -58,14 +58,47 @@
 /* Catppuccin Mocha palette, © 2021 Catppuccin, MIT.
    License: CATPPUCCIN-LICENSE.txt alongside these Admin assets. */
 :root[data-theme="catppuccin-mocha"] {
-  --bg: #1e1e2e; --panel: #242438; --panel-strong: #45475a;
-  --card: #313244; --card-hover: #45475a; --input: #181825; --input-focus: #242438;
-  --text: #cdd6f4; --text-strong: #eff1ff; --muted: #bac2de;
+  --bg: #1e1e2e; --panel: #181825; --panel-strong: #45475a;
+  --card: #313244; --card-hover: #45475a; --input: #181825; --input-focus: #313244;
+  --text: #cdd6f4; --text-strong: #cdd6f4; --muted: #bac2de;
   --line: rgba(205, 214, 244, 0.12); --line-strong: rgba(205, 214, 244, 0.25);
   --accent: #cba6f7; --accent-dark: #dec3fc; --on-accent: #211633;
   --accent-muted: rgba(203, 166, 247, 0.1); --accent-border: rgba(203, 166, 247, 0.4);
   --ok: #a6e3a1; --warn: #f9e2af; --error: #f38ba8; --info: #89dceb;
-  --bar-bg: #242438;
+  --ok-bg: rgba(166, 227, 161, 0.1); --ok-border: rgba(166, 227, 161, 0.35);
+  --warn-bg: rgba(249, 226, 175, 0.1); --warn-border: rgba(249, 226, 175, 0.35);
+  --error-bg: rgba(243, 139, 168, 0.1); --error-border: rgba(243, 139, 168, 0.35);
+  --neutral: #bac2de; --neutral-bg: rgba(186, 194, 222, 0.08); --neutral-border: rgba(186, 194, 222, 0.25);
+  --bar-bg: #181825;
+}
+/* Adaptations of Nord and Dracula's published palettes. */
+:root[data-theme="nord"] {
+  --bg: #2e3440; --panel: #3b4252; --panel-strong: #4c566a;
+  --card: #434c5e; --card-hover: #4c566a; --input: #2e3440; --input-focus: #3b4252;
+  --text: #e5e9f0; --text-strong: #eceff4; --muted: #d8dee9;
+  --line: rgba(216, 222, 233, 0.16); --line-strong: rgba(216, 222, 233, 0.30);
+  --accent: #b4dbe5; --accent-dark: #d0e8eb; --on-accent: #2e3440;
+  --accent-muted: rgba(136, 192, 208, 0.1); --accent-border: rgba(136, 192, 208, 0.4);
+  --ok: #c8dfb6; --warn: #ebcb8b; --error: #ffc1c4; --info: #b4dbe5;
+  --ok-bg: rgba(163, 190, 140, 0.1); --ok-border: rgba(163, 190, 140, 0.35);
+  --warn-bg: rgba(235, 203, 139, 0.1); --warn-border: rgba(235, 203, 139, 0.35);
+  --error-bg: rgba(191, 97, 106, 0.1); --error-border: rgba(255, 193, 196, 0.35);
+  --neutral: #d8dee9; --neutral-bg: rgba(216, 222, 233, 0.08); --neutral-border: rgba(216, 222, 233, 0.25);
+  --bar-bg: #3b4252;
+}
+:root[data-theme="dracula"] {
+  --bg: #282a36; --panel: #21222c; --panel-strong: #44475a;
+  --card: #343746; --card-hover: #44475a; --input: #21222c; --input-focus: #343746;
+  --text: #f8f8f2; --text-strong: #f8f8f2; --muted: #d5d6df;
+  --line: rgba(248, 248, 242, 0.14); --line-strong: rgba(248, 248, 242, 0.26);
+  --accent: #bd93f9; --accent-dark: #d6baff; --on-accent: #282a36;
+  --accent-muted: rgba(189, 147, 249, 0.1); --accent-border: rgba(189, 147, 249, 0.4);
+  --ok: #50fa7b; --warn: #f1fa8c; --error: #ffb3b3; --info: #8be9fd;
+  --ok-bg: rgba(80, 250, 123, 0.1); --ok-border: rgba(80, 250, 123, 0.35);
+  --warn-bg: rgba(241, 250, 140, 0.1); --warn-border: rgba(241, 250, 140, 0.35);
+  --error-bg: rgba(255, 85, 85, 0.1); --error-border: rgba(255, 179, 179, 0.35);
+  --neutral: #d5d6df; --neutral-bg: rgba(213, 214, 223, 0.08); --neutral-border: rgba(213, 214, 223, 0.25);
+  --bar-bg: #21222c;
 }
 :root[data-theme="ocean"] {
   --bg: #102332; --panel: #172f3d; --panel-strong: #294958;
@@ -1083,3 +1116,14 @@ button.startup-busy, .startup-spinner { display: inline-flex; align-items: cente
 @media (prefers-reduced-motion: reduce) {
   .nav-link, .primary-button, .secondary-button, .test-button { transition: none; }
 }
+
+.workload-suggestions {
+  margin-top: 24px;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--card);
+}
+.workload-suggestions h4 { margin: 0; color: var(--text-strong); }
+.workload-suggestions p { margin: 6px 0 12px; color: var(--muted); }
+.workload-buttons { display: flex; flex-wrap: wrap; gap: 8px; }

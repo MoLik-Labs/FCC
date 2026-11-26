@@ -5,7 +5,7 @@ from playwright.sync_api import Page, expect
 
 
 @pytest.mark.parametrize(
-    "theme", ["forest", "catppuccin-mocha", "ocean", "dusk", "dawn"]
+    "theme", ["forest", "catppuccin-mocha", "nord", "dracula", "ocean", "dusk", "dawn"]
 )
 def test_theme_persists_and_navigation_still_works(
     page: Page, admin_base_url: str, theme: str
@@ -71,3 +71,22 @@ def test_code_session_navigation_keeps_theme_control_usable(
     page.get_by_label("Appearance theme").select_option("catppuccin-mocha")
     expect(page.locator("html")).to_have_attribute("data-theme", "catppuccin-mocha")
     assert page.evaluate("document.documentElement.scrollWidth <= window.innerWidth")
+
+
+@pytest.mark.parametrize(
+    "theme,background",
+    [
+        ("forest", "rgb(11, 33, 27)"),
+        ("catppuccin-mocha", "rgb(30, 30, 46)"),
+        ("nord", "rgb(46, 52, 64)"),
+        ("dracula", "rgb(40, 42, 54)"),
+    ],
+)
+def test_theme_uses_expected_base_palette(
+    page: Page, admin_base_url: str, theme: str, background: str
+):
+    page.goto(f"{admin_base_url}/admin")
+    page.get_by_label("Appearance theme").select_option(theme)
+    assert (
+        page.evaluate("getComputedStyle(document.body).backgroundColor") == background
+    )
