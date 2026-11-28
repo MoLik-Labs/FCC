@@ -45,8 +45,8 @@ experimental and is not yet a replacement for the Python server.
 - [Skill workflow](docs/design/skill-workflow.md) — pinned sources and
   restoration instructions for future development sessions.
 
-The site uses Astro Starlight with Nimbus's accessible table helper and static
-Markdown for agent readers. To preview it from a checkout with Node.js
+The site uses Astro Starlight, Nimbus's accessible table helper and static
+Markdown for agent readers, with a VitePress API reference. To preview it from a checkout with Node.js
 22.23.4 or newer:
 
 ```sh

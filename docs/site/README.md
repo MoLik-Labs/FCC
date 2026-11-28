@@ -4,7 +4,9 @@ The bilingual FCC guide is built with [Astro Starlight](https://starlight.astro.
 English and Vietnamese source is in `src/content/docs/`. Keep both translations
 and the repository README aligned with actual behavior and safety boundaries.
 Starlight provides responsive navigation, local Pagefind search, and light/dark
-appearance. Forest accents are used on this site. FCC Admin has separate
+appearance. The bilingual API reference at `reference/` is built separately with
+[VitePress](https://vitepress.dev/) into the same static Pages artifact. Its
+source is in `reference/`, and its overview links back to the Starlight guide. Forest accents are used on this site. FCC Admin has separate
 browser-local themes including Forest and Catppuccin Mocha; those are not the
 Starlight theme selector.
 
@@ -16,9 +18,18 @@ Starlight: both would generate search and sitemap output, while Nimbus's content
 routing does not discover the Starlight pages. The pinned Nimbus package is
 used for the table helper, not for its full CLI or its server features.
 
+The two generators share one base-path and canonical-origin configuration. The
+final build re-indexes both with Pagefind, so search in the main guide finds the
+API reference too. VitePress also has its own reference-only local search; its
+appearance preference is independent of Starlight's. Each framework's sitemap
+is included in the published sitemap index. VitePress is pinned to a 2.0 alpha:
+the current 1.6 stable dependency tree reports Vite advisories. Alpha APIs can
+change; review upgrades and repeat the full build and browser checks.
+
 For agent readers, this static site publishes a Nimbus-inspired `llms.txt` index
-and the same source content at `guide.md` and `vi/guide.md`. These are generated
-at build time from the bilingual guides and need no external service. They are
+and the same source content at `guide.md`, `vi/guide.md`,
+`reference/index.md` and `reference/vi/index.md`. These are generated at build
+time from the bilingual guides and need no external service. They are
 public just like the HTML. GitHub Pages does not run an MCP server, AI search,
 or server-side Nimbus features; do not put secrets in any published content.
 
@@ -31,8 +42,12 @@ npm ci --prefix docs/site
 npm run dev --prefix docs/site
 ```
 
-Use the address printed by Astro on the machine running it. For a production
-build and local-link validation, run:
+The dev command starts Astro and a local VitePress server on port 4322, proxied
+through Astro under `/reference/`; use the Astro address it prints. The port
+must be free. To work on VitePress alone, use `npm run reference:dev --prefix
+docs/site`. Search uses production indexes and may differ in development.
+
+For a production build and local-link validation, run:
 
 ```sh
 python3 -m unittest tests.scripts.test_docs_site -v
@@ -40,8 +55,9 @@ python3 scripts/build_docs_site.py
 python3 -m http.server 8000 --directory site-build
 ```
 
-The Python wrapper needs Node/npm and installed dependencies, requires a new or
-empty output directory, and checks local links, fragments, duplicate IDs and
+The Python wrapper builds both generators, merges their sitemaps, indexes the
+combined pages, and needs Node/npm and installed dependencies. It requires a new
+or empty output directory and checks local links, fragments, duplicate IDs and
 image alt attributes. It does not verify external sites or product behavior.
 Use `--output` for another destination. For the project-site base path, set
 `DOCS_BASE=/FCC/`; serve its contents under `/FCC/` rather than the server root.

@@ -34,3 +34,5 @@ llama_cache
 /docs/site/public/molik.css
 /docs/site/public/style.css
 /docs/site/public/site.js
+
+/docs/site/reference/.vitepress/cache/

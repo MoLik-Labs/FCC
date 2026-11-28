@@ -2,17 +2,21 @@ import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 import { unified } from '@astrojs/markdown-remark';
 import { tableScroll } from '@cloudflare/nimbus-docs/markdown';
+import { siteBase, siteOrigin } from './site-base.mjs';
 
 // GitHub project sites live under /<repository>/; local previews default to /.
-const repository = process.env.GITHUB_REPOSITORY?.split('/')[1];
-const base = process.env.DOCS_BASE || (process.env.GITHUB_ACTIONS && repository ? `/${repository}/` : '/');
+const base = siteBase();
 
 export default defineConfig({
-  site: process.env.DOCS_SITE || (process.env.GITHUB_REPOSITORY_OWNER
-    ? `https://${process.env.GITHUB_REPOSITORY_OWNER.toLowerCase()}.github.io`
-    : 'https://molik-labs.github.io'),
+  site: siteOrigin(),
   base,
-  vite: { server: { allowedHosts: ['.e2b.app'] }, preview: { allowedHosts: ['.e2b.app'] } },
+  vite: {
+    server: {
+      allowedHosts: ['.e2b.app'],
+      proxy: { [`${base}reference`]: { target: 'http://127.0.0.1:4322', changeOrigin: true, ws: true } },
+    },
+    preview: { allowedHosts: ['.e2b.app'] },
+  },
   markdown: {
     // Nimbus and Starlight are separate frameworks. Reuse Nimbus's accessible
     // table wrapper in Starlight's unified pipeline instead of running two

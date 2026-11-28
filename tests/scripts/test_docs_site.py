@@ -6,6 +6,8 @@ from pathlib import Path
 
 from scripts.build_docs_site import build, validate_site
 
+ROOT = Path(__file__).resolve().parents[2]
+
 
 class DocumentationSiteTests(unittest.TestCase):
     def test_build_contains_site_without_stale_screenshots(self) -> None:
@@ -20,9 +22,32 @@ class DocumentationSiteTests(unittest.TestCase):
             self.assertFalse((output / "assets" / "browser-code-session.png").exists())
             self.assertTrue((output / "assets" / "molik-mark.svg").is_file())
             self.assertTrue((output / "pagefind" / "pagefind.js").is_file())
+            sitemap_index = (output / "sitemap-index.xml").read_text(encoding="utf-8")
+            self.assertIn("/reference/sitemap.xml", sitemap_index)
+            reference_sitemap = (output / "reference/sitemap.xml").read_text(
+                encoding="utf-8"
+            )
+            self.assertIn("/reference/vi/", reference_sitemap)
+            for page in ("reference/index.html", "reference/vi/index.html"):
+                reference = (output / page).read_text(encoding="utf-8")
+                self.assertIn("/v1/messages", reference)
+                self.assertIn("/v1/responses", reference)
+                self.assertIn("/v1/chat/completions", reference)
+                self.assertIn("VitePress", reference)
+                self.assertIn('rel="canonical"', reference)
+                self.assertIn("data-pagefind-body", reference)
             index = (output / "llms.txt").read_text(encoding="utf-8")
             self.assertIn("guide.md", index)
             self.assertIn("vi/guide.md", index)
+            self.assertIn("reference/index.md", index)
+            self.assertIn("reference/vi/index.md", index)
+            for source in ("index.md", "vi/index.md"):
+                expected = ROOT / "docs/site/reference" / source
+                published = output / "reference" / source
+                self.assertEqual(
+                    published.read_text(encoding="utf-8"),
+                    expected.read_text(encoding="utf-8"),
+                )
             docs = Path(__file__).resolve().parents[2] / "docs/site/src/content/docs"
             for output_name, source_name in (
                 ("guide.md", "index.md"),

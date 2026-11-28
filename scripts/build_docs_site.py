@@ -100,7 +100,11 @@ def build(output: Path) -> None:
     output = output.resolve()
     if output.exists() and (not output.is_dir() or any(output.iterdir())):
         raise ValueError(f"Output must be a new or empty directory: {output}")
-    subprocess.run(["npm", "run", "build"], cwd=SITE, check=True)
+    npm = shutil.which("npm")
+    if npm is None:
+        raise FileNotFoundError("npm is required to build the documentation")
+    # Windows installs npm as a .cmd wrapper. Arguments are fixed constants.
+    subprocess.run([npm, "run", "build"], cwd=SITE, check=True, shell=os.name == "nt")
     shutil.copytree(SITE / "dist", output, dirs_exist_ok=True)
     (output / ".nojekyll").touch()
     validate_site(output)

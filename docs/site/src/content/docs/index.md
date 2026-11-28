@@ -3,7 +3,7 @@ title: FCC field guide
 description: Install, configure and operate the FCC gateway.
 ---
 
-[Hướng dẫn tiếng Việt](vi/) · [Markdown for agents](guide.md) · [Previous guide](legacy.html)
+[Hướng dẫn tiếng Việt](vi/) · [Markdown for agents](guide.md) · [API reference](reference/) · [Previous guide](legacy.html)
 
 <a id="overview"></a>
 

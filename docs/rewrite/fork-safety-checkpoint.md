@@ -101,3 +101,40 @@ restricted to `main`. The documentation workflow is not yet on the default
 branch. The current working branch also contains broader application changes;
 deploying via `main` requires integration and review, not simply pushing this
 branch. No successful hosted deployment was verified in this checkpoint.
+
+## VitePress API reference and CI investigation
+
+The site now builds a bilingual VitePress API reference under `/reference/` in
+the same Pages artifact. The Starlight and VitePress builds share the base URL;
+the final Pagefind pass indexes both and the sitemap index includes each
+framework's sitemap. Nimbus is still used for its table helper, not as a second
+full Astro integration. VitePress 2.0.0-alpha.21 is pinned: npm audit flagged
+Vite vulnerabilities through the 1.6.4 stable dependency tree. The alpha
+version is a maintenance risk and needs review and testing on upgrade.
+
+A clean Node 22.23.4 `npm ci --engine-strict` and `npm audit` passed. Local
+documentation checks reported **36 passed, 18 subtests passed**; workflow and
+policy tests reported **70 passed**. The tests cover root and `/FCC/`, search
+across the two generators, reference-only search, bilingual navigation,
+no-JavaScript pages, legacy anchors, Markdown and sitemap publication. A
+separate build using `/custom/docs/` and an alternate site origin validated
+canonical URLs and links. Selected axe WCAG 2.0/2.1 A/AA checks for the two
+guides and two reference pages at 320 and 1440 pixels in both light and dark
+modes found no violations. These are not full accessibility or browser audits.
+
+The earlier PR checks showed the docs build succeeding but several Python and
+Playwright shards failing. Those jobs did not install the newly required Node
+docs dependencies; both shard workflows now explicitly install pinned Node and
+the locked npm dependencies. The old hosted job logs were not accessible in the
+sandbox, so this cannot establish that missing dependencies were the only cause
+of every failing shard; the updated hosted CI has not yet been verified.
+
+The PR's version-policy job also failed because the branch changes release
+paths but its title does not declare `patch:`, `minor:` or `major:`. Selecting
+release intent requires project review; the inherited publish job remains
+explicitly disabled. Repository-wide Pyrefly was rerun and still reports **330
+pre-existing diagnostics** in historical benchmark/generator code, while checks
+of the changed Python files pass. The branch is a broad draft PR, not a
+docs-only change. GitHub Pages still requires that work to be reviewed,
+integrated into `main`, and the deployment workflow to succeed; no hosted
+deployment has been confirmed.

@@ -20,6 +20,7 @@ def test_starlight_project_pins_dependencies_and_pages_base() -> None:
     assert "@astrojs/starlight" in package["dependencies"]
     assert "@cloudflare/nimbus-docs" in package["dependencies"]
     assert "astro" in package["dependencies"]
+    assert "vitepress" in package["dependencies"]
     assert (SITE / "package-lock.json").is_file()
     config = (SITE / "astro.config.mjs").read_text(encoding="utf-8")
     assert "@astrojs/starlight" in config

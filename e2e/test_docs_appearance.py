@@ -39,7 +39,9 @@ def docs_url(tmp_path_factory: pytest.TempPathFactory) -> Iterator[str]:
 
 
 @pytest.mark.parametrize("width", [320, 390, 1440])
-@pytest.mark.parametrize("path", ["", "vi/", "vi.html", "molik.html"])
+@pytest.mark.parametrize(
+    "path", ["", "vi/", "vi.html", "molik.html", "reference/", "reference/vi/"]
+)
 def test_docs_render_at_pages_base(
     page: Page, docs_url: str, width: int, path: str
 ) -> None:
@@ -105,11 +107,17 @@ def test_static_agent_guides_at_project_base(page: Page, docs_url: str) -> None:
     text = index.text()
     assert "https://molik-labs.github.io/FCC/guide.md" in text
     assert "https://molik-labs.github.io/FCC/vi/guide.md" in text
+    assert "https://molik-labs.github.io/FCC/reference/index.md" in text
+    assert "https://molik-labs.github.io/FCC/reference/vi/index.md" in text
     for path in ("guide.md", "vi/guide.md"):
         response = page.request.get(docs_url + path)
         assert response.ok
         assert "PROVIDER_MAX_CONCURRENCY" in response.text()
         assert "fcc-update" in response.text()
+    for path in ("reference/index.md", "reference/vi/index.md"):
+        response = page.request.get(docs_url + path)
+        assert response.ok
+        assert "/v1/responses" in response.text()
     page.goto(docs_url + "vi/")
     page.get_by_role("link", name="Markdown cho agent").click()
     expect(page).to_have_url(docs_url + "vi/guide.md")
@@ -124,3 +132,60 @@ def test_nimbus_table_scrolls_with_keyboard(page: Page, docs_url: str) -> None:
     region.focus()
     page.keyboard.press("ArrowRight")
     page.wait_for_function("document.querySelector('.nb-table-scroll').scrollLeft > 0")
+
+
+def test_reference_navigation_and_search(page: Page, docs_url: str) -> None:
+    page.goto(docs_url)
+    page.get_by_role("link", name="API reference", exact=True).click()
+    expect(page).to_have_url(docs_url + "reference/")
+    expect(page.get_by_role("heading", name="FCC API overview")).to_be_visible()
+    page.get_by_role("button", name="Search").click()
+    page.locator("#localsearch-input").fill("responses")
+    result = page.locator("#localsearch-list a.result").first
+    expect(result).to_be_visible()
+    assert result.get_attribute("href") == "/FCC/reference/#api-endpoints"
+    page.keyboard.press("Escape")
+    page.get_by_role("link", name="Security and remote access").click()
+    expect(page).to_have_url(docs_url + "#security")
+    page.goto(docs_url + "vi/")
+    page.get_by_role("link", name="Tham khảo API", exact=True).click()
+    expect(page).to_have_url(docs_url + "reference/vi/")
+    expect(page.get_by_role("heading", name="Tổng quan API FCC")).to_be_visible()
+    page.get_by_role("button", name="Tìm kiếm").click()
+    page.locator("#localsearch-input").fill("responses")
+    expect(page.locator("#localsearch-list a.result").first).to_be_visible()
+    page.keyboard.press("Escape")
+    page.get_by_role("link", name="Bảo mật và truy cập từ xa").click()
+    expect(page).to_have_url(docs_url + "vi/#security")
+
+
+def test_reference_works_without_javascript(browser: Browser, docs_url: str) -> None:
+    context = browser.new_context(
+        java_script_enabled=False, viewport={"width": 320, "height": 900}
+    )
+    try:
+        page = context.new_page()
+        page.goto(docs_url + "reference/")
+        expect(page.get_by_role("heading", name="FCC API overview")).to_be_visible()
+        page.get_by_role("link", name="Security and remote access").click()
+        expect(page).to_have_url(docs_url + "#security")
+        page.goto(docs_url + "reference/vi/")
+        expect(page.get_by_role("heading", name="Tổng quan API FCC")).to_be_visible()
+        assert page.evaluate("document.documentElement.scrollWidth <= innerWidth")
+    finally:
+        context.close()
+
+
+def test_guide_search_indexes_vitepress_reference(page: Page, docs_url: str) -> None:
+    page.goto(docs_url)
+    page.get_by_role("button", name="Search").first.click()
+    page.get_by_placeholder("Search", exact=True).fill("count_tokens")
+    result = page.get_by_role("link", name="FCC API overview", exact=False).first
+    expect(result).to_be_visible(timeout=10000)
+    assert "/FCC/reference/" in (result.get_attribute("href") or "")
+    page.goto(docs_url + "vi/")
+    page.locator("site-search button[data-open-modal]").first.click()
+    page.locator(".pagefind-ui__search-input").fill("count_tokens")
+    vietnamese = page.get_by_role("link", name="Tổng quan API FCC", exact=False).first
+    expect(vietnamese).to_be_visible(timeout=10000)
+    assert "/FCC/reference/vi/" in (vietnamese.get_attribute("href") or "")

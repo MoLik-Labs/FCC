@@ -3,7 +3,7 @@ title: Hướng dẫn FCC
 description: Cài đặt, cấu hình và vận hành FCC an toàn.
 ---
 
-[English guide](../) · [Markdown cho agent](guide.md) · [Bản lưu trước đây](../vi.html)
+[English guide](../) · [Markdown cho agent](guide.md) · [Tham khảo API](../reference/vi/) · [Bản lưu trước đây](../vi.html)
 
 <a id="overview"></a>
 
