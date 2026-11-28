@@ -14,7 +14,10 @@ Thanks for helping improve Free Claude Code. Keep changes focused, test the beha
 
 Changes to `assets/`, `scripts/`, `src/`, `pyproject.toml`, or `uv.lock` require a title starting with `patch: `, `minor: `, or `major: ` followed by a description. Use exactly one space after the colon.
 
-PRs without changes to those paths must not use a release prefix. Do not edit version numbers. Publishing calculates the version after merge, creates its Git tag, and publishes to PyPI and GitHub Releases.
+PRs without changes to those paths must not use a release prefix. Do not edit
+version numbers. The inherited publication job is **disabled on this fork**:
+the project still carries upstream's package identity and must not publish to
+PyPI automatically until the fork's release process is separately reviewed.
 
 ## Development Setup
 

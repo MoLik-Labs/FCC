@@ -50,8 +50,8 @@ def test_post_merge_serializes_and_limits_publish_permissions() -> None:
     assert publish["environment"] == "pypi"
     assert publish["permissions"] == {"contents": "write", "id-token": "write"}
     assert cache["permissions"] == {"contents": "read"}
+    assert cache["if"] == "github.ref == 'refs/heads/main'"
     for job in (cache, publish):
-        assert job["if"] == "github.ref == 'refs/heads/main'"
         checkout = next(
             s for s in job["steps"] if s.get("uses", "").startswith("actions/checkout@")
         )
@@ -60,6 +60,13 @@ def test_post_merge_serializes_and_limits_publish_permissions() -> None:
     step = next(s for s in publish["steps"] if s.get("name") == "Publish release")
     assert step["env"]["RELEASE_COMMIT"] == "${{ inputs.release_commit || github.sha }}"
     assert "-m scripts.publish_release" in step["run"]
+
+
+def test_fork_never_automatically_publishes_inherited_pypi_package() -> None:
+    publish = load("post-merge.yml")["jobs"]["publish"]
+    # Until the fork has its own reviewed package identity and release process,
+    # an inherited main-branch job must not publish free-claude-code to PyPI.
+    assert publish["if"] == "${{ false }}"
 
 
 def test_title_edits_only_trigger_the_separate_required_check() -> None:

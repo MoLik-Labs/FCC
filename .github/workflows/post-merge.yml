@@ -77,9 +77,11 @@ jobs:
           path: ${{ steps.environment.outputs.dependencies-path }}
           key: ${{ steps.environment.outputs.dependencies-key }}
 
+  # Disabled in this fork until its package identity and publishing policy are
+  # explicitly reviewed. The inherited project name is used by upstream on PyPI.
   publish:
-    name: Publish to PyPI
-    if: github.ref == 'refs/heads/main'
+    name: Publish to PyPI (disabled in fork)
+    if: ${{ false }}
     runs-on: macos-latest
     timeout-minutes: 15
     environment: pypi

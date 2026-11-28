@@ -40,7 +40,8 @@ experimental and is not yet a replacement for the Python server.
   GitHub Pages setup. The public URL is available from the deployment workflow
   after Pages has been enabled and a deployment succeeds.
 - [Development and contribution](CONTRIBUTING.md) · [Go rewrite status](gocore/README.md)
-  · [Rewrite plan and checkpoints](docs/rewrite/00-master-plan.md).
+  · [Rewrite plan and checkpoints](docs/rewrite/00-master-plan.md)
+  · [Fork safety and verification](docs/rewrite/fork-safety-checkpoint.md).
 - [Skill workflow](docs/design/skill-workflow.md) — pinned sources and
   restoration instructions for future development sessions.
 
@@ -592,7 +593,14 @@ git pull --ff-only
 uv sync --locked
 ```
 
-Review local changes before updating. Do **not** use the packaged `fcc-update` for this fork: it runs the upstream installer and can install or update the upstream release instead.
+Review local changes and confirm the branch and remote before updating. If using
+local voice, replace the sync command with `uv sync --locked --extra voice_local`.
+In this revision, `fcc-update` is deliberately disabled: it exits without
+changing files and prints the manual steps above. **Older installed copies** may
+still run the upstream installer; do not use them for this fork. The inherited
+`scripts/install.sh` and `scripts/install.ps1` also target upstream releases,
+not this source checkout. Automatic fork release publication is disabled until
+the package identity and release process have been reviewed.
 
 To remove the source checkout, stop FCC and connected clients, back up any
 needed data, then remove the checkout directory manually. Its `.venv` is inside

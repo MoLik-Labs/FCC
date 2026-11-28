@@ -46,6 +46,9 @@ class DocumentationSiteTests(unittest.TestCase):
                 )[0]
                 self.assertIn("fcc-update", maintenance)
                 self.assertIn("upstream", maintenance)
+                self.assertIn(
+                    "disabled" if name == "index.html" else "vô hiệu", maintenance
+                )
 
     def test_workload_guidance_and_fork_only_commands(self) -> None:
         root = Path(__file__).resolve().parents[2]

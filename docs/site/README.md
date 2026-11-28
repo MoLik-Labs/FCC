@@ -51,7 +51,9 @@ it to a branch does not itself publish a site or change repository settings.
 Links to project source and reference material point to the `main` branch of
 `MoLik-Labs/FCC`; they represent the published documentation after these
 changes reach that branch. The quick start clones the current development branch
-of this fork; the upstream installer and updater do not install this checkout.
+of this fork. The inherited installers target upstream, not this checkout; the
+new packaged updater is disabled, while older installed copies may still run
+upstream's installer. The inherited PyPI publish job is disabled on this fork.
 
 The Oh My Molik [theme collection](molik.html) is a static design preview;
 it does not demonstrate a working agent UI or theme persistence. The builder

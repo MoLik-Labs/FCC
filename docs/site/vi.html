@@ -709,9 +709,11 @@ uv run fcc-codex</code></pre>
             <p>
               Checkout chứa <code>.venv</code>; dữ liệu FCC như
               <code>~/.fcc/</code> nằm riêng và không bị xóa cùng checkout.
-              Không dùng <code>fcc-update</code>
-              cho fork này: updater đi kèm gọi installer upstream. Script cài và
-              gỡ upstream không quản lý checkout này.
+              Trong phiên bản này, <code>fcc-update</code> đã bị vô hiệu hóa và
+              không thay đổi dữ liệu; các bản updater cũ vẫn có thể chạy bộ cài
+              upstream. Script cài kế thừa cũng trỏ tới bản upstream, không phải
+              checkout này. Phát hành tự động của fork đang bị vô hiệu hóa cho
+              đến khi danh tính gói và quy trình phát hành được rà soát riêng.
             </p>
             <a
               class="text-link"

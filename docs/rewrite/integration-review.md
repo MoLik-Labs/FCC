@@ -33,10 +33,12 @@ The merge base is `56ee72e`.
    Decide the intended resource contract and test adversarial inputs before
    changing it; any implementation change must be ported to both languages and
    its performance and behavior assessed.
-5. **Documentation and installation provenance.** The root README's install
-   commands reference the upstream repository, not this fork. The Go README
-   previously described the partial port as byte-for-byte complete and omitted
-   later packages and limitations; both documents now clarify their scope.
+5. **Documentation and installation provenance.** At the time of this review,
+   the root README's install commands referenced upstream rather than this fork.
+   The README now documents a source checkout of the fork. The inherited
+   installer scripts still target upstream; the packaged updater now stops
+   instead of running them. Older installed updater copies remain unsafe for
+   this fork. The Go README also clarifies its scope and limitations.
 
 The integration produced conflicts in `api/admin_routes.py`,
 `api/stream_delivery.py`, `api/tool_call_buffer.py` (modified/deleted),

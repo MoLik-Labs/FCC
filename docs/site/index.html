@@ -736,9 +736,12 @@ uv run fcc-codex</code></pre>
             <p>
               The source checkout contains its own <code>.venv</code>; FCC data
               such as <code>~/.fcc/</code> is separate and is not removed with
-              the checkout. Do not use <code>fcc-update</code> for this fork:
-              the packaged updater invokes the upstream installer. Upstream
-              install and uninstall scripts do not manage this checkout.
+              the checkout. In this revision, <code>fcc-update</code> is
+              disabled and makes no changes; older installed copies may still
+              invoke the upstream installer. The inherited install scripts also
+              target upstream releases, not this checkout. Automatic fork
+              release publication is disabled pending a separate
+              package-identity review.
             </p>
             <a
               class="text-link"
