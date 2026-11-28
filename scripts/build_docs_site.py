@@ -1,7 +1,9 @@
-"""Build and validate the dependency-free GitHub Pages documentation site."""
+"""Build and validate the Astro Starlight GitHub Pages documentation site."""
 
 import argparse
+import os
 import shutil
+import subprocess
 from collections.abc import Callable
 from html.parser import HTMLParser
 from pathlib import Path
@@ -41,7 +43,16 @@ class PageParser(HTMLParser):
                 self.links.append(target)
 
 
-def validate_site(output: Path) -> None:
+def site_base() -> str:
+    base = os.environ.get("DOCS_BASE")
+    if not base and os.environ.get("GITHUB_ACTIONS"):
+        repository = os.environ.get("GITHUB_REPOSITORY", "").split("/")[-1]
+        base = f"/{repository}/" if repository else "/"
+    return base or "/"
+
+
+def validate_site(output: Path, base: str | None = None) -> None:
+    base = base or site_base()
     pages = list(output.rglob("*.html"))
     if not pages:
         raise ValueError("No HTML pages in built site")
@@ -57,9 +68,21 @@ def validate_site(output: Path) -> None:
             parts = urlsplit(link)
             if parts.scheme or parts.netloc:
                 continue
-            target = (
-                (page.parent / unquote(parts.path)).resolve() if parts.path else page
-            )
+            if parts.path.startswith("/"):
+                prefix = "/" + base.strip("/") if base.strip("/") else ""
+                if prefix and not (
+                    parts.path == prefix or parts.path.startswith(prefix + "/")
+                ):
+                    raise ValueError(f"{page}: link outside site base: {link}")
+                target = (
+                    output / unquote(parts.path[len(prefix) :]).lstrip("/")
+                ).resolve()
+            else:
+                target = (
+                    (page.parent / unquote(parts.path)).resolve()
+                    if parts.path
+                    else page
+                )
             if not target.is_relative_to(output.resolve()):
                 raise ValueError(f"{page}: link escapes site: {link}")
             if target.is_dir():
@@ -77,13 +100,8 @@ def build(output: Path) -> None:
     output = output.resolve()
     if output.exists() and (not output.is_dir() or any(output.iterdir())):
         raise ValueError(f"Output must be a new or empty directory: {output}")
-    output.mkdir(parents=True, exist_ok=True)
-    shutil.copytree(SITE, output, dirs_exist_ok=True)
-    images = output / "assets"
-    images.mkdir(exist_ok=True)
-    shutil.copy2(
-        ROOT / "ohmymolik" / "brand" / "molik-mark.svg", images / "molik-mark.svg"
-    )
+    subprocess.run(["npm", "run", "build"], cwd=SITE, check=True)
+    shutil.copytree(SITE / "dist", output, dirs_exist_ok=True)
     (output / ".nojekyll").touch()
     validate_site(output)
 

@@ -19,6 +19,13 @@ class DocumentationSiteTests(unittest.TestCase):
             self.assertFalse((output / "assets" / "admin-page.png").exists())
             self.assertFalse((output / "assets" / "browser-code-session.png").exists())
             self.assertTrue((output / "assets" / "molik-mark.svg").is_file())
+            self.assertTrue((output / "pagefind" / "pagefind.js").is_file())
+            for page in ("index.html", "vi/index.html"):
+                html = (output / page).read_text(encoding="utf-8")
+                self.assertIn('id="quickstart"', html)
+                self.assertIn('id="security"', html)
+                self.assertIn('tabindex="0"', html)
+                self.assertIn("PROVIDER_MAX_CONCURRENCY", html)
             validate_site(output)
 
     def test_quick_starts_use_the_fork_and_warn_about_upstream_updater(self) -> None:

@@ -34,7 +34,7 @@ experimental and is not yet a replacement for the Python server.
 
 ## Documentation
 
-- [English guide](docs/site/index.html) · [Hướng dẫn tiếng Việt](docs/site/vi.html)
+- [English guide](docs/site/src/content/docs/index.md) · [Hướng dẫn tiếng Việt](docs/site/src/content/docs/vi/index.md)
   — source pages for the bilingual installation, API and operations guide.
 - [Build and publish the documentation](docs/site/README.md) — local preview and
   GitHub Pages setup. The public URL is available from the deployment workflow
@@ -45,18 +45,17 @@ experimental and is not yet a replacement for the Python server.
 - [Skill workflow](docs/design/skill-workflow.md) — pinned sources and
   restoration instructions for future development sessions.
 
-GitHub displays the source HTML for the guide links. To view the rendered site
-locally from a checkout that contains the documentation:
+The site uses Astro Starlight. To preview it from a checkout with Node.js
+22.23.4 or newer:
 
 ```sh
-python3 scripts/build_docs_site.py
-python3 -m http.server 8000 --directory site-build
+npm ci --prefix docs/site
+npm run dev --prefix docs/site
 ```
 
-Open `http://localhost:8000/` on the same machine. The builder requires a new
-or empty output directory; see the documentation build guide for repeat builds.
-The guides include Light, Forest and Catppuccin Mocha reading themes; the choice
-is stored in the browser and is independent of the Admin appearance.
+See the build guide for production validation and GitHub Pages deployment. The
+site's light/dark preference is separate from the Admin's Forest, Catppuccin
+Mocha and other appearance choices.
 
 ## Oh My Molik (experimental)
 

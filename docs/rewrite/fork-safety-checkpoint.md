@@ -56,3 +56,23 @@ this checkpoint did not run live-provider tests.
   real package publication and deployed Pages were not tested. Admin and Code
   do not have a separate authentication boundary; protect remote access at the
   network/tunnel layer. See [remote access](../oh-my-fox/remote-access.md).
+
+## Starlight documentation migration
+
+The documentation now builds with pinned Astro and Starlight dependencies. A
+fresh `npm ci --engine-strict` on Node 22.23.4 succeeded, and `npm audit`
+reported no known vulnerabilities at the time of the check. The documentation
+unit and Chromium tests reported **25 passed and 18 subtests passed**. They
+exercise the `/FCC/` base, local search, both languages, legacy fragments,
+mobile layouts and navigation with JavaScript disabled. Selected axe WCAG
+2.0/2.1 A/AA automated checks reported no violations on the two main language
+pages at 320 and 1440 pixels. These checks do not constitute a full manual
+accessibility review or cross-browser testing.
+
+The workflow was exercised locally with GitHub Actions repository variables;
+actual GitHub Actions and Pages deployment remain unverified. The repository
+administrator must configure Pages and the publishing changes must reach the
+publishing branch. The full backend suite above was not rerun for this docs-only
+migration. The old reading-theme controls remain on archived pages; the new
+Starlight pages have light/dark appearance, while FCC Admin independently
+retains its additional themes.

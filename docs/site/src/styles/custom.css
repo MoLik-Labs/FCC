@@ -1,0 +1,19 @@
+/* Forest accents; Starlight retains its accessible light/dark preference control. */
+:root {
+  --sl-color-accent-low: #173d2c;
+  --sl-color-accent: #74c994;
+  --sl-color-accent-high: #d6f9e0;
+  --sl-font-system: ui-sans-serif, system-ui, -apple-system, sans-serif;
+}
+:root[data-theme='light'] {
+  --sl-color-accent-low: #dcefe3;
+  --sl-color-accent: #226d44;
+  --sl-color-accent-high: #123f29;
+}
+.sl-markdown-content { max-width: 76ch; }
+.sl-markdown-content h2 { scroll-margin-top: 6rem; }
+.sl-markdown-content a[id] { scroll-margin-top: 6rem; }
+
+/* The upstream shortcut hint is redundant with aria-keyshortcuts and can
+   otherwise become the button's only visible accessible label. */
+site-search button[data-open-modal] kbd { display: none !important; }
