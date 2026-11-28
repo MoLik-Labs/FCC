@@ -176,6 +176,41 @@ def seal(root: Path):
     write(profile(root), config)
 
 
+@pytest.mark.parametrize(
+    "url",
+    [
+        "http://192.168.1.25:8082",
+        "http://100.101.102.103:8082",
+        "https://fcc.example.trycloudflare.com",
+        "https://fcc.example.ngrok.app",
+        "https://fcc.example.ts.net",
+    ],
+)
+def test_desktop_gateway_accepts_remote_addresses(tmp_path: Path, url: str) -> None:
+    root = tmp_path / "desktop"
+    result = desktop.configure(
+        root, url, TOKEN, True, disconnect_path=tmp_path / "disconnect.json"
+    )
+    assert result["connected"] is True
+    assert read(profile(root))["inferenceGatewayBaseUrl"] == url
+    assert read(profile(root))["inferenceGatewayApiKey"] == TOKEN
+
+
+@pytest.mark.parametrize(
+    "url",
+    [
+        "ftp://example.com",
+        "https://user:password@example.com",
+        "https://example.com/path",
+        "https://example.com?key=secret",
+        "https://example.com#fragment",
+    ],
+)
+def test_desktop_gateway_rejects_invalid_urls(url: str) -> None:
+    with pytest.raises(ValueError):
+        desktop._values(url, TOKEN)
+
+
 def test_fresh_connection_and_disconnect_preserve_native_library(
     tmp_path: Path,
 ) -> None:
@@ -639,7 +674,7 @@ def test_reserved_profile_collision_is_not_overwritten(tmp_path: Path) -> None:
     assert read(profile(tmp_path)) == {"inferenceProvider": "bedrock"}
 
 
-@pytest.mark.parametrize("url,token", [("http://192.0.2.1:8000", TOKEN), (URL, "")])
+@pytest.mark.parametrize("url,token", [("ftp://192.0.2.1:8000", TOKEN), (URL, "")])
 def test_invalid_gateway_does_not_write(tmp_path: Path, url: str, token: str) -> None:
     with pytest.raises(ValueError):
         desktop.configure(

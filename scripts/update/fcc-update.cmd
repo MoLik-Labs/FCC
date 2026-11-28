@@ -1,7 +1,9 @@
 @echo off
-setlocal
-rem The installer replaces this file, so cmd must parse the whole block first.
-(
-  powershell.exe -NoProfile -ExecutionPolicy Bypass -Command "$ErrorActionPreference = 'Stop'; & ([scriptblock]::Create((Invoke-RestMethod 'https://raw.githubusercontent.com/Alishahryar1/free-claude-code/main/scripts/install.ps1'))) -Update" %*
-  call exit /b %%errorlevel%%
-)
+rem Do not download the upstream installer or infer a checkout to modify.
+>&2 echo Automatic update is not available for the MoLik-Labs/FCC source checkout.
+>&2 echo The upstream installer would update a different project; nothing was changed.
+>&2 echo Stop FCC, inspect local changes, then run in your FCC checkout:
+>&2 echo   git pull --ff-only
+>&2 echo   uv sync --locked
+>&2 echo If using local voice, include --extra voice_local when syncing.
+exit /b 2

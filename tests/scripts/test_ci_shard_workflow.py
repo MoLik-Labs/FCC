@@ -284,3 +284,22 @@ def test_summary_only_passes_when_preparation_and_all_shards_succeed(
     assert (result.returncode == 0) == (preparation == shards == "success"), (
         result.stderr
     )
+
+
+@pytest.mark.parametrize("suite", ["pytest", "playwright"])
+def test_documentation_build_dependencies_are_prepared_in_test_shards(
+    suite: str,
+) -> None:
+    steps = workflow()["jobs"][f"{suite}-shards"]["steps"]
+    names = [step.get("name") for step in steps]
+    node = steps[names.index("Set up documentation Node.js")]
+    assert node["with"]["node-version"] == "22.23.4"
+    assert node["with"]["cache-dependency-path"] == "docs/site/package-lock.json"
+    install = steps[names.index("Install documentation dependencies")]
+    assert install["run"] == "npm ci --prefix docs/site"
+    run_name = "Run pytest" if suite == "pytest" else "Run Playwright"
+    assert (
+        names.index("Set up documentation Node.js")
+        < names.index("Install documentation dependencies")
+        < names.index(run_name)
+    )

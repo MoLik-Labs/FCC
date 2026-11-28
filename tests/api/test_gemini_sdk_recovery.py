@@ -6,6 +6,7 @@ import warnings
 from copy import deepcopy
 
 import httpx
+import httpx2
 import pytest
 from fastapi.testclient import TestClient
 
@@ -156,12 +157,17 @@ def test_sdk_recovers_and_replays_native_generation(
     app = matrix_app("gemini", native_reply=upstream)
     with TestClient(app) as fcc:
 
-        def bridge(request: httpx.Request):
-            return fcc.request(
+        def bridge(request: httpx2.Request) -> httpx2.Response:
+            response = fcc.request(
                 request.method,
                 str(request.url),
                 content=request.content,
-                headers=request.headers,
+                headers=dict(request.headers),
+            )
+            return httpx2.Response(
+                response.status_code,
+                headers=dict(response.headers),
+                content=response.content,
             )
 
         with genai.Client(
@@ -169,7 +175,7 @@ def test_sdk_recovers_and_replays_native_generation(
             http_options=types.HttpOptions(
                 base_url="http://testserver",
                 api_version="v1beta",
-                client_args={"transport": httpx.MockTransport(bridge)},
+                client_args={"transport": httpx2.MockTransport(bridge)},
             ),
         ) as sdk:
             initial = types.Content(role="user", parts=[types.Part(text="hello")])
@@ -334,27 +340,30 @@ async def test_sdk_chat_automatic_tool_result_preserves_recovered_history(
     app = matrix_app("gemini", native_reply=upstream)
     with TestClient(app) as fcc:
 
-        def bridge(request: httpx.Request):
-            return fcc.request(
+        def bridge(request: httpx2.Request) -> httpx2.Response:
+            response = fcc.request(
                 request.method,
                 str(request.url),
                 content=request.content,
-                headers=request.headers,
+                headers=dict(request.headers),
+            )
+            return httpx2.Response(
+                response.status_code,
+                headers=dict(response.headers),
+                content=response.content,
             )
 
-        async def async_bridge(request: httpx.Request):
+        async def async_bridge(request: httpx2.Request) -> httpx2.Response:
             response = bridge(request)
-            return httpx.Response(
-                response.status_code, headers=response.headers, content=response.content
-            )
+            return response
 
         with genai.Client(
             api_key="test",
             http_options=types.HttpOptions(
                 base_url="http://testserver",
                 api_version="v1beta",
-                client_args={"transport": httpx.MockTransport(bridge)},
-                async_client_args={"transport": httpx.MockTransport(async_bridge)},
+                client_args={"transport": httpx2.MockTransport(bridge)},
+                async_client_args={"transport": httpx2.MockTransport(async_bridge)},
             ),
         ) as sdk:
             config = types.GenerateContentConfig(tools=[read])

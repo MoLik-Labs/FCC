@@ -24,7 +24,10 @@ from free_claude_code.core.json_types import (
     json_objects,
     optional_string,
 )
-from free_claude_code.core.replay_finalization import finalize_replay
+from free_claude_code.core.replay_finalization import (
+    finalize_replay,
+    needs_replay_sealing,
+)
 from free_claude_code.core.stream_delivery import (
     StreamDeliveryState,
     bind_stream_delivery,
@@ -32,7 +35,7 @@ from free_claude_code.core.stream_delivery import (
 from free_claude_code.core.stream_output import StreamOutput, call_references
 
 from .classifier_projection import ClassifierProjection
-from .stream_frames import frame_data, replace_frame_data
+from .stream_frames import FramePayloadCache, replace_frame_data
 
 
 class DeliveryObservedStream(AsyncIterator[StreamOutput]):
@@ -78,6 +81,7 @@ class PublicResponseStream(AsyncIterator[str]):
         self._revision = state.attempt_revision
         self._hide_reasoning = hide_reasoning
         self._decoder = AnthropicSSEDecoder()
+        self._payloads = FramePayloadCache()
         self._projection = ClassifierProjection() if hide_reasoning else None
         self._delivered = DeliveredResponse(wire_api)
         self._continuation = ContinuationStream(self._delivered)
@@ -137,6 +141,7 @@ class PublicResponseStream(AsyncIterator[str]):
             "_events",
             "_terminal_frame",
             "_terminal_failure_observer",
+            "_payloads",
         }
         state: dict[str, object] = self.__dict__
         saved = deepcopy(
@@ -169,15 +174,27 @@ class PublicResponseStream(AsyncIterator[str]):
             self._pending_release = False
             return "".join(published) or None
         except BaseException:
+            self._payloads.clear()
             self.__dict__.update(saved)
             self.state.bind_prefix(self._delivered.snapshot)
             raise
 
     def _finalize_frame(self, frame: str) -> str:
-        payload = frame_data(frame)
+        payload = self._payloads.get(frame)
         if payload is None:
             return frame
-        if finalize_replay(payload, self._delivered.snapshot, self._replay_carriers):
+        replay = needs_replay_sealing(payload, self._replay_carriers)
+        # Cached parses are shared across stages. Clone only when replay or a
+        # continuation/failure envelope can edit the payload.
+        if (
+            replay
+            or self._continuation.active
+            or payload.get("type") == "response.failed"
+        ):
+            payload = deepcopy(payload)
+        if replay and finalize_replay(
+            payload, self._delivered.snapshot, self._replay_carriers
+        ):
             if self._continuation.active and not self._continuation.made_progress:
                 raise ExecutionFailure(
                     kind=FailureKind.UPSTREAM,
@@ -243,6 +260,7 @@ class PublicResponseStream(AsyncIterator[str]):
         self._revision = self.state.attempt_revision
         self.state.transition = None
         self._decoder = AnthropicSSEDecoder()
+        self._payloads.clear()
         self._projection = ClassifierProjection() if self._hide_reasoning else None
         self._seen_starts.clear()
         self._pending_starts.clear()
@@ -274,11 +292,11 @@ class PublicResponseStream(AsyncIterator[str]):
         if not self._continuation.active:
             yield frame
             return
-        payload = frame_data(frame)
+        payload = self._payloads.get(frame)
         if payload is None:
             yield frame
             return
-        for item in self._continuation.prepare(payload):
+        for item in self._continuation.prepare(deepcopy(payload)):
             yield (
                 replace_frame_data(frame, item)
                 if item.get("type") == payload.get("type")
@@ -298,6 +316,7 @@ class PublicResponseStream(AsyncIterator[str]):
         await self._events.aclose()
         self._pending_starts.clear()
         self._pending_call_proofs.clear()
+        self._payloads.clear()
         self._decoder = AnthropicSSEDecoder()
         self._replay_carriers.clear()
         self.state.bind_prefix(None)
@@ -324,7 +343,7 @@ class PublicResponseStream(AsyncIterator[str]):
     def _record(self, frame: str, *, synthetic: bool) -> None:
         if self._wire_api == "chat" and frame.strip() == "data: [DONE]":
             return
-        payload = frame_data(frame)
+        payload = self._payloads.get(frame)
         if payload is not None:
             self._delivered.observe(payload, count_progress=not synthetic)
         elif any(line.startswith("data:") for line in frame.splitlines()):
@@ -332,7 +351,7 @@ class PublicResponseStream(AsyncIterator[str]):
 
     def _publish(self, frame: str, *, synthetic: bool = False) -> str | None:
         """Keep replacement and failure envelopes in the public response lifecycle."""
-        payload = frame_data(frame)
+        payload = self._payloads.get(frame)
         if payload is None:
             if self._wire_api == "chat" and frame.strip() == "data: [DONE]":
                 return self._release_content(frame, synthetic=synthetic)
@@ -349,6 +368,7 @@ class PublicResponseStream(AsyncIterator[str]):
                 self._public_id = payload["id"]
                 self._created_at = payload.get("created")
             elif self._public_id is not None and "id" in payload:
+                payload = deepcopy(payload)
                 payload["id"] = self._public_id
                 if self._created_at is not None:
                     payload["created"] = self._created_at
@@ -365,6 +385,7 @@ class PublicResponseStream(AsyncIterator[str]):
                 self._public_id = payload["responseId"]
                 self.start_frame = frame
             elif self._public_id is not None and "responseId" in payload:
+                payload = deepcopy(payload)
                 payload["responseId"] = self._public_id
                 frame = replace_frame_data(frame, payload)
         kind = raw_kind if isinstance(raw_kind, str) else ""
@@ -397,6 +418,9 @@ class PublicResponseStream(AsyncIterator[str]):
 
         changed = False
         failure = kind == "response.failed"
+        if self._wire_api == "responses":
+            # Public envelope edits must not mutate the cached pristine parse.
+            payload = deepcopy(payload)
         if (self._replacement or failure) and self._wire_api == "responses":
             response = payload.get("response")
             if isinstance(response, dict):

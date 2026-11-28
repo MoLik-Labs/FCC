@@ -7,7 +7,7 @@
   </picture>
 </h1>
 
-[![License: AGPL v3](https://img.shields.io/badge/License-AGPL_v3-2e7d32.svg?style=for-the-badge)](https://github.com/Alishahryar1/free-claude-code/blob/main/LICENSE)
+[![License: AGPL v3](https://img.shields.io/badge/License-AGPL_v3-2e7d32.svg?style=for-the-badge)](LICENSE)
 [![Python 3.14](https://img.shields.io/badge/python-3.14-3776ab.svg?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/downloads/)
 [![Package Manager: uv](assets/package-manager-uv.svg)](https://github.com/astral-sh/uv)
 [![Testing: Pytest](https://img.shields.io/badge/Testing-Pytest-ad1457.svg?style=for-the-badge)](https://github.com/pytest-dev/pytest)
@@ -15,7 +15,7 @@
 [![Formatter: Ruff](https://img.shields.io/badge/Formatter-ruff-bf4b00.svg?style=for-the-badge)](https://github.com/astral-sh/ruff)
 [![Logging: Loguru](https://img.shields.io/badge/logging-loguru-00695c.svg?style=for-the-badge)](https://github.com/Delgan/loguru)
 
-[Quick Start](#quick-start) · [Providers](#choose-a-provider) · [Integrations](#integrations) · [API](#use-the-api-directly) · [Phone](#use-from-your-phone) · [Manage](#manage-your-installation)
+[Documentation](#documentation) · [Quick Start](#quick-start) · [Providers](#choose-a-provider) · [Integrations](#integrations) · [API](#use-the-api-directly) · [Phone](#use-from-your-phone) · [Manage](#manage-your-installation)
 
 </div>
 
@@ -23,20 +23,63 @@
   <em>Independent open-source project. Not affiliated with or endorsed by Anthropic. Claude and Claude Code are trademarks of Anthropic.</em>
 </p>
 
+Free Claude Code (FCC) is an open-source gateway that connects coding agents,
+editors and API clients to cloud or local model providers. Configure routing in
+the Admin UI, then use a supported launcher or one of the compatible APIs.
+
+This repository, [MoLik-Labs/FCC](https://github.com/MoLik-Labs/FCC), is a fork
+of [Alishahryar1/free-claude-code](https://github.com/Alishahryar1/free-claude-code).
+The Python application is the supported runtime. The Go work in `gocore/` is
+experimental and is not yet a replacement for the Python server.
+
+## Documentation
+
+- [English guide](docs/site/src/content/docs/index.md) · [Hướng dẫn tiếng Việt](docs/site/src/content/docs/vi/index.md)
+  — source pages for the bilingual installation, API and operations guide.
+- [Build and publish the documentation](docs/site/README.md) — local preview and
+  GitHub Pages setup. The public URL is available from the deployment workflow
+  after Pages has been enabled and a deployment succeeds.
+- [Development and contribution](CONTRIBUTING.md) · [Go rewrite status](gocore/README.md)
+  · [Rewrite plan and checkpoints](docs/rewrite/00-master-plan.md)
+  · [Fork safety and verification](docs/rewrite/fork-safety-checkpoint.md).
+- [Skill workflow](docs/design/skill-workflow.md) — pinned sources and
+  restoration instructions for future development sessions.
+
+The site uses Astro Starlight, Nimbus's accessible table helper and static
+Markdown for agent readers, with a VitePress API reference. To preview it from a checkout with Node.js
+22.23.4 or newer:
+
+```sh
+npm ci --prefix docs/site
+npm run dev --prefix docs/site
+```
+
+See the build guide for production validation and GitHub Pages deployment. The
+site's light/dark preference is separate from the Admin's Forest, Catppuccin
+Mocha and other appearance choices.
+
+## Oh My Molik (experimental)
+
+[Oh My Molik](ohmymolik/README.md) is a separate experimental agent project. Its
+Rust and historical Go prototypes can inspect files read-only via an explicit
+local or remote Chat Completions endpoint. The Rust CLI uses system curl and
+is non-streaming. It also has an experimental read-only MCP stdio server;
+neither prototype is a complete coding agent. See the [research and roadmap](docs/oh-my-fox/research.md)
+for sources, migration status and safety gates.
+
 ## Features
 
 - Route any supported harness to models from any supported provider.
 - 12 supported harnesses: [Claude Code](https://code.claude.com/docs/en/overview), [Codex](https://github.com/openai/codex), [Pi](https://github.com/earendil-works/pi), [OpenCode](https://github.com/anomalyco/opencode), [Cline](https://github.com/cline/cline), [Hermes](https://github.com/NousResearch/hermes-agent), [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness), [Grok Build](https://github.com/xai-org/grok-build), [Muse Code](https://research.meta.ai/blog/introducing-muse-code-and-muse-spark-1-2/), [Aider](https://aider.chat/), [Antigravity CLI](https://antigravity.google/docs/getting-started/), or [VS Code Chat](https://code.visualstudio.com/).
-  - Preserved native streaming, tool use, and interleaved thinking for maximum performance.
+  - Supports streaming, tool use, and interleaved thinking where supported by the client and provider.
   - For Claude Code, route [Fable](https://www.anthropic.com/claude/fable), [Opus](https://www.anthropic.com/claude/opus), [Sonnet](https://www.anthropic.com/claude/sonnet), and [Haiku](https://www.anthropic.com/claude/haiku) to supported models.
 - Use any model through any of four APIs: [Anthropic Messages](https://platform.claude.com/docs/en/api/messages) (`/v1/messages`), [OpenAI Chat Completions](https://platform.openai.com/docs/api-reference/chat/create) (`/v1/chat/completions`), [OpenAI Responses](https://platform.openai.com/docs/api-reference/responses/create) (`/v1/responses`), or [Gemini](https://ai.google.dev/api/generate-content) (`generateContent`). See [Use The API Directly](#use-the-api-directly).
-- 61 supported providers, including free, paid, subscription, and local providers.
-  - 1.3B+ free tokens per month.
-  - FCC follows provider TOS and removes integrations if they stop being allowed.
+- Supports free-tier, paid, subscription, and local providers. Model access,
+  quotas, pricing, and permitted use depend on each provider and can change.
 - Use through the terminal, desktop apps ([Codex App](https://learn.chatgpt.com/docs/app), [Claude Desktop](https://claude.ai/download), and [DeepSeek Desktop](https://github.com/deepseek-ai/deepseek-harness)), IDE extensions ([VS Code](https://code.visualstudio.com/) and [JetBrains](https://www.jetbrains.com/)), [your phone](#use-from-your-phone) ([Discord](https://discord.com/) and [Telegram](https://telegram.org/)), or your browser through native Code sessions.
   - Voice notes supported for Discord and Telegram using local [Whisper](https://github.com/openai/whisper) or [NVIDIA NIM](https://docs.nvidia.com/nim/speech/latest/asr/deploy-asr-models/whisper.html).
-- Up to 90% lower token usage using [RTK](https://github.com/rtk-ai/rtk) and [Headroom](https://github.com/headroomlabs-ai/headroom).
-- State-of-the-art reliability features so you can keep coding through provider outages:
+- Optional token optimization using [RTK](https://github.com/rtk-ai/rtk) and [Headroom](https://github.com/headroomlabs-ai/headroom); savings depend on the workload.
+- Reliability features for provider failures:
   - Automatic retries.
   - Configurable rate limits.
   - Configurable concurrency control.
@@ -45,57 +88,45 @@
 
 Free-tier availability and limits are controlled by each provider and may change.
 
-<div align="center">
-  <img src="assets/pic.png" alt="Claude Code running with Free Claude Code" width="700">
-  <p><em>Claude Code running with FCC.</em></p>
-</div>
-
-<div align="center">
-  <img src="assets/browser-code-session.png" alt="Native Codex browser session in FCC, showing model controls and a repository exploration" width="700">
-  <p><em>A native Codex session in FCC's browser UI.</em></p>
-</div>
+> **Security:** Admin and Code session endpoints are reachable by remote clients
+> when the server is exposed; they do not have a separate Admin authentication
+> boundary. They can change configuration and operate code sessions. Do not
+> expose them to untrusted networks or the public internet without protection
+> provided by your network or tunnel. Proxy Authentication protects the proxy
+> API; do not assume it also protects Admin. Remote HTTP sends credentials
+> and request contents without HTTP transport encryption; use HTTPS or a
+> properly protected private tunnel, including for Claude Desktop gateways.
+>
+> The Go port in [`gocore/`](gocore/README.md) is experimental and incomplete;
+> the Python application remains the supported runtime.
 
 ## Quick Start
 
 <a id="install"></a>
 
-### 1. Install
+### 1. Install this fork from source
 
-macOS/Linux:
+Install [Git](https://git-scm.com/downloads) and [uv](https://docs.astral.sh/uv/getting-started/installation/) first. In a terminal (or Windows PowerShell), run:
 
 ```bash
-curl -fsSL "https://raw.githubusercontent.com/Alishahryar1/free-claude-code/main/scripts/install.sh" | sh
+git clone --branch arena/5fe6a43f-fcc https://github.com/MoLik-Labs/FCC.git
+cd FCC
+uv sync --locked
 ```
 
-Windows PowerShell:
-
-```powershell
-& ([scriptblock]::Create((irm "https://raw.githubusercontent.com/Alishahryar1/free-claude-code/main/scripts/install.ps1")))
-```
-
-When prompted, choose at least one coding agent and optionally enable [RTK](https://github.com/rtk-ai/rtk) + [Headroom](https://github.com/headroomlabs-ai/headroom) token optimization for supported agents.
+This checks out the current development branch of **this fork**, not an upstream release. The branch is still under development; after these changes are integrated into `main`, use the desired available branch instead. Python 3.14.10 is required; uv can provision it. This source setup does not install coding agents, create desktop shortcuts or provide the upstream installer's optional setup. Install the client you intend to use separately.
 
 ### 2. Start FCC
 
-#### Windows
-
-Open **Free Claude Code** from your desktop or Start menu.
-
-#### macOS
-
-Open **Free Claude Code** from your desktop or Applications folder.
-
-#### Linux
-
-Run:
+From the `FCC` checkout on Windows, macOS or Linux:
 
 ```bash
-fcc-server
+uv run fcc-server
 ```
 
-FCC opens the Admin UI after starting. On Windows and macOS, use the tray or
-menu-bar icon to open Admin, restart, or quit. When using `fcc-server`, keep its
-terminal open.
+Keep the terminal open and open the Admin URL shown in the server log. In a
+second terminal, change into the same checkout before running a launcher with
+`uv run`.
 
 <a id="nvidia-nim-provider"></a>
 
@@ -108,88 +139,109 @@ terminal open.
 5. Click **Apply** to save your model selection.
 
 To protect the local proxy with a bearer token, enable **Proxy Authentication**
-in Admin.
+in Admin. This token does not protect Admin or Code sessions; see the [remote
+access guidance](docs/oh-my-fox/remote-access.md) before exposing them.
 
-<div align="center">
-  <img src="assets/admin-page.png" alt="Free Claude Code Admin UI" width="700">
-</div>
+Use **Appearance** in the sidebar to choose Forest, Catppuccin Mocha, Nord, Dracula, Ocean,
+Dusk or Dawn. The choice is saved in this browser when storage is available;
+it does not change server configuration or the separate Molik CLI.
 
 ### 4. Run Your Coding Agent
+
+Install your chosen agent separately, then run one of these commands from the checkout:
 
 Claude Code:
 
 ```bash
-fcc-claude
+uv run fcc-claude
 ```
 
 Codex:
 
 ```bash
-fcc-codex
+uv run fcc-codex
 ```
 
 Pi:
 
 ```bash
-fcc-pi
+uv run fcc-pi
 ```
 
 OpenCode 2:
 
 ```bash
-fcc-opencode
+uv run fcc-opencode
 ```
 
 Cline:
 
 ```bash
-fcc-cline
+uv run fcc-cline
 ```
 
 Hermes:
 
 ```bash
-fcc-hermes
+uv run fcc-hermes
 ```
 
 DeepSeek Harness Web:
 
 ```bash
-fcc-dsh
+uv run fcc-dsh
 ```
 
 Grok Build:
 
 ```bash
-fcc-grok
+uv run fcc-grok
 ```
 
 Muse Code:
 
 ```bash
-fcc-muse
+uv run fcc-muse
 ```
 
 Aider:
 
 ```bash
-fcc-aider
+uv run fcc-aider
 ```
 
 Antigravity CLI:
 
 ```bash
-fcc-agy
+uv run fcc-agy
 ```
 
 Other clients and SDKs can call FCC directly. See [Use The API Directly](#use-the-api-directly).
 
 <a id="model-picker"></a>
 
-<div align="center">
-  <img src="assets/cc-model-picker.png" alt="Claude Code model picker showing FCC models" width="700">
-  <p><em>Select an FCC model from Claude Code's native <code>/model</code> picker.</em></p>
-</div>
+## Workload and hardware guidance
+
+In **Admin → Providers → Runtime configuration**, the workload buttons stage
+only **Provider Max Concurrency**: Light = 1, Balanced = 2 (the default), High
+= 4. Review the field and click **Apply** to save. You can enter a different
+positive value manually. If a process environment variable locks the field,
+change that variable instead; the buttons are disabled.
+
+The limit is per provider, not a global CPU/RAM limit. Provider Rate Limit and
+Rate Window remain separate and can still delay attempts. These are starting
+points, not automatic hardware detection or speed guarantees:
+
+- **Low-resource machine / local model:** start at 1; use a smaller model and
+  context, and avoid optional local Whisper if memory or disk is tight.
+- **Typical single-user setup:** start at 2; observe memory, latency and errors.
+- **More capacity or multiple users:** try 4 only when the provider quota and
+  local inference server can sustain it; higher concurrency can increase memory
+  use and latency. Lower it if requests fail or the machine becomes unresponsive.
+
+Cloud inference runs on the provider's hardware; local inference requirements
+are determined primarily by the model, context, quantization and inference
+server. These controls do not change model settings or limit the entire machine.
 
 ## Choose A Provider
 
@@ -512,113 +564,60 @@ in **Admin UI → Messaging**, then click **Apply**.
 <details>
 <summary><strong>Voice notes</strong></summary>
 
-NVIDIA NIM transcription support is included in every installation. In **Admin UI → Messaging → Voice**, enable voice notes, select `nvidia_nim`, and choose a supported model. Configure your **NVIDIA NIM API key** on the Providers page.
+For NVIDIA NIM transcription, configure its API key under **Providers**, then
+in **Messaging → Voice** enable voice notes and choose `nvidia_nim`.
 
-For local Whisper on CPU or CUDA, re-run the installer with the local voice option:
-
-macOS/Linux:
-
-Local Whisper on CPU or CUDA:
+Local Whisper is optional and needs substantially more disk space and memory.
+From this source checkout, install the `voice_local` extra:
 
 ```bash
-curl -fsSL "https://raw.githubusercontent.com/Alishahryar1/free-claude-code/main/scripts/install.sh" | sh -s -- --voice-local
+uv sync --locked --extra voice_local
 ```
 
-Local Whisper with CUDA 13.0:
-
-```bash
-curl -fsSL "https://raw.githubusercontent.com/Alishahryar1/free-claude-code/main/scripts/install.sh" | sh -s -- --voice-local --torch-backend cu130
-```
-
-Windows PowerShell:
-
-Local Whisper on CPU or CUDA:
-
-```powershell
-& ([scriptblock]::Create((irm "https://raw.githubusercontent.com/Alishahryar1/free-claude-code/main/scripts/install.ps1"))) -VoiceLocal
-```
-
-Local Whisper with CUDA 13.0:
-
-```powershell
-& ([scriptblock]::Create((irm "https://raw.githubusercontent.com/Alishahryar1/free-claude-code/main/scripts/install.ps1"))) -VoiceLocal -TorchBackend cu130
-```
-
-After installing local support, restart `fcc-server`. In **Admin UI → Messaging → Voice**, enable voice notes, select `cpu` or `cuda`, and choose the Whisper model. Local gated models need `HUGGINGFACE_API_KEY`.
+The configured PyTorch index targets CUDA 13.0; availability and CPU/GPU
+compatibility depend on platform, driver and package wheels. Verify those
+requirements before installing. Start with `uv run --extra voice_local fcc-server`,
+enable voice in **Messaging → Voice**, select `cpu` or `cuda` and
+choose a Whisper model. Gated models need `HUGGINGFACE_API_KEY`. Repeat the
+extra on `uv sync` when updating; a plain sync can remove optional packages.
+This extra has not been validated on every platform.
 
 </details>
 
 ## Manage Your Installation
 
-Run `fcc-server --version` to check the installed version without starting FCC.
-
-### Update
-
-Stop all running FCC commands, then run:
-
-```sh
-fcc-update
-```
-
-`fcc-update` installs the latest FCC release unless you already have it.
-
-If `fcc-update` is unavailable or fails, try running the [install command](#install) again.
-
-To reinstall FCC or change optional components while already up to date, run the [installer](#install) directly.
-
-For local voice support, include `--voice-local` (macOS/Linux) or `-VoiceLocal` (Windows), plus your `--torch-backend` or `-TorchBackend` option if used.
-
-### Muse Code on native Windows
-
-To install or update only Muse Code:
-
-```powershell
-& ([scriptblock]::Create((irm "https://raw.githubusercontent.com/Alishahryar1/free-claude-code/main/scripts/install-muse.ps1")))
-```
-
-To remove the Muse Code copy installed by FCC, keeping its data:
-
-```powershell
-& ([scriptblock]::Create((irm "https://raw.githubusercontent.com/Alishahryar1/free-claude-code/main/scripts/uninstall-muse.ps1")))
-```
-
-Uninstalling FCC leaves Muse Code installed.
-
-### Uninstall
-
-Stop every running FCC command and quit connected desktop/editor apps before uninstalling.
-
-**Removes**
-
-- Free Claude Code, including its desktop launcher and commands
-- `~/.fcc/`
-
-**Keeps**
-
-- uv and Python
-- Your coding agents, RTK, and Headroom
-
-macOS/Linux:
+For the source checkout, run `uv run fcc-server --version` or `uv run fcc-doctor` from the `FCC` directory. To update the same checked-out branch, stop FCC and run:
 
 ```bash
-curl -fsSL "https://raw.githubusercontent.com/Alishahryar1/free-claude-code/main/scripts/uninstall.sh" | sh
+git pull --ff-only
+uv sync --locked
 ```
 
-Windows PowerShell:
+Review local changes and confirm the branch and remote before updating. If using
+local voice, replace the sync command with `uv sync --locked --extra voice_local`.
+In this revision, `fcc-update` is deliberately disabled: it exits without
+changing files and prints the manual steps above. **Older installed copies** may
+still run the upstream installer; do not use them for this fork. The inherited
+`scripts/install.sh` and `scripts/install.ps1` also target upstream releases,
+not this source checkout. Automatic fork release publication is disabled until
+the package identity and release process have been reviewed.
 
-```powershell
-& ([scriptblock]::Create((irm "https://raw.githubusercontent.com/Alishahryar1/free-claude-code/main/scripts/uninstall.ps1")))
-```
+To remove the source checkout, stop FCC and connected clients, back up any
+needed data, then remove the checkout directory manually. Its `.venv` is inside
+the checkout. FCC data such as `~/.fcc/` is separate and is not removed; delete
+it only if you intentionally want to remove configuration, credentials and data.
+The source install does not install or remove coding agents, RTK or Headroom.
 
 ## Project Links
 
-For a problem after installation, run the command below and paste its output into your bug report.
+For a problem with this checkout, run the command below from the repository and redact credentials and private data before sharing the output.
 
 ```bash
-fcc-doctor
+uv run fcc-doctor
 ```
 
-- [Report bugs or request features](https://github.com/Alishahryar1/free-claude-code/issues)
+- [This repository and its pull requests](https://github.com/MoLik-Labs/FCC) — issues are currently disabled on this fork.
+- [Upstream issues](https://github.com/Alishahryar1/free-claude-code/issues) — for the upstream project and its releases; follow its reporting rules.
 - [Contributing guide](CONTRIBUTING.md)
 
 ## Maintainers

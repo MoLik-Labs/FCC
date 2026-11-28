@@ -1,4 +1,5 @@
 from collections.abc import Iterator
+from pathlib import Path
 
 import pytest
 from _pytest.mark.structures import ParameterSet
@@ -24,8 +25,10 @@ def pytest_collection_modifyitems(items: list[pytest.Item]) -> None:
     if SmokeConfig.load().live:
         return
     skip = pytest.mark.skip(reason="set FCC_LIVE_SMOKE=1 to run local smoke tests")
+    smoke_root = Path(__file__).resolve().parent
     for item in items:
-        item.add_marker(skip)
+        if item.path.resolve().is_relative_to(smoke_root):
+            item.add_marker(skip)
 
 
 def pytest_configure(config: pytest.Config) -> None:

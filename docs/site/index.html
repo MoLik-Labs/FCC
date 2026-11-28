@@ -1,0 +1,946 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="A practical guide to installing, configuring, and operating Free Claude Code."
+    />
+    <meta name="color-scheme" content="light dark" />
+    <title>FCC documentation — your models, your workflow</title>
+    <link rel="stylesheet" href="style.css" />
+    <script src="site.js" defer></script>
+  </head>
+  <body>
+    <noscript
+      ><style>
+        @media (max-width: 800px) {
+          .sidebar {
+            display: block;
+            position: static;
+            width: 100%;
+            height: auto;
+            box-shadow: none;
+          }
+          .menu-toggle {
+            display: none;
+          }
+        }
+      </style></noscript
+    >
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="topbar">
+      <a class="brand" href="#top"
+        ><span class="brand-mark" aria-hidden="true">F<span>.</span></span
+        ><span
+          >FCC <span class="brand-divider">/</span>
+          <span class="brand-label">DOCS</span></span
+        ></a
+      >
+      <div class="top-actions">
+        <a href="vi.html" lang="vi" aria-label="VI — read the Vietnamese guide"
+          >VI</a
+        ><a href="https://github.com/MoLik-Labs/FCC"
+          >GitHub <span aria-hidden="true">↗</span></a
+        ><a class="header-button" href="#quickstart"
+          >Get started <span aria-hidden="true">↗</span></a
+        ><button
+          class="menu-toggle"
+          aria-expanded="false"
+          aria-controls="navigation"
+          type="button"
+        >
+          Menu <span aria-hidden="true">☰</span>
+        </button>
+      </div>
+    </header>
+    <div class="shell" id="top">
+      <aside
+        class="sidebar"
+        id="navigation"
+        aria-label="Documentation navigation"
+      >
+        <div class="sidebar-top">
+          <span class="sidebar-label">DOCUMENTATION</span
+          ><span class="version">GUIDE <span>01</span></span>
+        </div>
+        <nav aria-label="On this page">
+          <p class="nav-heading">START HERE</p>
+          <a href="#overview">Overview</a><a href="#quickstart">Quick start</a
+          ><a href="#first-request">Your first request</a>
+          <p class="nav-heading">CONFIGURE</p>
+          <a href="#providers">Providers &amp; models</a
+          ><a href="#clients">Agents &amp; integrations</a
+          ><a href="#api">API reference</a
+          ><a href="#messaging">Discord &amp; Telegram</a>
+          <p class="nav-heading">OPERATE</p>
+          <a href="#workloads">Workload settings</a>
+          <a href="#security">Security &amp; remote access</a
+          ><a href="#maintenance">Maintenance</a
+          ><a href="#troubleshooting">Troubleshooting</a>
+          <p class="nav-heading">BUILD</p>
+          <a href="#development">Development</a
+          ><a href="#pages">Publish this site</a
+          ><a href="#resources">Resources</a>
+        </nav>
+        <div class="reading-control" hidden>
+          <label for="reading-theme">Reading theme</label>
+          <select id="reading-theme">
+            <option value="light">Light</option>
+            <option value="forest">Forest</option>
+            <option value="catppuccin-mocha">Catppuccin Mocha</option>
+          </select>
+        </div>
+        <div class="sidebar-note">
+          <span class="status-dot"></span
+          ><span
+            >Python is the supported runtime.<br /><a href="#development"
+              >About the Go port →</a
+            ></span
+          >
+        </div>
+      </aside>
+      <main id="main" tabindex="-1">
+        <section class="hero" id="overview">
+          <div class="hero-grid" aria-hidden="true"></div>
+          <div class="hero-content">
+            <div class="eyebrow">
+              <span class="eyebrow-dot"></span> THE FCC FIELD GUIDE
+              <span class="eyebrow-index">/ 01</span>
+            </div>
+            <h1>Your models.<br /><em>Your workflow.</em></h1>
+            <p>
+              Connect your coding tools to the models you choose. This guide
+              takes you from a first install to a working request—and helps you
+              operate FCC safely.
+            </p>
+            <div class="hero-actions">
+              <a class="button button-primary" href="#quickstart"
+                >Start the guide <span aria-hidden="true">↗</span></a
+              ><a class="button button-ghost" href="#api"
+                >Explore the API <span aria-hidden="true">→</span></a
+              >
+            </div>
+            <div class="hero-footer">
+              <span>INDEPENDENT &amp; OPEN SOURCE</span
+              ><span>PYTHON RUNTIME <span aria-hidden="true">●</span></span>
+            </div>
+          </div>
+          <div class="flow" aria-label="How FCC fits into your workflow">
+            <span class="flow-kicker">THE CONNECTION</span>
+            <div class="flow-node">
+              <span>01</span>
+              <div><b>Your client</b><small>Agent, editor or API</small></div>
+              <i>↗</i>
+            </div>
+            <div class="flow-line"></div>
+            <div class="flow-node flow-node-active">
+              <span>02</span>
+              <div><b>FCC</b><small>Local routing layer</small></div>
+              <i>✳</i>
+            </div>
+            <div class="flow-line"></div>
+            <div class="flow-node">
+              <span>03</span>
+              <div><b>Your provider</b><small>Cloud or local model</small></div>
+              <i>↗</i>
+            </div>
+            <p>
+              One place to configure the connection between your tools and
+              models.
+            </p>
+          </div>
+        </section>
+        <div class="content">
+          <div class="intro-row">
+            <div>
+              <span class="section-kicker">WELCOME TO FCC</span>
+              <h2>One gateway.<br />Many ways to build.</h2>
+            </div>
+            <p>
+              Free Claude Code routes supported coding agents and API clients to
+              cloud or local model providers. Configure models in the Admin UI,
+              then use your preferred client. Provider availability, costs,
+              terms and model capabilities vary.
+            </p>
+          </div>
+          <div class="cards">
+            <a class="card" href="#quickstart"
+              ><span>01 / SET UP</span>
+              <h3>Get running</h3>
+              <p>Install, start the server and connect a provider.</p>
+              <b aria-hidden="true">↗</b></a
+            ><a class="card" href="#clients"
+              ><span>02 / CONNECT</span>
+              <h3>Choose your tools</h3>
+              <p>Use a terminal agent, editor, desktop app or the API.</p>
+              <b aria-hidden="true">↗</b></a
+            ><a class="card" href="#security"
+              ><span>03 / OPERATE</span>
+              <h3>Stay in control</h3>
+              <p>Understand authentication and remote exposure.</p>
+              <b aria-hidden="true">↗</b></a
+            >
+          </div>
+          <section class="doc-section" id="quickstart">
+            <div class="section-header">
+              <span class="section-number">01 / GET STARTED</span>
+              <h2>From zero to ready.</h2>
+              <p>
+                Start locally, configure one provider and verify that the model
+                is reachable.
+              </p>
+            </div>
+            <div class="notice">
+              <strong>This installs the fork from source.</strong> The commands
+              use the current development branch of MoLik-Labs/FCC, not the
+              upstream release. The Go port is experimental; Python remains the
+              runtime.
+            </div>
+            <div class="steps">
+              <article class="step">
+                <span class="step-number">01</span>
+                <div>
+                  <h3>Get the fork</h3>
+                  <p>
+                    Install <a href="https://git-scm.com/downloads">Git</a> and
+                    <a
+                      href="https://docs.astral.sh/uv/getting-started/installation/"
+                      >uv</a
+                    >. In a terminal or Windows PowerShell, run:
+                  </p>
+                  <pre
+                    tabindex="0"
+                  ><code>git clone --branch arena/5fe6a43f-fcc https://github.com/MoLik-Labs/FCC.git
+cd FCC
+uv sync --locked</code></pre>
+                  <p>
+                    The branch is under development. After integration into
+                    main, choose an available branch as needed. uv can provision
+                    Python 3.14.10. Install coding agents separately; this
+                    source setup does not create desktop shortcuts or install
+                    optional tools.
+                  </p>
+                </div>
+              </article>
+              <article class="step">
+                <span class="step-number">02</span>
+                <div>
+                  <h3>Start the server</h3>
+                  <p>From the FCC checkout on Windows, macOS or Linux:</p>
+                  <pre tabindex="0"><code>uv run fcc-server</code></pre>
+                  <p>
+                    Keep the terminal open and use the Admin URL from the log.
+                    In a second terminal, return to this checkout to run a
+                    client.
+                  </p>
+                </div>
+              </article>
+              <article class="step">
+                <span class="step-number">03</span>
+                <div>
+                  <h3>Connect a model provider</h3>
+                  <p>
+                    In <strong>Providers</strong>, open a provider, add its key
+                    and save. In <strong>Model Config</strong>, select a model
+                    and click <strong>Apply</strong>. For example, NVIDIA NIM
+                    uses <code>NVIDIA_NIM_API_KEY</code>; obtain a key from
+                    <a href="https://build.nvidia.com/settings/api-keys"
+                      >NVIDIA</a
+                    >. The provider controls access, pricing and limits.
+                  </p>
+                  <p>
+                    If your provider cannot list models, enter its exact ID as
+                    <code>provider-id/model-id</code>. For subscription
+                    authentication, use
+                    <strong>Providers → OAuth providers</strong>.
+                  </p>
+                </div>
+              </article>
+              <article class="step">
+                <span class="step-number">04</span>
+                <div>
+                  <h3>Launch your agent</h3>
+                  <p>
+                    Install the agent separately, then launch Claude Code or
+                    Codex from a terminal in the checkout. The launcher can
+                    start FCC automatically.
+                  </p>
+                  <pre tabindex="0"><code>uv run fcc-claude
+# or
+uv run fcc-codex</code></pre>
+                  <p>
+                    Use the agent’s model picker when available. See
+                    <a href="#clients">all launchers and integrations</a>.
+                  </p>
+                </div>
+              </article>
+            </div>
+            <p>
+              Choose <strong>Appearance</strong> in the Admin sidebar for
+              Forest, Catppuccin Mocha, Nord, Dracula, Ocean, Dusk or Dawn. The
+              selection is stored in this browser when storage is available, not
+              on the server or in the separate Molik CLI.
+            </p>
+          </section>
+          <section class="doc-section" id="first-request">
+            <div class="section-header">
+              <span class="section-number">02 / VERIFY</span>
+              <h2>Make your first request.</h2>
+              <p>
+                Once the server and provider are ready, list models and send a
+                request locally.
+              </p>
+            </div>
+            <p>
+              The examples use the default local address. If your server log
+              shows a different address or port, use that instead. Select an
+              available model ID from the model list; the example model requires
+              the corresponding provider to be configured.
+            </p>
+            <p class="code-label">LIST AVAILABLE MODELS</p>
+            <pre
+              tabindex="0"
+            ><code>curl "http://127.0.0.1:8082/v1/models?view=messages"</code></pre>
+            <p class="code-label">SEND AN ANTHROPIC MESSAGES REQUEST</p>
+            <pre tabindex="0"><code>curl http://127.0.0.1:8082/v1/messages \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "nvidia_nim/nvidia/nemotron-3-ultra-550b-a55b",
+    "max_tokens": 1024,
+    "messages": [{"role": "user", "content": "Hello!"}]
+  }'</code></pre>
+            <p>
+              If <strong>Proxy Authentication</strong> is enabled, also send
+              <code>Authorization: Bearer &lt;token&gt;</code>. Keep tokens out
+              of shared logs and shell history. A successful response depends on
+              the provider, its credentials and model availability.
+            </p>
+          </section>
+          <section class="doc-section" id="providers">
+            <div class="section-header">
+              <span class="section-number">03 / CONFIGURE</span>
+              <h2>Providers &amp; models.</h2>
+              <p>
+                Use a hosted service, your own compatible endpoint, or a model
+                running locally.
+              </p>
+            </div>
+            <div class="feature-grid">
+              <article>
+                <span>01</span>
+                <h3>Hosted providers</h3>
+                <p>
+                  Open <strong>Providers</strong>, add credentials or connect
+                  OAuth, then choose a model. Numbered keys can be added and
+                  reordered; key 1 is the default. Some providers need extra
+                  region, endpoint or account settings.
+                </p>
+              </article>
+              <article>
+                <span>02</span>
+                <h3>Custom providers</h3>
+                <p>
+                  Choose
+                  <strong>Providers → Custom providers → Add provider</strong>.
+                  Enter the base URL, API format and optional keys. Leave model
+                  IDs empty for discovery or enter exact IDs, then save and
+                  select a model.
+                </p>
+              </article>
+              <article>
+                <span>03</span>
+                <h3>Local models</h3>
+                <p>
+                  Start the model server first. Use <code>lmstudio/</code>,
+                  <code>llamacpp/</code> or <code>ollama/</code> with its exact
+                  model ID. After starting it, refresh models or use
+                  <strong>Test</strong> in its provider card.
+                </p>
+              </article>
+              <article>
+                <span>04</span>
+                <h3>Routing &amp; fallback</h3>
+                <p>
+                  <code>MODEL</code> is the default. Configure optional tier
+                  overrides, reasoning effort and ordered fallback models in
+                  <strong>Model Config</strong>. A failed request may consume
+                  usage on multiple providers.
+                </p>
+              </article>
+            </div>
+            <p>
+              Local defaults: LM Studio <code>http://localhost:1234/v1</code>,
+              llama.cpp <code>http://localhost:8080/v1</code> and Ollama
+              <code>http://localhost:11434</code>. Prefer tool-capable models
+              with sufficient context for coding agents.
+            </p>
+            <a
+              class="text-link"
+              href="https://github.com/MoLik-Labs/FCC/blob/main/README.md#choose-a-provider"
+              >Explore the full provider catalog and settings
+              <span aria-hidden="true">↗</span></a
+            >
+          </section>
+          <section class="doc-section" id="clients">
+            <div class="section-header">
+              <span class="section-number">04 / CONNECT</span>
+              <h2>Bring your tools.</h2>
+              <p>
+                FCC supports terminal launchers, editor and desktop
+                integrations, browser sessions, and direct API clients.
+              </p>
+            </div>
+            <p>
+              For this source checkout, install the agent separately and prefix
+              the launcher commands below with <code>uv run</code> from the FCC
+              directory.
+            </p>
+            <div
+              class="table-wrap"
+              role="region"
+              aria-label="Scrollable table"
+              tabindex="0"
+            >
+              <table>
+                <thead>
+                  <tr>
+                    <th>TERMINAL CLIENT</th>
+                    <th>COMMAND</th>
+                    <th>TERMINAL CLIENT</th>
+                    <th>COMMAND</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Claude Code</td>
+                    <td><code>fcc-claude</code></td>
+                    <td>Codex</td>
+                    <td><code>fcc-codex</code></td>
+                  </tr>
+                  <tr>
+                    <td>Pi</td>
+                    <td><code>fcc-pi</code></td>
+                    <td>OpenCode</td>
+                    <td><code>fcc-opencode</code></td>
+                  </tr>
+                  <tr>
+                    <td>Cline</td>
+                    <td><code>fcc-cline</code></td>
+                    <td>Hermes</td>
+                    <td><code>fcc-hermes</code></td>
+                  </tr>
+                  <tr>
+                    <td>DeepSeek Harness</td>
+                    <td><code>fcc-dsh</code></td>
+                    <td>Grok Build</td>
+                    <td><code>fcc-grok</code></td>
+                  </tr>
+                  <tr>
+                    <td>Muse Code</td>
+                    <td><code>fcc-muse</code></td>
+                    <td>Aider</td>
+                    <td><code>fcc-aider</code></td>
+                  </tr>
+                  <tr>
+                    <td>Antigravity CLI</td>
+                    <td><code>fcc-agy</code></td>
+                    <td></td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <h3>Editors and desktop apps</h3>
+            <ol>
+              <li>
+                Install and start the client on the same computer and user
+                environment as FCC.
+              </li>
+              <li>
+                Start FCC; open <strong>Admin → Integrations</strong> and select
+                <strong>Connect</strong> on the relevant card.
+              </li>
+              <li>
+                Reload VS Code or restart the app or IDE, then select an FCC
+                model where applicable. Use <strong>Disconnect</strong> on the
+                same card to undo the integration.
+              </li>
+            </ol>
+            <p>
+              Claude Desktop must be fully quit before connecting or
+              disconnecting. JetBrains ACP has additional agent setup
+              requirements. Consult the
+              <a
+                href="https://github.com/MoLik-Labs/FCC/blob/main/README.md#integrations"
+                >integration-specific instructions</a
+              >.
+            </p>
+          </section>
+          <section class="doc-section" id="api">
+            <div class="section-header">
+              <span class="section-number">05 / REFERENCE</span>
+              <h2>Use the API directly.</h2>
+              <p>
+                Point a compatible SDK or HTTP client at FCC. The examples
+                assume the default local port.
+              </p>
+            </div>
+            <div
+              class="table-wrap"
+              role="region"
+              aria-label="Scrollable table"
+              tabindex="0"
+            >
+              <table>
+                <thead>
+                  <tr>
+                    <th>PROTOCOL</th>
+                    <th>ENDPOINT</th>
+                    <th>STREAMING</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Anthropic Messages</td>
+                    <td><code>POST /v1/messages</code></td>
+                    <td>Add <code>"stream": true</code></td>
+                  </tr>
+                  <tr>
+                    <td>OpenAI Chat Completions</td>
+                    <td><code>POST /v1/chat/completions</code></td>
+                    <td>Add <code>"stream": true</code></td>
+                  </tr>
+                  <tr>
+                    <td>OpenAI Responses</td>
+                    <td><code>POST /v1/responses</code></td>
+                    <td>Always streamed</td>
+                  </tr>
+                  <tr>
+                    <td>Gemini</td>
+                    <td>
+                      <code>POST /v1/models/{model}:generateContent</code>
+                    </td>
+                    <td>Use <code>:streamGenerateContent?alt=sse</code></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <p>
+              OpenAI-compatible SDK base URL:
+              <code>http://127.0.0.1:8082/v1</code>. Anthropic and Gemini base
+              URL: <code>http://127.0.0.1:8082</code>. When proxy authentication
+              is enabled, pass its token as the API key or bearer token. Model
+              capabilities and provider-specific behavior still apply.
+            </p>
+            <a
+              class="text-link"
+              href="https://github.com/MoLik-Labs/FCC/blob/main/README.md#use-the-api-directly"
+              >See request examples for all four APIs
+              <span aria-hidden="true">↗</span></a
+            >
+          </section>
+          <section class="doc-section" id="messaging">
+            <div class="section-header">
+              <span class="section-number">06 / ON THE GO</span>
+              <h2>Work from your phone.</h2>
+              <p>
+                Set up Discord or Telegram in
+                <strong>Admin → Messaging</strong>, then click Apply.
+              </p>
+            </div>
+            <div class="feature-grid two">
+              <article>
+                <span>DISCORD</span>
+                <h3>Connect a bot</h3>
+                <p>
+                  Create a bot in the Discord Developer Portal, enable Message
+                  Content Intent and invite it with read, send, history and
+                  Manage Messages permissions. Configure the token, allowed
+                  channel IDs and an absolute allowed directory.
+                </p>
+              </article>
+              <article>
+                <span>TELEGRAM</span>
+                <h3>Connect a bot</h3>
+                <p>
+                  Create a bot with BotFather, obtain your numeric user ID and
+                  configure the token, allowed user ID and an absolute allowed
+                  directory. In groups, grant the bot permission to delete
+                  messages.
+                </p>
+              </article>
+            </div>
+            <p>
+              Restart the server if prompted. <code>/stats</code> shows session
+              state; standalone <code>/stop</code> cancels work and standalone
+              <code>/clear</code> clears FCC conversations in the chat. Replying
+              to a message with these commands targets the selected request or
+              conversation chain. Voice notes support NVIDIA NIM or optional
+              local Whisper; see the
+              <a
+                href="https://github.com/MoLik-Labs/FCC/blob/main/README.md#use-from-your-phone"
+                >full setup</a
+              >.
+            </p>
+          </section>
+          <section class="doc-section" id="workloads">
+            <div class="section-header">
+              <span class="section-number">OPERATE / CAPACITY</span>
+              <h2>Match the workload.</h2>
+              <p>Start conservatively, observe the result, and adjust.</p>
+            </div>
+            <p>
+              In <strong>Admin → Providers → Runtime configuration</strong>,
+              workload buttons stage <code>PROVIDER_MAX_CONCURRENCY</code>:
+              Light 1, Balanced 2 (default), High 4. Review the value and click
+              <strong>Apply</strong>. A process environment override locks the
+              field and disables the suggestions.
+            </p>
+            <div class="feature-grid">
+              <article>
+                <h3>Light · 1</h3>
+                <p>
+                  Start here on constrained machines, particularly with a local
+                  model. Reduce model size or context and avoid optional local
+                  voice when resources are tight.
+                </p>
+              </article>
+              <article>
+                <h3>Balanced · 2</h3>
+                <p>
+                  The default starting point for a typical single-user setup.
+                  Watch memory, response latency and errors.
+                </p>
+              </article>
+              <article>
+                <h3>High · 4</h3>
+                <p>
+                  Try only when the provider quota and local inference server
+                  have headroom. Reduce it if memory or latency increases.
+                </p>
+              </article>
+              <article>
+                <h3>Measure &amp; adjust</h3>
+                <p>
+                  The limit is per provider, not a machine-wide resource cap.
+                  Rate Limit and Rate Window remain independent. Cloud inference
+                  runs on the provider, not your computer.
+                </p>
+              </article>
+            </div>
+            <p>
+              These are suggestions, not hardware detection or speed guarantees.
+              Local inference depends on model, context, quantization and the
+              inference server; concurrency does not change those settings.
+            </p>
+          </section>
+          <section class="doc-section" id="security">
+            <div class="section-header">
+              <span class="section-number">07 / IMPORTANT</span>
+              <h2>Operate with care.</h2>
+              <p>
+                Before opening access beyond your machine, understand the trust
+                boundary.
+              </p>
+            </div>
+            <div class="notice warning">
+              <strong
+                >Admin and Code endpoints have no separate Admin
+                authentication.</strong
+              >
+              Remote clients that can reach them may change configuration or
+              operate code sessions. Proxy Authentication protects the proxy
+              API; do not assume it protects Admin or Code. Do not expose them
+              to untrusted networks or the public internet without independent
+              access controls.
+            </div>
+            <h3>Remote access and tunnels</h3>
+            <p>
+              Cloudflare Tunnel, ngrok and Tailscale can provide remote
+              connectivity when configured appropriately. Restrict access at the
+              network or tunnel layer with controls you trust; a tunnel URL by
+              itself is not an authorization policy. Review its provider’s
+              access configuration and test that unauthorized users cannot reach
+              Admin or Code before use. Remote HTTP transmits tokens and request
+              contents without HTTP transport encryption; use HTTPS or a
+              properly protected private tunnel, including for Claude Desktop.
+              Preserve the server and credentials on a trusted host.
+            </p>
+            <h3>Credential hygiene</h3>
+            <ul>
+              <li>
+                Use the least privilege available for provider keys, bots and
+                tunnel access. Restrict messaging users, channels and allowed
+                directories.
+              </li>
+              <li>
+                Never commit tokens or paste them into public issues. Redact
+                logs and diagnostic output before sharing.
+              </li>
+              <li>
+                Review provider terms, model pricing, and the directory
+                accessible to code sessions and messaging agents.
+              </li>
+            </ul>
+          </section>
+          <section class="doc-section" id="maintenance">
+            <div class="section-header">
+              <span class="section-number">08 / MAINTAIN</span>
+              <h2>Keep things healthy.</h2>
+              <p>
+                Check versions, update deliberately, and know what an uninstall
+                removes.
+              </p>
+            </div>
+            <div
+              class="table-wrap"
+              role="region"
+              aria-label="Scrollable table"
+              tabindex="0"
+            >
+              <table>
+                <thead>
+                  <tr>
+                    <th>TASK</th>
+                    <th>COMMAND OR ACTION</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Check version</td>
+                    <td><code>uv run fcc-server --version</code></td>
+                  </tr>
+                  <tr>
+                    <td>Diagnose</td>
+                    <td><code>uv run fcc-doctor</code></td>
+                  </tr>
+                  <tr>
+                    <td>Update</td>
+                    <td>
+                      Stop FCC, then run <code>git pull --ff-only</code> and
+                      <code>uv sync --locked</code> in the checkout.
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Uninstall</td>
+                    <td>
+                      Stop FCC and connected apps, back up data, then remove the
+                      source checkout if no longer needed.
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <p>
+              The source checkout contains its own <code>.venv</code>; FCC data
+              such as <code>~/.fcc/</code> is separate and is not removed with
+              the checkout. In this revision, <code>fcc-update</code> is
+              disabled and makes no changes; older installed copies may still
+              invoke the upstream installer. The inherited install scripts also
+              target upstream releases, not this checkout. Automatic fork
+              release publication is disabled pending a separate
+              package-identity review.
+            </p>
+            <a
+              class="text-link"
+              href="https://github.com/MoLik-Labs/FCC/blob/main/README.md#manage-your-installation"
+              >View platform-specific maintenance instructions
+              <span aria-hidden="true">↗</span></a
+            >
+          </section>
+          <section class="doc-section" id="troubleshooting">
+            <div class="section-header">
+              <span class="section-number">09 / DIAGNOSE</span>
+              <h2>When things go wrong.</h2>
+              <p>
+                Start with the smallest failing connection and work outward.
+              </p>
+            </div>
+            <div class="faq">
+              <details>
+                <summary>Admin does not open or the API cannot connect</summary>
+                <p>
+                  Confirm FCC is running and use the address and port printed in
+                  its log. Check local firewall or tunnel access controls. Do
+                  not expose Admin publicly as a workaround.
+                </p>
+              </details>
+              <details>
+                <summary>The model is missing or a request fails</summary>
+                <p>
+                  Check provider credentials, model ID, account access and
+                  provider availability. For local providers, start the model
+                  server and refresh models or use Test. Verify that the model
+                  supports the tools and context your agent needs.
+                </p>
+              </details>
+              <details>
+                <summary>An editor or desktop client does not see FCC</summary>
+                <p>
+                  Ensure FCC and the client run in the same user environment,
+                  reconnect in Admin, and reload or restart the client. Some
+                  integrations require a complete quit or additional setup.
+                </p>
+              </details>
+              <details>
+                <summary>I need to report a bug</summary>
+                <p>
+                  Run <code>uv run fcc-doctor</code> from the checkout,
+                  reproduce the problem and record the FCC version, active
+                  model, model mappings, steps and complete error. Redact
+                  credentials and private data before sharing. Issues are
+                  currently disabled on this fork; use the upstream tracker only
+                  for upstream issues and releases.
+                </p>
+              </details>
+            </div>
+          </section>
+          <section class="doc-section" id="development">
+            <div class="section-header">
+              <span class="section-number">10 / CONTRIBUTORS</span>
+              <h2>Build and verify.</h2>
+              <p>
+                Python is the supported application. Go is an experimental,
+                incomplete port, not a replacement server.
+              </p>
+            </div>
+            <p>
+              For this checkout, install
+              <a href="https://docs.astral.sh/uv/">uv</a> and use its pinned
+              Python and locked dependencies:
+            </p>
+            <pre
+              tabindex="0"
+            ><code>git clone --branch arena/5fe6a43f-fcc https://github.com/MoLik-Labs/FCC.git
+cd FCC
+uv sync --locked
+uv run fcc-server</code></pre>
+            <p>
+              Run <code>./scripts/ci.sh</code> on macOS/Linux or
+              <code>.\scripts\ci.ps1</code> on Windows. Individual checks
+              include Ruff, Pyrefly and pytest. Review
+              <a
+                href="https://github.com/MoLik-Labs/FCC/blob/main/CONTRIBUTING.md"
+                >CONTRIBUTING.md</a
+              >
+              before opening a pull request. Repository-wide type checks and
+              some historical benchmark generators have known failures on the
+              development branch; see the checkpoints rather than assuming all
+              gates pass.
+            </p>
+            <p>
+              For Go parity work, read
+              <a
+                href="https://github.com/MoLik-Labs/FCC/blob/main/gocore/README.md"
+                >gocore/README.md</a
+              >
+              and the
+              <a
+                href="https://github.com/MoLik-Labs/FCC/blob/main/docs/rewrite/00-master-plan.md"
+                >rewrite plan</a
+              >. Fixture success alone does not establish current-provider or
+              full-service parity.
+            </p>
+            <div class="molik-card">
+              <img src="assets/molik-mark.svg" alt="" width="64" height="64" />
+              <div>
+                <span class="molik-card-label"
+                  >IN DEVELOPMENT / SEPARATE PROJECT</span
+                >
+                <h3>Oh My Molik</h3>
+                <p>
+                  The Rust and Go prototypes connect to Chat endpoints and
+                  inspect files read-only. Rust also offers a limited read-only
+                  MCP stdio server. Neither is a complete coding agent.
+                </p>
+                <a
+                  href="https://github.com/MoLik-Labs/FCC/blob/main/ohmymolik/README.md"
+                  >Explore the project →</a
+                >
+                <br /><a href="molik.html">View theme collection →</a> <br /><a
+                  href="molik.html#mcp-stdio"
+                  >MCP setup and security →</a
+                >
+              </div>
+            </div>
+          </section>
+          <section class="doc-section" id="pages">
+            <div class="section-header">
+              <span class="section-number">11 / PUBLISHING</span>
+              <h2>About this site.</h2>
+              <p>
+                Static files, no third-party runtime, and a reproducible GitHub
+                Pages deployment.
+              </p>
+            </div>
+            <p>From the repository root, build and preview with Python 3:</p>
+            <pre tabindex="0"><code>python3 scripts/build_docs_site.py
+python3 -m http.server 8000 --directory site-build</code></pre>
+            <p>
+              Open <code>http://localhost:8000</code> on the machine running the
+              preview. The builder checks local links and copies the site and
+              assets into <code>site-build/</code>. Pull requests validate the
+              build; pushes to <code>main</code> publish using GitHub Actions
+              after a repository administrator selects
+              <strong
+                >Settings → Pages → Build and deployment → GitHub
+                Actions</strong
+              >. The workflow does not publish this working branch. A live URL
+              requires the change to reach the configured publishing branch and
+              a successful Pages deployment.
+            </p>
+          </section>
+          <section class="doc-section last" id="resources">
+            <div class="section-header">
+              <span class="section-number">12 / KEEP EXPLORING</span>
+              <h2>Go further.</h2>
+              <p>
+                Detailed references and project information, all in one place.
+              </p>
+            </div>
+            <div class="resource-links">
+              <a href="https://github.com/MoLik-Labs/FCC/blob/main/README.md"
+                ><span
+                  ><b>Full project README</b
+                  ><small
+                    >Provider catalog, API examples and integrations</small
+                  ></span
+                ><span>↗</span></a
+              ><a
+                href="https://github.com/MoLik-Labs/FCC/blob/main/CONTRIBUTING.md"
+                ><span
+                  ><b>Contributing</b
+                  ><small>Development standards and quality checks</small></span
+                ><span>↗</span></a
+              ><a href="https://github.com/Alishahryar1/free-claude-code/issues"
+                ><span
+                  ><b>Upstream issues</b
+                  ><small
+                    >For the upstream project and its releases</small
+                  ></span
+                ><span>↗</span></a
+              ><a href="https://github.com/MoLik-Labs/FCC/blob/main/LICENSE"
+                ><span
+                  ><b>License</b><small>GNU AGPL version 3 only</small></span
+                ><span>↗</span></a
+              >
+            </div>
+          </section>
+        </div>
+        <footer>
+          <div>
+            <strong>FCC <span>/</span> DOCUMENTATION</strong>
+            <p>
+              An independent open-source project. Not affiliated with or
+              endorsed by Anthropic. Claude and Claude Code are trademarks of
+              Anthropic.
+            </p>
+          </div>
+          <a href="#top">BACK TO TOP ↑</a>
+        </footer>
+      </main>
+    </div>
+  </body>
+</html>

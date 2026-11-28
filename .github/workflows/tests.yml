@@ -150,6 +150,16 @@ jobs:
           runner-label: ${{ matrix.runner }}
           prepare-node: "true"
 
+      - name: Set up documentation Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '22.23.4'
+          cache: npm
+          cache-dependency-path: docs/site/package-lock.json
+
+      - name: Install documentation dependencies
+        run: npm ci --prefix docs/site
+
       - name: Restore frozen timing input
         uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333
         with:
@@ -208,6 +218,16 @@ jobs:
 
       - name: Install Chromium
         run: uv run --locked playwright install --only-shell ${{ matrix.os == 'Linux' && '--with-deps chromium' || 'chromium' }}
+
+      - name: Set up documentation Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '22.23.4'
+          cache: npm
+          cache-dependency-path: docs/site/package-lock.json
+
+      - name: Install documentation dependencies
+        run: npm ci --prefix docs/site
 
       - name: Restore frozen timing input
         uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333

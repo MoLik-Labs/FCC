@@ -69,21 +69,23 @@ def test_connect_disconnect_and_doctor_status(
 
 @pytest.mark.parametrize("action", ["", "/connect", "/disconnect", "/refresh"])
 @pytest.mark.parametrize(
-    "headers", [{"Host": "evil.test"}, {"Origin": "https://evil.test"}]
+    "headers",
+    [
+        {"Host": "fcc.example.trycloudflare.com"},
+        {"Origin": "https://fcc.example.trycloudflare.com"},
+    ],
 )
-def test_local_admin_security(
+def test_admin_accepts_tunnel_headers(
     integration: tuple[TestClient, Path, ApplicationRuntime],
     action: str,
     headers: dict[str, str],
 ) -> None:
-    client, path, _ = integration
-    assert (
-        client.request(
-            "GET" if not action else "POST", ROOT + action, headers=headers
-        ).status_code
-        == 403
+    client, _, _ = integration
+    response = client.request(
+        "GET" if not action else "POST", ROOT + action, headers=headers
     )
-    assert not path.exists()
+    assert response.status_code == 200
+    assert response.headers["cache-control"] == "no-store"
 
 
 def test_bad_configuration_errors_do_not_leak_credentials(

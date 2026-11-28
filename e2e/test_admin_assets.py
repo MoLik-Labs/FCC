@@ -1,6 +1,6 @@
 """Rendered contracts for Admin asset generation consistency."""
 
-from typing import TypedDict
+from typing import Literal, TypedDict
 from urllib.parse import urlsplit
 
 import pytest
@@ -212,9 +212,7 @@ def test_admin_loads_current_release_assets_before_rendering_dynamic_content(
     )
     logo_link = page.get_by_role("link", name="Open Free Claude Code on GitHub")
     expect(logo_link).to_be_visible()
-    expect(logo_link).to_have_attribute(
-        "href", "https://github.com/Alishahryar1/free-claude-code"
-    )
+    expect(logo_link).to_have_attribute("href", "https://github.com/MoLik-Labs/FCC")
     expect(logo_link).to_have_attribute("target", "_blank")
 
     versioned_root = f"/admin/assets/{package_version()}"
@@ -232,3 +230,30 @@ def test_admin_loads_current_release_assets_before_rendering_dynamic_content(
     assert "/admin/assets/admin.js" not in requested_paths
     assert not any("/chat_sessions." in path for path in requested_paths)
     assert page_errors == []
+
+
+@pytest.mark.parametrize(
+    ("reduced_motion", "expected_behavior"),
+    [("reduce", "instant"), ("no-preference", "smooth")],
+)
+def test_navigation_respects_reduced_motion(
+    page: Page,
+    admin_base_url: str,
+    reduced_motion: Literal["reduce", "no-preference"],
+    expected_behavior: str,
+) -> None:
+    page.emulate_media(reduced_motion=reduced_motion)
+    page.goto(f"{admin_base_url}/admin")
+    expect(page.locator('[data-provider="nvidia_nim"]')).to_be_visible()
+    page.evaluate("""() => {
+      window.recordedScroll = null;
+      window.scrollTo = options => { window.recordedScroll = options; };
+    }""")
+
+    page.get_by_role("button", name="Model Config", exact=True).click()
+
+    expect(page.locator("#view-model_config")).to_be_visible()
+    assert page.evaluate("window.recordedScroll") == {
+        "top": 0,
+        "behavior": expected_behavior,
+    }

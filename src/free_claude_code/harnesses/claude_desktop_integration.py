@@ -254,10 +254,8 @@ def _values(url: str, token: str) -> JsonObject:
         or parsed.path not in ("", "/")
     ):
         raise ValueError("Invalid Desktop gateway")
-    if parsed.scheme != "https" and not (
-        parsed.scheme == "http" and parsed.hostname in {"localhost", "127.0.0.1", "::1"}
-    ):
-        raise ValueError("Desktop requires a loopback HTTP or HTTPS gateway")
+    if parsed.scheme not in {"http", "https"}:
+        raise ValueError("Desktop requires an HTTP or HTTPS gateway")
     return {
         "inferenceProvider": "gateway",
         "inferenceGatewayBaseUrl": url.rstrip("/"),

@@ -109,16 +109,16 @@ def test_desktop_routes_connect_disconnect_and_hide_credentials(
 
 
 @pytest.mark.parametrize("action", ["", "/connect", "/disconnect", "/refresh"])
-def test_desktop_admin_routes_reject_other_origins(
+def test_desktop_admin_routes_accept_tunnel_origin(
     client: TestClient, action: str
 ) -> None:
     response = client.request(
         "POST" if action else "GET",
         ROOT + action,
-        headers={"Origin": "https://evil.test"},
+        headers={"Origin": "https://fcc.example.trycloudflare.com"},
     )
-    assert response.status_code == 403
-    assert not desktop.config_root().exists()
+    assert response.status_code == 200
+    assert response.headers["cache-control"] == "no-store"
 
 
 def test_managed_desktop_error_is_safe(

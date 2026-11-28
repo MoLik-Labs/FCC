@@ -57,7 +57,7 @@ def test_connect_retry_disconnect_and_modal_dismissal(
     )
     page.reload()
     expect(opener).to_have_text("Disconnect")
-    expect(opener).to_have_css("color", "rgb(239, 68, 68)")
+    expect(opener).to_have_css("color", "rgb(244, 177, 168)")
     jb.registry_path().unlink()
     assert page.request.post(
         f"{admin_base_url}/admin/api/integrations/jetbrains-acp/refresh"

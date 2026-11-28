@@ -1,0 +1,553 @@
+{
+  "schema": "chat-identity-current-v1",
+  "scenarios": [
+    {
+      "name": "two_id_only_calls",
+      "steps": [
+        {
+          "index": null,
+          "id": "call_a",
+          "slot": 0,
+          "tool_id": "call_a",
+          "error": null
+        },
+        {
+          "index": null,
+          "id": "call_b",
+          "slot": 1,
+          "tool_id": "call_b",
+          "error": null
+        }
+      ]
+    },
+    {
+      "name": "learn_index_then_id",
+      "steps": [
+        {
+          "index": 0,
+          "id": null,
+          "slot": 0,
+          "tool_id": null,
+          "error": null
+        },
+        {
+          "index": 0,
+          "id": "call_a",
+          "slot": 0,
+          "tool_id": "call_a",
+          "error": null
+        }
+      ]
+    },
+    {
+      "name": "learn_id_then_index",
+      "steps": [
+        {
+          "index": null,
+          "id": "call_a",
+          "slot": 0,
+          "tool_id": "call_a",
+          "error": null
+        },
+        {
+          "index": 4,
+          "id": "call_a",
+          "slot": 0,
+          "tool_id": "call_a",
+          "error": null
+        }
+      ]
+    },
+    {
+      "name": "index_then_fragment_without_id",
+      "steps": [
+        {
+          "index": 2,
+          "id": "call_x",
+          "slot": 0,
+          "tool_id": "call_x",
+          "error": null
+        },
+        {
+          "index": 2,
+          "id": null,
+          "slot": 0,
+          "tool_id": "call_x",
+          "error": null
+        }
+      ]
+    },
+    {
+      "name": "disjoint_partials_variant_a",
+      "steps": [
+        {
+          "index": null,
+          "id": "call_a",
+          "slot": 0,
+          "tool_id": "call_a",
+          "error": null
+        },
+        {
+          "index": 1,
+          "id": null,
+          "slot": 1,
+          "tool_id": null,
+          "error": null
+        },
+        {
+          "index": 1,
+          "id": "call_b",
+          "slot": 1,
+          "tool_id": "call_b",
+          "error": null
+        }
+      ]
+    },
+    {
+      "name": "disjoint_partials_variant_b",
+      "steps": [
+        {
+          "index": 0,
+          "id": null,
+          "slot": 0,
+          "tool_id": null,
+          "error": null
+        },
+        {
+          "index": null,
+          "id": "call_b",
+          "slot": 1,
+          "tool_id": "call_b",
+          "error": null
+        },
+        {
+          "index": 0,
+          "id": "call_a",
+          "slot": 0,
+          "tool_id": "call_a",
+          "error": null
+        }
+      ]
+    },
+    {
+      "name": "new_index_does_not_attach_to_unindexed",
+      "steps": [
+        {
+          "index": null,
+          "id": "call_a",
+          "slot": 0,
+          "tool_id": "call_a",
+          "error": null
+        },
+        {
+          "index": null,
+          "id": "call_b",
+          "slot": 1,
+          "tool_id": "call_b",
+          "error": null
+        },
+        {
+          "index": 3,
+          "id": null,
+          "slot": 2,
+          "tool_id": null,
+          "error": null
+        }
+      ]
+    },
+    {
+      "name": "sparse_numeric_order",
+      "steps": [
+        {
+          "index": 8,
+          "id": "call_a",
+          "slot": 0,
+          "tool_id": "call_a",
+          "error": null
+        },
+        {
+          "index": 2,
+          "id": "call_b",
+          "slot": 1,
+          "tool_id": "call_b",
+          "error": null
+        }
+      ]
+    },
+    {
+      "name": "repeated_index_allocates_new_slot",
+      "steps": [
+        {
+          "index": 0,
+          "id": "call_a",
+          "slot": 0,
+          "tool_id": "call_a",
+          "error": null
+        },
+        {
+          "index": 0,
+          "id": "call_b",
+          "slot": 1,
+          "tool_id": "call_b",
+          "error": null
+        }
+      ]
+    },
+    {
+      "name": "unidentified_without_existing",
+      "steps": [
+        {
+          "index": null,
+          "id": null,
+          "slot": null,
+          "tool_id": null,
+          "error": "Tool fragment has neither a usable index nor an ID."
+        }
+      ]
+    },
+    {
+      "name": "unidentified_negative_index_blank_id",
+      "steps": [
+        {
+          "index": 0,
+          "id": "call_a",
+          "slot": 0,
+          "tool_id": "call_a",
+          "error": null
+        },
+        {
+          "index": -1,
+          "id": "",
+          "slot": null,
+          "tool_id": null,
+          "error": "Tool fragment has neither a usable index nor an ID."
+        }
+      ]
+    },
+    {
+      "name": "unidentified_string_index_whitespace_id",
+      "steps": [
+        {
+          "index": 0,
+          "id": "call_a",
+          "slot": 0,
+          "tool_id": "call_a",
+          "error": null
+        },
+        {
+          "index": "missing",
+          "id": "  ",
+          "slot": null,
+          "tool_id": null,
+          "error": "Tool fragment has neither a usable index nor an ID."
+        }
+      ]
+    },
+    {
+      "name": "unidentified_bool_index",
+      "steps": [
+        {
+          "index": 0,
+          "id": "call_a",
+          "slot": 0,
+          "tool_id": "call_a",
+          "error": null
+        },
+        {
+          "index": false,
+          "id": null,
+          "slot": null,
+          "tool_id": null,
+          "error": "Tool fragment has neither a usable index nor an ID."
+        }
+      ]
+    },
+    {
+      "name": "ambiguous_shared_index",
+      "steps": [
+        {
+          "index": 0,
+          "id": "call_a",
+          "slot": 0,
+          "tool_id": "call_a",
+          "error": null
+        },
+        {
+          "index": 0,
+          "id": "call_b",
+          "slot": 1,
+          "tool_id": "call_b",
+          "error": null
+        },
+        {
+          "index": 0,
+          "id": null,
+          "slot": null,
+          "tool_id": null,
+          "error": "Tool fragment has ambiguous identity."
+        }
+      ]
+    },
+    {
+      "name": "ambiguous_shared_id",
+      "steps": [
+        {
+          "index": 0,
+          "id": "same",
+          "slot": 0,
+          "tool_id": "same",
+          "error": null
+        },
+        {
+          "index": 1,
+          "id": "same",
+          "slot": 1,
+          "tool_id": "same",
+          "error": null
+        },
+        {
+          "index": null,
+          "id": "same",
+          "slot": null,
+          "tool_id": null,
+          "error": "Tool fragment has ambiguous identity."
+        }
+      ]
+    },
+    {
+      "name": "both_missing_after_index_only_calls",
+      "steps": [
+        {
+          "index": 0,
+          "id": null,
+          "slot": 0,
+          "tool_id": null,
+          "error": null
+        },
+        {
+          "index": 1,
+          "id": null,
+          "slot": 1,
+          "tool_id": null,
+          "error": null
+        },
+        {
+          "index": null,
+          "id": null,
+          "slot": null,
+          "tool_id": null,
+          "error": "Tool fragment has neither a usable index nor an ID."
+        }
+      ]
+    },
+    {
+      "name": "ambiguous_unindexed_neighbour",
+      "steps": [
+        {
+          "index": 0,
+          "id": "call_a",
+          "slot": 0,
+          "tool_id": "call_a",
+          "error": null
+        },
+        {
+          "index": null,
+          "id": "call_b",
+          "slot": 1,
+          "tool_id": "call_b",
+          "error": null
+        },
+        {
+          "index": 0,
+          "id": null,
+          "slot": null,
+          "tool_id": null,
+          "error": "Tool fragment has ambiguous identity."
+        }
+      ]
+    },
+    {
+      "name": "ambiguous_id_with_indexed_neighbour",
+      "steps": [
+        {
+          "index": 0,
+          "id": "call_a",
+          "slot": 0,
+          "tool_id": "call_a",
+          "error": null
+        },
+        {
+          "index": 1,
+          "id": null,
+          "slot": 1,
+          "tool_id": null,
+          "error": null
+        },
+        {
+          "index": null,
+          "id": "call_a",
+          "slot": null,
+          "tool_id": null,
+          "error": "Tool fragment has ambiguous identity."
+        }
+      ]
+    },
+    {
+      "name": "ambiguous_two_linked_calls",
+      "steps": [
+        {
+          "index": 0,
+          "id": null,
+          "slot": 0,
+          "tool_id": null,
+          "error": null
+        },
+        {
+          "index": null,
+          "id": "call_a",
+          "slot": 1,
+          "tool_id": "call_a",
+          "error": null
+        },
+        {
+          "index": 0,
+          "id": "call_a",
+          "slot": null,
+          "tool_id": null,
+          "error": "Tool fragment has ambiguous identity."
+        }
+      ]
+    },
+    {
+      "name": "order_key_missing_index_uses_zero",
+      "steps": [
+        {
+          "index": null,
+          "id": "call_a",
+          "slot": 0,
+          "tool_id": "call_a",
+          "error": null
+        },
+        {
+          "index": 0,
+          "id": "call_b",
+          "slot": 1,
+          "tool_id": "call_b",
+          "error": null
+        }
+      ]
+    },
+    {
+      "name": "whitespace_id_treated_as_missing",
+      "steps": [
+        {
+          "index": 1,
+          "id": "  ",
+          "slot": 0,
+          "tool_id": null,
+          "error": null
+        }
+      ]
+    },
+    {
+      "name": "bool_index_falls_back_to_id",
+      "steps": [
+        {
+          "index": false,
+          "id": "call_a",
+          "slot": 0,
+          "tool_id": "call_a",
+          "error": null
+        }
+      ]
+    },
+    {
+      "name": "float_index_falls_back_to_id",
+      "steps": [
+        {
+          "index": 1.5,
+          "id": "call_a",
+          "slot": 0,
+          "tool_id": "call_a",
+          "error": null
+        }
+      ]
+    },
+    {
+      "name": "python_control_whitespace_1c",
+      "steps": [
+        {
+          "index": null,
+          "id": "\u001c",
+          "slot": null,
+          "tool_id": null,
+          "error": "Tool fragment has neither a usable index nor an ID."
+        },
+        {
+          "index": 1,
+          "id": "\u001ccall",
+          "slot": 0,
+          "tool_id": "\u001ccall",
+          "error": null
+        }
+      ]
+    },
+    {
+      "name": "python_control_whitespace_1d",
+      "steps": [
+        {
+          "index": null,
+          "id": "\u001d",
+          "slot": null,
+          "tool_id": null,
+          "error": "Tool fragment has neither a usable index nor an ID."
+        },
+        {
+          "index": 1,
+          "id": "\u001dcall",
+          "slot": 0,
+          "tool_id": "\u001dcall",
+          "error": null
+        }
+      ]
+    },
+    {
+      "name": "python_control_whitespace_1e",
+      "steps": [
+        {
+          "index": null,
+          "id": "\u001e",
+          "slot": null,
+          "tool_id": null,
+          "error": "Tool fragment has neither a usable index nor an ID."
+        },
+        {
+          "index": 1,
+          "id": "\u001ecall",
+          "slot": 0,
+          "tool_id": "\u001ecall",
+          "error": null
+        }
+      ]
+    },
+    {
+      "name": "python_control_whitespace_1f",
+      "steps": [
+        {
+          "index": null,
+          "id": "\u001f",
+          "slot": null,
+          "tool_id": null,
+          "error": "Tool fragment has neither a usable index nor an ID."
+        },
+        {
+          "index": 1,
+          "id": "\u001fcall",
+          "slot": 0,
+          "tool_id": "\u001fcall",
+          "error": null
+        }
+      ]
+    }
+  ]
+}

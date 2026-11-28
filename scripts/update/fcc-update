@@ -1,4 +1,11 @@
 #!/bin/sh
-set -eu
-installer=$(curl -fsSL "https://raw.githubusercontent.com/Alishahryar1/free-claude-code/main/scripts/install.sh")
-exec sh -c "$installer" sh --update "$@"
+# The inherited updater installed a different upstream project from the network.
+# Do not guess an installation directory, remote or branch on the user's behalf.
+printf '%s\n' \
+  'Automatic update is not available for the MoLik-Labs/FCC source checkout.' \
+  'The upstream installer would update a different project; nothing was changed.' \
+  'Stop FCC, inspect local changes, then run in your FCC checkout:' \
+  '  git pull --ff-only' \
+  '  uv sync --locked' \
+  'If using local voice, include --extra voice_local when syncing.' >&2
+exit 2

@@ -238,7 +238,7 @@ def _catalog_proxy_env_keys() -> tuple[str, ...]:
 @pytest.mark.parametrize(
     "path", ["/admin", "/admin/model_config", "/admin/messaging", "/admin/integrations"]
 )
-def test_admin_page_is_loopback_only(
+def test_admin_page_accepts_remote_and_tunnel_clients(
     monkeypatch: pytest.MonkeyPatch, tmp_path: Path, path: str
 ) -> None:
     _set_home(monkeypatch, tmp_path)
@@ -246,7 +246,15 @@ def test_admin_page_is_loopback_only(
 
     assert _local_client(app).get(path).status_code == 200
     remote_client = TestClient(app, client=("203.0.113.10", 50000))
-    assert remote_client.get(path).status_code == 403
+    assert remote_client.get(path).status_code == 200
+    tunneled = remote_client.get(
+        path,
+        headers={
+            "Host": "fcc.example.trycloudflare.com",
+            "Origin": "https://fcc.example.trycloudflare.com",
+        },
+    )
+    assert tunneled.status_code == 200
 
 
 def test_admin_page_uses_installed_version(
@@ -262,7 +270,7 @@ def test_admin_page_uses_installed_version(
 
     assert response.status_code == 200
     assert "<p>Server Control · v9.8.7</p>" in response.text
-    assert 'href="https://github.com/Alishahryar1/free-claude-code"' in response.text
+    assert 'href="https://github.com/MoLik-Labs/FCC"' in response.text
     assert 'target="_blank"' in response.text
     assert 'rel="noopener noreferrer"' in response.text
     assert 'aria-label="Open Free Claude Code on GitHub"' in response.text
@@ -365,7 +373,7 @@ def test_admin_responses_are_never_cached(
 @pytest.mark.parametrize(
     ("path", "client_host", "expected_status"),
     (
-        ("/admin", "203.0.113.10", 403),
+        ("/admin", "203.0.113.10", 200),
         ("/admin/assets/admin.js", "127.0.0.1", 404),
         (
             f"/admin/assets/{package_version()}.stale/admin.js",
@@ -380,11 +388,11 @@ def test_admin_responses_are_never_cached(
         (
             f"/admin/assets/{package_version()}/admin.js",
             "203.0.113.10",
-            403,
+            200,
         ),
     ),
 )
-def test_admin_http_errors_are_never_cached(
+def test_admin_responses_are_never_cached_for_any_client(
     monkeypatch: pytest.MonkeyPatch,
     tmp_path: Path,
     path: str,
@@ -526,7 +534,7 @@ class _FakeConnectedAccount:
         return None
 
 
-def test_admin_connected_account_routes_are_safe_loopback_only_and_uncached(
+def test_admin_connected_account_routes_are_uncached_for_any_client(
     monkeypatch: pytest.MonkeyPatch, tmp_path: Path
 ) -> None:
     _set_home(monkeypatch, tmp_path)
@@ -560,7 +568,9 @@ def test_admin_connected_account_routes_are_safe_loopback_only_and_uncached(
     assert cancel_response.status_code == 200
     assert account.cancelled is True
     remote = TestClient(app, client=("203.0.113.10", 50000))
-    assert remote.get("/admin/api/providers/openai/auth").status_code == 403
+    remote_status = remote.get("/admin/api/providers/openai/auth")
+    assert remote_status.status_code == 200
+    assert remote_status.headers["cache-control"] == "no-store"
 
 
 @pytest.mark.parametrize(
@@ -2149,12 +2159,14 @@ def test_admin_restart_status_can_be_read_from_another_local_address(
     assert stopping["instance_id"] == initial["instance_id"]
 
 
-def test_admin_restart_status_does_not_allow_a_remote_web_origin() -> None:
+def test_admin_status_reflects_a_remote_web_origin() -> None:
+    origin = "https://fcc.example.trycloudflare.com"
     response = _local_client(create_test_app()).get(
-        "/admin/api/status", headers={"Origin": "https://example.com"}
+        "/admin/api/status", headers={"Origin": origin}
     )
-    assert response.status_code == 403
-    assert "Access-Control-Allow-Origin" not in response.headers
+    assert response.status_code == 200
+    assert response.headers["Access-Control-Allow-Origin"] == origin
+    assert response.headers["Vary"] == "Origin"
 
 
 def test_admin_apply_restart_required_reports_manual_fallback(

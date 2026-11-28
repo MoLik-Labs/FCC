@@ -45,7 +45,7 @@ def test_connection_check_uses_disabled_loading_button(
         expect(button).to_be_disabled()
         expect(button).to_have_text("Loading…")
         expect(button).to_have_attribute("aria-busy", "true")
-        expect(button).to_have_css("background-color", "rgb(23, 27, 38)")
+        expect(button).to_have_css("background-color", "rgb(32, 62, 50)")
         assert (
             button.evaluate(
                 "element => getComputedStyle(element, '::before').animationName"
@@ -133,7 +133,7 @@ def test_codex_connect_disconnect_and_modal_paths(
     expect(dialog).not_to_be_visible()
     expect(opener).to_have_text("Disconnect")
     expect(page.locator("#codexIntegrationStatus")).to_have_count(0)
-    expect(opener).to_have_css("color", "rgb(239, 68, 68)")
+    expect(opener).to_have_css("color", "rgb(244, 177, 168)")
     if width >= 1200:
         buttons = [
             visible_bounds(card.get_by_role("button").first) for card in cards.all()
@@ -151,14 +151,14 @@ def test_codex_connect_disconnect_and_modal_paths(
     opener.click()
     expect(page.locator("#confirmCodexIntegration")).to_have_text("Disconnect")
     expect(page.locator("#confirmCodexIntegration")).to_have_css(
-        "color", "rgb(239, 68, 68)"
+        "color", "rgb(244, 177, 168)"
     )
     expect(dialog.locator("#codexIntegrationFiles li")).to_have_text(
         [str(path.resolve())]
     )
     page.locator("#confirmCodexIntegration").click()
     expect(opener).to_have_text("Connect")
-    expect(opener).to_have_css("color", "rgb(6, 16, 11)")
+    expect(opener).to_have_css("color", "rgb(16, 37, 27)")
     expect(page.locator("#codexIntegrationStatus")).to_have_count(0)
     assert tomllib.loads(path.read_text()) == {"model": "my-choice"}
     assert not (tmp_path / "vscode" / "settings.json").exists()
@@ -215,7 +215,7 @@ def test_connect_disconnect_and_modal_dismissal(
     expect(dialog).not_to_be_visible()
     expect(card_button).to_have_text("Disconnect")
     expect(page.locator("#claudeIntegrationStatus")).to_have_count(0)
-    expect(card_button).to_have_css("color", "rgb(239, 68, 68)")
+    expect(card_button).to_have_css("color", "rgb(244, 177, 168)")
     expect(page.locator("#claudeIntegrationMessage")).to_contain_text("Reload VS Code")
     assert json.loads(path.read_text())["claudeCode.disableLoginPrompt"] is True
     state_path = tmp_path / ".claude.json"
@@ -225,14 +225,14 @@ def test_connect_disconnect_and_modal_dismissal(
     expect(card_button).to_have_text("Disconnect")
     card_button.click()
     expect(action).to_have_text("Disconnect")
-    expect(action).to_have_css("color", "rgb(239, 68, 68)")
+    expect(action).to_have_css("color", "rgb(244, 177, 168)")
     expect(page.locator("#claudeIntegrationDescription")).to_contain_text("Remove")
     page.keyboard.press("Escape")
     assert json.loads(path.read_text())["claudeCode.disableLoginPrompt"] is True
     card_button.click()
     action.click()
     expect(card_button).to_have_text("Connect")
-    expect(card_button).to_have_css("color", "rgb(6, 16, 11)")
+    expect(card_button).to_have_css("color", "rgb(16, 37, 27)")
     expect(page.locator("#claudeIntegrationStatus")).to_have_count(0)
     assert json.loads(path.read_text()) == {}
     assert json.loads(state_path.read_text())["hasCompletedOnboarding"] is True
@@ -416,7 +416,7 @@ def test_background_update_spinner_failure_retry_and_completion(
     progress.update(state="ready", changed=True)
     expect(button).to_have_text("Disconnect")
     expect(button).to_be_enabled()
-    expect(button).to_have_css("color", "rgb(239, 68, 68)")
+    expect(button).to_have_css("color", "rgb(244, 177, 168)")
     expect(message).to_have_text(
         "Settings updated. Reload VS Code."
         if prefix == "Claude"
@@ -532,7 +532,7 @@ def test_onboarding_status_uses_loading_and_completed_button(
     expect(button).to_have_text("Loading…")
     expect(button).to_be_disabled()
     expect(button).to_have_attribute("aria-busy", "true")
-    expect(button).to_have_css("background-color", "rgb(23, 27, 38)")
+    expect(button).to_have_css("background-color", "rgb(32, 62, 50)")
     assert (
         button.evaluate(
             "element => getComputedStyle(element, '::before').animationName"
@@ -550,7 +550,7 @@ def test_onboarding_status_uses_loading_and_completed_button(
     expect(button).to_have_attribute("aria-busy", "false")
     if completed:
         expect(button).to_be_disabled()
-        expect(button).to_have_css("background-color", "rgb(23, 27, 38)")
+        expect(button).to_have_css("background-color", "rgb(32, 62, 50)")
     else:
         expect(button).to_be_enabled()
 

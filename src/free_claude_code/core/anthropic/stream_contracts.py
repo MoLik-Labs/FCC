@@ -7,8 +7,9 @@ import json
 import re
 from collections.abc import Iterable
 from dataclasses import dataclass
+from typing import cast
 
-from free_claude_code.core.json_types import JsonObject, load_json_value
+from free_claude_code.core.json_types import JsonObject, JsonValue, load_json_value
 
 from .server_tool_types import (
     SERVER_TOOL_USE,
@@ -75,11 +76,75 @@ def parse_sse_lines(
     return events
 
 
+# Compiled once: this runs for every SSE frame, and a pattern string would pay
+# a regex-cache lookup on each call while also splitting on exotic Unicode line
+# separators that may legally appear inside a JSON payload.
+_SSE_LINE_BREAKS: re.Pattern[str] = re.compile(r"\r\n|\r|\n")
+
+
 def parse_sse_text(
     text: str, *, event_names: frozenset[str] | None = None
 ) -> list[SSEEvent]:
     # SSE uses CR/LF framing; Unicode line separators can occur inside JSON text.
-    return parse_sse_lines(re.split(r"\r\n|\r|\n", text), event_names=event_names)
+    return parse_sse_lines(_SSE_LINE_BREAKS.split(text), event_names=event_names)
+
+
+def sse_event_name(frame: str) -> str:
+    """Return an SSE frame's named event without decoding its JSON payload."""
+    # JSON strings may contain Unicode separators that are not SSE line endings.
+    for line in _SSE_LINE_BREAKS.split(frame):
+        if line.startswith("event:"):
+            return line[6:].strip()
+    return ""
+
+
+def failure_reason_from_frame(frame: str, failure_events: frozenset[str]) -> str | None:
+    """Return a failure reason for one SSE frame without parsing healthy frames.
+
+    Outcome observation only needs the small set of terminal error events. The
+    event name lives on a plain ``event:`` line, so the JSON payload is decoded
+    only when a frame is a named failure event or an unnamed data frame that
+    plausibly carries an error. Successful streams therefore perform no JSON
+    decoding at the outcome middleware.
+    """
+    # Cheap C-level rejection before any line splitting: a failure frame has
+    # to mention an error payload or the response.failed event.
+    if "error" not in frame and "response.failed" not in frame:
+        return None
+
+    event_name: str = ""
+    data_parts: list[str] = []
+    # The pattern has no capturing groups, so split yields only strings.
+    for line in cast(list[str], _SSE_LINE_BREAKS.split(frame)):
+        if line.startswith("event:"):
+            event_name = line[6:].strip()
+        elif line.startswith("data:"):
+            data_parts.append(line[5:].lstrip(" "))
+
+    if event_name and event_name not in failure_events:
+        return None
+    if not event_name and not data_parts:
+        return None
+
+    try:
+        parsed: JsonValue = load_json_value("\n".join(data_parts)) if data_parts else {}
+    except json.JSONDecodeError:
+        # The full SSE parser still reports a named error with malformed data.
+        parsed = {"raw": "\n".join(data_parts)}
+    if isinstance(parsed, dict):
+        data: JsonObject = parsed
+    else:
+        data = {"value": parsed}
+
+    kind = event_name or data.get("type") or ("error" if "error" in data else None)
+    if not isinstance(kind, str) or kind not in failure_events:
+        return None
+    response = data.get("response")
+    payload = response if isinstance(response, dict) else data
+    error = payload.get("error")
+    error = error if isinstance(error, dict) else payload
+    reason = error.get("code") or error.get("type")
+    return reason if isinstance(reason, str) else kind
 
 
 def _append_event(
