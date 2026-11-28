@@ -1,6 +1,7 @@
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 import { unified } from '@astrojs/markdown-remark';
+import { tableScroll } from '@cloudflare/nimbus-docs/markdown';
 
 // GitHub project sites live under /<repository>/; local previews default to /.
 const repository = process.env.GITHUB_REPOSITORY?.split('/')[1];
@@ -13,11 +14,19 @@ export default defineConfig({
   base,
   vite: { server: { allowedHosts: ['.e2b.app'] }, preview: { allowedHosts: ['.e2b.app'] } },
   markdown: {
-    processor: unified({ rehypePlugins: [function keyboardAccessibleTables() {
+    // Nimbus and Starlight are separate frameworks. Reuse Nimbus's accessible
+    // table wrapper in Starlight's unified pipeline instead of running two
+    // conflicting site integrations (and two search/sitemap builders).
+    processor: unified({ rehypePlugins: [function nimbusAccessibleTables() {
+      const wrap = tableScroll().element.visit;
       return (tree) => {
         const visit = (node) => {
-          if (node.type === 'element' && node.tagName === 'table') node.properties.tabIndex = 0;
-          for (const child of node.children || []) visit(child);
+          if (!node.children) return;
+          node.children = node.children.map((child) => {
+            if (child.type === 'element' && child.tagName === 'table') return wrap(child) || child;
+            visit(child);
+            return child;
+          });
         };
         visit(tree);
       };

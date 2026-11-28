@@ -64,7 +64,8 @@ def test_search_and_language_navigation(page: Page, docs_url: str) -> None:
     page.get_by_role("button", name="Search").first.click()
     search = page.get_by_placeholder("Search", exact=True)
     assert page.locator("pre:not([tabindex])").count() == 0
-    assert page.locator("table:not([tabindex])").count() == 0
+    regions = page.locator('.nb-table-scroll[role="region"][tabindex="0"][aria-label]')
+    assert regions.count() == page.locator("main table").count() > 0
     search.fill("PROVIDER_MAX_CONCURRENCY")
     expect(
         page.get_by_role("link", name="FCC field guide", exact=False).first
@@ -96,3 +97,30 @@ def test_navigation_and_legacy_fragments_without_javascript(
         ).to_be_visible()
     finally:
         context.close()
+
+
+def test_static_agent_guides_at_project_base(page: Page, docs_url: str) -> None:
+    index = page.request.get(docs_url + "llms.txt")
+    assert index.ok
+    text = index.text()
+    assert "https://molik-labs.github.io/FCC/guide.md" in text
+    assert "https://molik-labs.github.io/FCC/vi/guide.md" in text
+    for path in ("guide.md", "vi/guide.md"):
+        response = page.request.get(docs_url + path)
+        assert response.ok
+        assert "PROVIDER_MAX_CONCURRENCY" in response.text()
+        assert "fcc-update" in response.text()
+    page.goto(docs_url + "vi/")
+    page.get_by_role("link", name="Markdown cho agent").click()
+    expect(page).to_have_url(docs_url + "vi/guide.md")
+
+
+def test_nimbus_table_scrolls_with_keyboard(page: Page, docs_url: str) -> None:
+    page.set_viewport_size({"width": 320, "height": 900})
+    page.goto(docs_url)
+    region = page.locator('.nb-table-scroll[role="region"]').first
+    assert region.evaluate("el => el.scrollWidth > el.clientWidth")
+    assert region.get_attribute("aria-label")
+    region.focus()
+    page.keyboard.press("ArrowRight")
+    page.wait_for_function("document.querySelector('.nb-table-scroll').scrollLeft > 0")

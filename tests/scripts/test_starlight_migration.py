@@ -18,10 +18,12 @@ def test_starlight_project_pins_dependencies_and_pages_base() -> None:
         Package, json.loads((SITE / "package.json").read_text(encoding="utf-8"))
     )
     assert "@astrojs/starlight" in package["dependencies"]
+    assert "@cloudflare/nimbus-docs" in package["dependencies"]
     assert "astro" in package["dependencies"]
     assert (SITE / "package-lock.json").is_file()
     config = (SITE / "astro.config.mjs").read_text(encoding="utf-8")
     assert "@astrojs/starlight" in config
+    assert "@cloudflare/nimbus-docs/markdown" in config
     assert "base" in config
     assert "vi" in config
 

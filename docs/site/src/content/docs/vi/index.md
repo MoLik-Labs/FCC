@@ -3,11 +3,18 @@ title: Hướng dẫn FCC
 description: Cài đặt, cấu hình và vận hành FCC an toàn.
 ---
 
-[English guide](../) · [Bản lưu trước đây](../vi.html)
+[English guide](../) · [Markdown cho agent](guide.md) · [Bản lưu trước đây](../vi.html)
 
 <a id="overview"></a>
 
 FCC kết nối công cụ lập trình và ứng dụng API với nhà cung cấp mô hình đám mây hoặc cục bộ. Python là runtime được hỗ trợ; bản Go và Oh My Molik còn thử nghiệm.
+
+<nav class="start-grid" aria-label="Bắt đầu tại đây">
+  <a href="#quickstart"><strong>Cài đặt FCC</strong><span>Khởi chạy bản fork.</span></a>
+  <a href="#clients"><strong>Kết nối công cụ</strong><span>Sử dụng agent và ứng dụng.</span></a>
+  <a href="#security"><strong>Vận hành an toàn</strong><span>Hiểu cách truy cập từ xa.</span></a>
+  <a href="#troubleshooting"><strong>Khắc phục sự cố</strong><span>Giải quyết lỗi thường gặp.</span></a>
+</nav>
 
 <a id="quickstart"></a>
 

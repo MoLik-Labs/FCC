@@ -20,10 +20,27 @@ class DocumentationSiteTests(unittest.TestCase):
             self.assertFalse((output / "assets" / "browser-code-session.png").exists())
             self.assertTrue((output / "assets" / "molik-mark.svg").is_file())
             self.assertTrue((output / "pagefind" / "pagefind.js").is_file())
+            index = (output / "llms.txt").read_text(encoding="utf-8")
+            self.assertIn("guide.md", index)
+            self.assertIn("vi/guide.md", index)
+            docs = Path(__file__).resolve().parents[2] / "docs/site/src/content/docs"
+            for output_name, source_name in (
+                ("guide.md", "index.md"),
+                ("vi/guide.md", "vi/index.md"),
+            ):
+                markdown = (output / output_name).read_text(encoding="utf-8")
+                self.assertEqual(
+                    markdown, (docs / source_name).read_text(encoding="utf-8")
+                )
+                self.assertIn("PROVIDER_MAX_CONCURRENCY", markdown)
+                self.assertIn("fcc-update", markdown)
             for page in ("index.html", "vi/index.html"):
                 html = (output / page).read_text(encoding="utf-8")
                 self.assertIn('id="quickstart"', html)
                 self.assertIn('id="security"', html)
+                self.assertIn('class="start-grid"', html)
+                self.assertIn('class="nb-table-scroll"', html)
+                self.assertIn('role="region"', html)
                 self.assertIn('tabindex="0"', html)
                 self.assertIn("PROVIDER_MAX_CONCURRENCY", html)
             validate_site(output)

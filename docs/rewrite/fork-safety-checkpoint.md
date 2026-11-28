@@ -76,3 +76,28 @@ publishing branch. The full backend suite above was not rerun for this docs-only
 migration. The old reading-theme controls remain on archived pages; the new
 Starlight pages have light/dark appearance, while FCC Admin independently
 retains its additional themes.
+
+## Nimbus and static agent-facing docs
+
+Nimbus 0.20.2's MIT-licensed `tableScroll` helper is used with the Starlight
+Markdown pipeline for named, keyboard-scrollable tables. Testing both complete
+Astro integrations together showed duplicated search/sitemap generation and
+Nimbus did not discover the Starlight routes, so this site deliberately does
+not claim to run a full Nimbus site. Static, Nimbus-inspired `llms.txt` and
+English/Vietnamese Markdown guides are built from the same source files. No
+hosted AI search or remote MCP server is provided by GitHub Pages.
+
+With the pinned dependencies, a clean `npm ci --engine-strict` succeeded and
+`npm audit` reported no known vulnerabilities. The documentation and Chromium
+checks reported **27 passed and 18 subtests passed**; the tested cases include
+`/FCC/` search and agent links, no-JavaScript navigation and keyboard table
+scrolling. Selected axe WCAG 2.0/2.1 A/AA checks on both languages at 320 and
+1440 pixels in light and dark mode reported no violations. These automated
+checks are not full accessibility or cross-browser certification.
+
+The GitHub Pages API reports a workflow-based Pages configuration at
+`https://molik-labs.github.io/FCC/`, with the `github-pages` environment
+restricted to `main`. The documentation workflow is not yet on the default
+branch. The current working branch also contains broader application changes;
+deploying via `main` requires integration and review, not simply pushing this
+branch. No successful hosted deployment was verified in this checkpoint.

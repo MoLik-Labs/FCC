@@ -14,8 +14,9 @@
     "predev": "node sync-legacy.mjs"
   },
   "dependencies": {
-    "@astrojs/starlight": "0.43.2",
     "@astrojs/markdown-remark": "7.3.0",
+    "@astrojs/starlight": "0.43.2",
+    "@cloudflare/nimbus-docs": "0.20.2",
     "astro": "7.4.13"
   }
 }

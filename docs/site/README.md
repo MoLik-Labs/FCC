@@ -8,6 +8,20 @@ appearance. Forest accents are used on this site. FCC Admin has separate
 browser-local themes including Forest and Catppuccin Mocha; those are not the
 Starlight theme selector.
 
+The site also uses the MIT-licensed [Nimbus](https://github.com/cloudflare/nimbus)
+`tableScroll` helper to make wide tables named, keyboard-scrollable regions.
+Nimbus and Starlight are both Astro documentation frameworks rather than
+composable themes. We do not run the full Nimbus integration alongside
+Starlight: both would generate search and sitemap output, while Nimbus's content
+routing does not discover the Starlight pages. The pinned Nimbus package is
+used for the table helper, not for its full CLI or its server features.
+
+For agent readers, this static site publishes a Nimbus-inspired `llms.txt` index
+and the same source content at `guide.md` and `vi/guide.md`. These are generated
+at build time from the bilingual guides and need no external service. They are
+public just like the HTML. GitHub Pages does not run an MCP server, AI search,
+or server-side Nimbus features; do not put secrets in any published content.
+
 ## Build and preview
 
 Install Node.js 22.23.4 or later, then from the repository root:
@@ -47,7 +61,8 @@ security boundaries.
 ## Deploy
 
 The `Documentation site` workflow builds pull requests and publishes pushes or
-manual runs on `main` with GitHub Actions. A repository administrator must
+manual runs on `main` with GitHub Actions. The intended project-site address is
+<https://molik-labs.github.io/FCC/> after a successful deployment. A repository administrator must
 select **Settings → Pages → Build and deployment → Source: GitHub Actions** and
 approve the environment if required. A deployment URL exists only after the
 change reaches the publishing branch and a deployment succeeds. This workflow

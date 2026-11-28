@@ -3,11 +3,18 @@ title: FCC field guide
 description: Install, configure and operate the FCC gateway.
 ---
 
-[Hướng dẫn tiếng Việt](vi/) · [Previous guide](legacy.html)
+[Hướng dẫn tiếng Việt](vi/) · [Markdown for agents](guide.md) · [Previous guide](legacy.html)
 
 <a id="overview"></a>
 
 FCC connects coding tools and API clients to your chosen cloud or local model providers. Python is the supported runtime; the Go port and Oh My Molik are experimental.
+
+<nav class="start-grid" aria-label="Start here">
+  <a href="#quickstart"><strong>Install FCC</strong><span>Get the fork running.</span></a>
+  <a href="#clients"><strong>Connect a client</strong><span>Use your tools and agents.</span></a>
+  <a href="#security"><strong>Operate securely</strong><span>Understand remote access.</span></a>
+  <a href="#troubleshooting"><strong>Troubleshoot</strong><span>Resolve common issues.</span></a>
+</nav>
 
 <a id="quickstart"></a>
 
